@@ -1,5 +1,9 @@
 package pl.debuguj.parkingspacessystem.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.debuguj.parkingspacessystem.controllers.ParkingSpaceController;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,6 +11,7 @@ import java.util.Date;
  * Created by grzesiek on 07.10.17.
  */
 public class ParkingSpace {
+
 
     private final String carRegistrationNumber;
     private final DriverType driverType;

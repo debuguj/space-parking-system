@@ -11,7 +11,11 @@ import pl.debuguj.parkingspacessystem.domain.DriverType;
 import pl.debuguj.parkingspacessystem.calculation.PaymentManager;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by grzesiek on 07.10.17.
@@ -25,11 +29,13 @@ public class ParkingSpaceController {
 
     private final ParkingSpaceDao parkingSpaceDao;
 
+    private final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     public ParkingSpaceController(PaymentManager paymentManager, ParkingSpaceDao parkingSpaceDao) {
         this.paymentManager = paymentManager;
         this.parkingSpaceDao = parkingSpaceDao;
 
-        //TO DO: change to read from application.properties
+        //TODO change to read from application.properties
         paymentManager.setCurrency(Currency.PL);
     }
 
@@ -41,13 +47,17 @@ public class ParkingSpaceController {
     public BigDecimal startParkingMeter(
             @RequestParam() String registrationNumber,
             @RequestParam() DriverType driverType,
-            @RequestParam() Date beginTime,
-            @RequestParam() Date endTime)
-    {
+            @RequestParam() String startTime,
+            @RequestParam() String stopTime) throws ParseException {
+
+        Date beginTime = format.parse(startTime);
+        Date endTime = format.parse(stopTime);
 
         ParkingSpace ps = new ParkingSpace(registrationNumber, driverType, beginTime, endTime);
         parkingSpaceDao.addParkingSpace(ps);
 
+        logger.info(ps.toString());
+        logger.info("Money: "+paymentManager.getFee(ps).toString());
         return paymentManager.getFee(ps);
     }
 
