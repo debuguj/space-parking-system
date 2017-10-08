@@ -1,5 +1,6 @@
 package pl.debuguj.parkingspacessystem.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -7,33 +8,40 @@ import java.util.Date;
  */
 public class ParkingSpace {
 
-    private final int id;
-    private final String registrationNumber;
-    private final Date startTime;
-    private final Date stopTime;
+    private final String carRegistrationNumber;
+    private final DriverType driverType;
+    private final Date beginTime;
+    private Date endTime;
 
-    public ParkingSpace(final int id, final String registrationNumber,
-                        final Date startTime, final Date stopTime) {
-        this.id = id;
-        this.registrationNumber = registrationNumber;
-        this.startTime = startTime;
-        this.stopTime = stopTime;
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+
+    public ParkingSpace(final String registrationNumber, final DriverType driverType,
+                        final Date startTime, Date endTime) {
+        this.carRegistrationNumber = registrationNumber;
+        this.driverType = driverType;
+        this.beginTime = startTime;
+        this.endTime = endTime;
     }
 
-    public int getId() {
-        return id;
+    public String getCarRegistrationNumber() {
+        return carRegistrationNumber;
     }
 
-    public String getRegistrationNumber() {
-        return registrationNumber;
+    public DriverType getDriverType() {
+        return driverType;
     }
 
-    public Date getStartTime() {
-        return startTime;
+    public Date getBeginTime() {
+        return beginTime;
     }
 
-    public Date getStopTime() {
-        return stopTime;
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     @Override
@@ -43,14 +51,17 @@ public class ParkingSpace {
 
         ParkingSpace that = (ParkingSpace) o;
 
-        if (id != that.id) return false;
-        return registrationNumber.equals(that.registrationNumber);
+        if (carRegistrationNumber != null ? !carRegistrationNumber.equals(that.carRegistrationNumber) : that.carRegistrationNumber != null)
+            return false;
+        if (driverType != that.driverType) return false;
+        return beginTime != null ? beginTime.equals(that.beginTime) : that.beginTime == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + registrationNumber.hashCode();
+        int result = carRegistrationNumber != null ? carRegistrationNumber.hashCode() : 0;
+        result = 31 * result + (driverType != null ? driverType.hashCode() : 0);
+        result = 31 * result + (beginTime != null ? beginTime.hashCode() : 0);
         return result;
     }
 
@@ -59,12 +70,14 @@ public class ParkingSpace {
 
         StringBuilder sb = new StringBuilder();
         sb.append("ParkingSpace{")
-                .append("id=").append(id)
-                .append(", registrationNumber='").append(registrationNumber)
-                .append(", startTime=").append(startTime)
-                .append(", stopTime=").append(stopTime)
+                .append(" carRegistrationNumber='").append(carRegistrationNumber)
+                .append(" driverType='").append(driverType)
+                .append(", beginTime=").append(simpleDateFormat.format(beginTime))
+                .append(", endTime=").append(simpleDateFormat.format(endTime))
                 .append('}');
 
         return sb.toString();
     }
+
+
 }
