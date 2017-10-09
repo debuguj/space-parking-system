@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.calculation;
+package pl.debuguj.parkingspacessystem.services;
 
 import java.math.BigDecimal;
 

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
 @Service
 public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
 
-    private List<ParkingSpace> listParkingSpaces = new ArrayList<ParkingSpace>();
+    private List<ParkingSpace> listParkingSpaces = new ArrayList<>();
 
     @Override
     public void addParkingSpace(ParkingSpace ps) {
@@ -27,6 +28,6 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
 
     @Override
     public List<ParkingSpace> getAllParkingSpaces() {
-        return listParkingSpaces;
+        return Collections.unmodifiableList(listParkingSpaces);
     }
 }
