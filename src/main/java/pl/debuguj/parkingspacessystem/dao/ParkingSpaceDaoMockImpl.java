@@ -17,12 +17,12 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     private List<ParkingSpace> listParkingSpaces = new ArrayList<>();
 
     @Override
-    public void addParkingSpace(ParkingSpace ps) {
+    public void add(ParkingSpace ps) {
         listParkingSpaces.add(ps);
     }
 
     @Override
-    public boolean checkSpace(ParkingSpace ps) {
+    public boolean find(ParkingSpace ps) {
         return listParkingSpaces.contains(ps);
     }
 
