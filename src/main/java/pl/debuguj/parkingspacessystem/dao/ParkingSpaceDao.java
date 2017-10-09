@@ -2,6 +2,7 @@ package pl.debuguj.parkingspacessystem.dao;
 
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,5 +11,8 @@ import java.util.List;
 public interface ParkingSpaceDao {
 
     void add(ParkingSpace ps);
+
     List<ParkingSpace> getAllParkingSpaces();
+
+    void changeStopParkingTimeAt(String registrationNumber, Date date);
 }

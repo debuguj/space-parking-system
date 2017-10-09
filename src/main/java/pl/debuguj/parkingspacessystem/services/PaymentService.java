@@ -12,4 +12,5 @@ public interface PaymentService {
 
     void setCurrency(Currency currency);
     BigDecimal getFee(ParkingSpace ps);
+
 }

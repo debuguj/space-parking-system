@@ -6,6 +6,7 @@ import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,5 +25,15 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     @Override
     public List<ParkingSpace> getAllParkingSpaces() {
         return Collections.unmodifiableList(listParkingSpaces);
+    }
+
+    @Override
+    public void changeStopParkingTimeAt(String registrationNumber, Date timestamp) {
+        listParkingSpaces
+                .forEach(ps -> {
+                    if(registrationNumber.equals(ps.getCarRegistrationNumber())){
+                        ps.setEndTime(timestamp);
+                    }
+                });
     }
 }
