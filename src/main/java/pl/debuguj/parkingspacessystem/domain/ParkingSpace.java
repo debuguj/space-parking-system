@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.debuguj.parkingspacessystem.controllers.ParkingSpaceController;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,11 +23,11 @@ public class ParkingSpace {
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
 
     public ParkingSpace(final String registrationNumber, final DriverType driverType,
-                        final Date startTime, Date endTime) {
+                        final String startTime, String endTime) throws ParseException {
         this.carRegistrationNumber = registrationNumber;
         this.driverType = driverType;
-        this.beginTime = startTime;
-        this.endTime = endTime;
+        this.beginTime = simpleDateFormat.parse(startTime);
+        this.endTime = simpleDateFormat.parse(endTime);;
     }
 
     public String getCarRegistrationNumber() {

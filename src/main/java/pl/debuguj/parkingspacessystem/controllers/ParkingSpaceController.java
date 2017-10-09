@@ -3,12 +3,15 @@ package pl.debuguj.parkingspacessystem.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.services.Currency;
+import pl.debuguj.parkingspacessystem.domain.Currency;
 import pl.debuguj.parkingspacessystem.domain.DriverType;
+import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
 import pl.debuguj.parkingspacessystem.services.PaymentService;
+import pl.debuguj.parkingspacessystem.services.PaymentServiceImpl;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -24,18 +27,14 @@ public class ParkingSpaceController {
 
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
 
-    private final PaymentService paymentService;
+    @Autowired
+    private ParkingSpaceManagementService parkingSpaceMangement;
 
-    private final ParkingSpaceDao parkingSpaceDao;
-
-    private final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    @Autowired
+    private PaymentService paymentService;
 
     public ParkingSpaceController(PaymentService paymentService, ParkingSpaceDao parkingSpaceDao) {
         this.paymentService = paymentService;
-        this.parkingSpaceDao = parkingSpaceDao;
-
-        //TODO change to read from application.properties
-        paymentService.setCurrency(Currency.PL);
     }
 
     /**
@@ -49,14 +48,10 @@ public class ParkingSpaceController {
             @RequestParam() String startTime,
             @RequestParam() String stopTime)  {
 
-        Date beginTime;
-        Date endTime;
         try {
-            beginTime = format.parse(startTime);
-            endTime = format.parse(stopTime);
 
-            ParkingSpace ps = new ParkingSpace(registrationNumber, driverType, beginTime, endTime);
-            parkingSpaceDao.addParkingSpace(ps);
+            ParkingSpace ps = new ParkingSpace(registrationNumber, driverType, startTime, stopTime);
+            parkingSpaceMangement.reserveParkingSpace(ps);
 
             return paymentService.getFee(ps);
 
@@ -75,21 +70,22 @@ public class ParkingSpaceController {
     )
     {
 
-        Date currentTime = new Date();
-
-        return parkingSpaceDao.getAllParkingSpaces()
-                    .stream()
-                    .filter(parkingSpace -> registrationNumber.equals(parkingSpace.getCarRegistrationNumber()))
-                    .filter(parkingSpace -> {
-                        if (currentTime.after(parkingSpace.getBeginTime())
-                                && currentTime.before(parkingSpace.getEndTime()))
-                        {
-                            return true;
-                        }
-                            return false;
-                    })
-                    .findAny()
-                    .orElse(null);
+//        Date currentTime = new Date();
+//
+//        return parkingSpaceDao.getAllParkingSpaces()
+//                    .stream()
+//                    .filter(parkingSpace -> registrationNumber.equals(parkingSpace.getCarRegistrationNumber()))
+//                    .filter(parkingSpace -> {
+//                        if (currentTime.after(parkingSpace.getBeginTime())
+//                                && currentTime.before(parkingSpace.getEndTime()))
+//                        {
+//                            return true;
+//                        }
+//                            return false;
+//                    })
+//                    .findAny()
+//                    .orElse(null);
+        return null;
     }
 
     /**
@@ -99,7 +95,7 @@ public class ParkingSpaceController {
     public void stopParkingMeter(@RequestParam String registrationNumber)
     {
 
-        parkingSpaceDao.getAllParkingSpaces();
+        parkingSpaceMangement.getAllParkingSpaces();
     }
 
     /**
