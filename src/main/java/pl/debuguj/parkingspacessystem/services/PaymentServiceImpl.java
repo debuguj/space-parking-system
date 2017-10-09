@@ -24,6 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     private Currency currency;
 
     public PaymentServiceImpl() {
+        currency = Currency.PL;
     }
     @Override
     public void setCurrency(Currency c) {

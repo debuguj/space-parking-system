@@ -1,9 +1,5 @@
 package pl.debuguj.parkingspacessystem.domain;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pl.debuguj.parkingspacessystem.controllers.ParkingSpaceController;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,8 +18,11 @@ public class ParkingSpace {
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
 
-    public ParkingSpace(final String registrationNumber, final DriverType driverType,
-                        final String startTime, String endTime) throws ParseException {
+    public ParkingSpace(final String registrationNumber,
+                        final DriverType driverType,
+                        final String startTime,
+                        String endTime) throws ParseException
+    {
         this.carRegistrationNumber = registrationNumber;
         this.driverType = driverType;
         this.beginTime = simpleDateFormat.parse(startTime);
@@ -64,7 +63,8 @@ public class ParkingSpace {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int result = carRegistrationNumber != null ? carRegistrationNumber.hashCode() : 0;
         result = 31 * result + (driverType != null ? driverType.hashCode() : 0);
         result = 31 * result + (beginTime != null ? beginTime.hashCode() : 0);
@@ -72,12 +72,13 @@ public class ParkingSpace {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
 
         StringBuilder sb = new StringBuilder();
         sb.append("ParkingSpace{")
                 .append(" carRegistrationNumber='").append(carRegistrationNumber)
-                .append(" driverType='").append(driverType)
+                .append(", driverType='").append(driverType)
                 .append(", beginTime=").append(simpleDateFormat.format(beginTime))
                 .append(", endTime=").append(simpleDateFormat.format(endTime))
                 .append('}');

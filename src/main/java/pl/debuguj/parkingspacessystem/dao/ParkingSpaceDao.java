@@ -9,7 +9,6 @@ import java.util.List;
  */
 public interface ParkingSpaceDao {
 
-    public void add(ParkingSpace ps);
-    public boolean find(ParkingSpace ps);
-    public List<ParkingSpace> getAllParkingSpaces();
+    void add(ParkingSpace ps);
+    List<ParkingSpace> getAllParkingSpaces();
 }

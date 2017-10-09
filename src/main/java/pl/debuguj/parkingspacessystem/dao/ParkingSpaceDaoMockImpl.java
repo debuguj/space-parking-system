@@ -22,11 +22,6 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     }
 
     @Override
-    public boolean find(ParkingSpace ps) {
-        return listParkingSpaces.contains(ps);
-    }
-
-    @Override
     public List<ParkingSpace> getAllParkingSpaces() {
         return Collections.unmodifiableList(listParkingSpaces);
     }

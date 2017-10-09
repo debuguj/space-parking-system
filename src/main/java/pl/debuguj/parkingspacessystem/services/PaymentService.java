@@ -10,6 +10,6 @@ import java.math.BigDecimal;
  */
 public interface PaymentService {
 
-    public void setCurrency(Currency currency);
-    public BigDecimal getFee(ParkingSpace ps);
+    void setCurrency(Currency currency);
+    BigDecimal getFee(ParkingSpace ps);
 }

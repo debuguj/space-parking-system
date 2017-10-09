@@ -24,13 +24,12 @@ public class ParkingSpaceController {
 
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
 
-    @Autowired
-    private ParkingSpaceManagementService parkingSpaceManagement;
+    private final ParkingSpaceManagementService parkingSpaceManagement;
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    public ParkingSpaceController(PaymentService paymentService, ParkingSpaceDao parkingSpaceDao) {
+    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement, PaymentService paymentService) {
+        this.parkingSpaceManagement = parkingSpaceManagement;
         this.paymentService = paymentService;
     }
 
@@ -57,20 +56,20 @@ public class ParkingSpaceController {
 
 
     @GetMapping("/checkVehicle")
-    public boolean checkVehicle(@RequestParam() String registrationNumber)
+    public boolean checkVehicle(@RequestParam String registrationNumber)
     {
         return parkingSpaceManagement.checkVehicle(registrationNumber);
     }
 
 
     @GetMapping("/stopParkingMeter")
-    public void stopParkingMeter(@RequestParam String registrationNumber)
+    public BigDecimal stopParkingMeter(@RequestParam String registrationNumber)
     {
-        parkingSpaceManagement.stopParkingMeter(registrationNumber);
+        return parkingSpaceManagement.stopParkingMeter(registrationNumber);
     }
 
     @GetMapping("/checkParkingFee")
-    public void checkParkingFee(@RequestParam() String startTime, @RequestParam() String stopTime)
+    public void checkParkingFee(@RequestParam String startTime, @RequestParam() String stopTime)
     {
         parkingSpaceManagement.checkFee(startTime, stopTime);
     }
