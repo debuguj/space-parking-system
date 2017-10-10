@@ -1,5 +1,8 @@
 package pl.debuguj.parkingspacessystem.domain;
 
+import pl.debuguj.parkingspacessystem.calculations.PaymentManager;
+
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,6 +17,7 @@ public class ParkingSpace {
     private final DriverType driverType;
     private final Date beginTime;
     private Date endTime;
+    private BigDecimal fee;
 
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
@@ -26,7 +30,8 @@ public class ParkingSpace {
         this.carRegistrationNumber = registrationNumber;
         this.driverType = driverType;
         this.beginTime = simpleDateFormat.parse(startTime);
-        this.endTime = simpleDateFormat.parse(endTime);;
+        this.endTime = simpleDateFormat.parse(endTime);
+        this.fee = PaymentManager.getFee(this);
     }
 
     public String getCarRegistrationNumber() {
@@ -47,6 +52,10 @@ public class ParkingSpace {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
     }
 
     @Override
@@ -81,6 +90,7 @@ public class ParkingSpace {
                 .append(", driverType='").append(driverType)
                 .append(", beginTime=").append(simpleDateFormat.format(beginTime))
                 .append(", endTime=").append(simpleDateFormat.format(endTime))
+                .append(", fee=").append(fee)
                 .append('}');
 
         return sb.toString();

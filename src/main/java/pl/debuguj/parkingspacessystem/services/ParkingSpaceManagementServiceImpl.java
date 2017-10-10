@@ -1,11 +1,15 @@
 package pl.debuguj.parkingspacessystem.services;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.debuguj.parkingspacessystem.calculations.PaymentManager;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -16,9 +20,6 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
     @Autowired
     private ParkingSpaceDao parkingSpaceDao;
-
-    @Autowired
-    private PaymentService paymentService;
 
     @Override
     public void reserveParkingSpace(ParkingSpace ps) {
@@ -53,7 +54,8 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
                 .filter(parkingSpace -> registrationNumber.equals(parkingSpace.getCarRegistrationNumber()))
                 .findFirst()
                 .orElse(null);
-        return paymentService.getFee(ps);
+
+        return PaymentManager.getFee(ps);
     }
 
     @Override
@@ -62,7 +64,31 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal getFeePerDay(String timestamp) {
-        return null;
+    public BigDecimal getIncomePerDay(String timestamp) throws ParseException {
+
+        Date begin = createBeginDate(timestamp);
+        Date end = createEndDate(begin);
+
+        return parkingSpaceDao.getAllParkingSpaces()
+                .stream()
+                .filter(ps -> {
+                    return begin.after(ps.getBeginTime())
+                        && end.before(ps.getEndTime());
+
+                }).map(ParkingSpace::getFee)
+                .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
+
+    }
+
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+
+    private Date createBeginDate(String timestamp) throws ParseException {
+        return simpleDateFormat.parse(timestamp);
+    }
+
+    private Date createEndDate(Date d){
+        return (new DateTime(d).plusDays(1)).toDate();
     }
 }
