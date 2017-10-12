@@ -38,18 +38,20 @@ public class ParkingSpaceController {
 
         try {
 
-            ParkingSpace ps = new ParkingSpace(registrationNumber, driverType, startTime, stopTime);
+            ParkingSpace ps = new ParkingSpace(registrationNumber, startTime, stopTime);
+            ps.setDriverType(driverType);
 
             parkingSpaceManagement.reserveParkingSpace(ps);
 
-            return ps.getFee();
-
+            //return ps.getFee();
+            return null;
         } catch (ParseException e) {
             //TODO implement below
             return null;
         } catch (IncorrectEndDateException e) {
             //TODO implement below
-           return null;
+            return null;
+
         }
     }
 

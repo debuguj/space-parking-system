@@ -76,7 +76,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
                     return begin.after(ps.getBeginTime())
                         && end.before(ps.getEndTime());
 
-                }).map(ParkingSpace::getFee)
+                }).map(ps -> PaymentManager.getFee(ps))
                 .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
 
     }

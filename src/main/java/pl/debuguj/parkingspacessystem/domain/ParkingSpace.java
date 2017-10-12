@@ -1,7 +1,6 @@
 package pl.debuguj.parkingspacessystem.domain;
 
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,52 +10,95 @@ import java.util.Date;
  */
 public class ParkingSpace implements Space {
 
-    public ParkingSpace(String carRegistrationNumber) {
+    private final String carRegistrationNumber;
+    private DriverType driverType = DriverType.REGULAR;
+    private Date beginDate;
+    private Date endDate;
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+
+
+    public ParkingSpace(String carRegistrationNumber,
+                        String beginDate,
+                        String endDate) throws ParseException, IncorrectEndDateException {
+        this.carRegistrationNumber = carRegistrationNumber;
+        this.beginDate = simpleDateFormat.parse(beginDate);
+        this.endDate = checkEndDate(simpleDateFormat.parse(endDate));
     }
 
     @Override
     public String getCarRegistrationNumber() {
-        return null;
+        return carRegistrationNumber;
     }
 
     @Override
     public DriverType getDriverType() {
-        return null;
+        return driverType;
     }
 
     @Override
-    public void setDriverType(DriverType dt) {
-
+    public void setDriverType( DriverType dt) {
+        if(dt != null)
+            this.driverType = dt;
     }
 
-    @Override
-    public void setBeginTime(String time) {
-
-    }
 
     @Override
     public Date getBeginTime() {
-        return null;
+        return beginDate;
     }
 
     @Override
-    public void setEndTime(String time) {
-
+    public void setEndTime(String time) throws ParseException, IncorrectEndDateException {
+        this.endDate = checkEndDate(simpleDateFormat.parse(time));
     }
 
     @Override
     public Date getEndTime() {
-        return null;
+        return endDate;
+    }
+
+    private Date checkEndDate(Date d) throws IncorrectEndDateException {
+        if(d.compareTo(getBeginTime()) > 0)
+            return d;
+        throw new IncorrectEndDateException();
     }
 
     @Override
-    public void setPeriod(String beginTime, String endTime) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        ParkingSpace that = (ParkingSpace) o;
+
+        if (carRegistrationNumber != null ? !carRegistrationNumber.equals(that.carRegistrationNumber) : that.carRegistrationNumber != null)
+            return false;
+        return driverType == that.driverType;
     }
 
+    @Override
+    public int hashCode() {
+        int result = carRegistrationNumber != null ? carRegistrationNumber.hashCode() : 0;
+        result = 31 * result + (driverType != null ? driverType.hashCode() : 0);
+        return result;
+    }
 
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ParkingSpace{")
+                .append(" carRegistrationNumber='").append(carRegistrationNumber)
+                .append(", driverType='").append(driverType)
+                .append(", beginTime=").append(simpleDateFormat.format(beginDate))
+                .append(", endTime=").append(simpleDateFormat.format(endDate))
+                .append('}');
 
-//    private final String carRegistrationNumber;
+        return sb.toString();
+    }
+
+    //    private final String carRegistrationNumber;
 //    private final DriverType driverType;
 //    private final Date beginTime;
 //    private Date endTime;

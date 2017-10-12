@@ -1,5 +1,6 @@
 package pl.debuguj.parkingspacessystem.domain;
 
+import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -13,13 +14,10 @@ public interface Space {
 
     DriverType getDriverType();
 
-    void setBeginTime(String time);
-
     Date getBeginTime();
 
-    void setEndTime(String time);
+    void setEndTime(String time) throws ParseException, IncorrectEndDateException;
 
     Date getEndTime();
 
-    void setPeriod(String beginTime, String endTime);
 }

@@ -2,6 +2,7 @@ package pl.debuguj.parkingspacessystem.dao;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.text.ParseException;
@@ -36,6 +37,8 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
                         try {
                             ps.setEndTime(timestamp);
                         } catch (ParseException e) {
+                            e.printStackTrace();
+                        } catch (IncorrectEndDateException e) {
                             e.printStackTrace();
                         }
                     }
