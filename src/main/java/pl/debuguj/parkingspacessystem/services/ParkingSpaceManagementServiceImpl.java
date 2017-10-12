@@ -45,9 +45,10 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal stopParkingMeter(String registrationNumber) {
+    public BigDecimal stopParkingMeter(String registrationNumber, String date) {
 
-        parkingSpaceDao.changeStopParkingTimeAt(registrationNumber, new Date());
+
+        parkingSpaceDao.changeStopParkingTimeAt(registrationNumber, date);
 
         ParkingSpace ps = parkingSpaceDao.getAllParkingSpaces()
                 .stream()

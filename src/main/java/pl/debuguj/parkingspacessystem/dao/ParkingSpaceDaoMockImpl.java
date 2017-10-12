@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -28,11 +29,15 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     }
 
     @Override
-    public void changeStopParkingTimeAt(String registrationNumber, Date timestamp) {
+    public void changeStopParkingTimeAt(String registrationNumber, String timestamp){
         listParkingSpaces
                 .forEach(ps -> {
                     if(registrationNumber.equals(ps.getCarRegistrationNumber())){
-                        ps.setEndTime(timestamp);
+                        try {
+                            ps.setEndTime(timestamp);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
     }

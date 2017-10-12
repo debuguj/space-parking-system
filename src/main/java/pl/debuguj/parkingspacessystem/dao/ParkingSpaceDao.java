@@ -14,5 +14,5 @@ public interface ParkingSpaceDao {
 
     List<ParkingSpace> getAllParkingSpaces();
 
-    void changeStopParkingTimeAt(String registrationNumber, Date date);
+    void changeStopParkingTimeAt(String registrationNumber, String date);
 }

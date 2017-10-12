@@ -2,6 +2,8 @@ package pl.debuguj.parkingspacessystem.calculations;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.domain.Currency;
@@ -14,7 +16,7 @@ import java.math.BigDecimal;
  */
 
 public final class PaymentManager {
-    //private static final Logger logger = LoggerFactory.getLogger(PaymentManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(PaymentManager.class);
     private static final BigDecimal BEGIN_REGULAR_FEE = BigDecimal.ONE;
     private static final BigDecimal FACTOR_REGULAR_FEE = new BigDecimal("2.0");
     private static final BigDecimal BEGIN_VIP_FEE = BigDecimal.ZERO;
@@ -23,7 +25,7 @@ public final class PaymentManager {
 
     private static Currency currency;
 
-    public PaymentManager() {
+    static {
         currency = Currency.PL;
     }
 
@@ -34,6 +36,7 @@ public final class PaymentManager {
 
     public static BigDecimal getFee(ParkingSpace ps)
     {
+
         BigDecimal fee = BigDecimal.ZERO;
 
         switch(ps.getDriverType()){

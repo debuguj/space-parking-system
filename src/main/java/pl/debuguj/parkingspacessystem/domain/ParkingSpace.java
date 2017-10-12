@@ -20,18 +20,23 @@ public class ParkingSpace {
     private BigDecimal fee;
 
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
 
     public ParkingSpace(final String registrationNumber,
                         final DriverType driverType,
                         final String startTime,
-                        String endTime) throws ParseException
-    {
+                        String endTime) throws ParseException, IncorrectEndDateException {
         this.carRegistrationNumber = registrationNumber;
         this.driverType = driverType;
         this.beginTime = simpleDateFormat.parse(startTime);
-        this.endTime = simpleDateFormat.parse(endTime);
+        this.endTime = checkEndDate(simpleDateFormat.parse(endTime));
         this.fee = PaymentManager.getFee(this);
+    }
+
+    private Date checkEndDate(Date d) throws IncorrectEndDateException {
+        if(d.compareTo(this.getBeginTime()) > 0)
+            return d;
+        throw new IncorrectEndDateException();
     }
 
     public String getCarRegistrationNumber() {
@@ -50,8 +55,9 @@ public class ParkingSpace {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setEndTime(String endTime) throws ParseException {
+        this.endTime = simpleDateFormat.parse(endTime);
+        fee = PaymentManager.getFee(this);
     }
 
     public BigDecimal getFee() {

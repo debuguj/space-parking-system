@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.debuguj.parkingspacessystem.domain.DriverType;
+import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
 
@@ -39,13 +40,16 @@ public class ParkingSpaceController {
 
             ParkingSpace ps = new ParkingSpace(registrationNumber, driverType, startTime, stopTime);
 
-            //parkingSpaceManagement.reserveParkingSpace(ps);
+            parkingSpaceManagement.reserveParkingSpace(ps);
 
             return ps.getFee();
 
         } catch (ParseException e) {
             //TODO implement below
             return null;
+        } catch (IncorrectEndDateException e) {
+            //TODO implement below
+           return null;
         }
     }
 
@@ -58,9 +62,10 @@ public class ParkingSpaceController {
 
 
     @GetMapping("/stopParkingMeter")
-    public BigDecimal stopParkingMeter(@RequestParam String registrationNumber)
+    public BigDecimal stopParkingMeter(@RequestParam String registrationNumber,
+                                       @RequestParam String timeStamp)
     {
-        return parkingSpaceManagement.stopParkingMeter(registrationNumber);
+        return parkingSpaceManagement.stopParkingMeter(registrationNumber, timeStamp);
     }
 
     @GetMapping("/checkParkingFee")

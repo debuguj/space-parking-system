@@ -27,7 +27,7 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to stop the parking meter, so that I pay only for the actual parking time
      */
-    BigDecimal stopParkingMeter(String registrationNumber);
+    BigDecimal stopParkingMeter(String registrationNumber, String date);
 
 
     BigDecimal checkFee(String startTime, String stopTime);
