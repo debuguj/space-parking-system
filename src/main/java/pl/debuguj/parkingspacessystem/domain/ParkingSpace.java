@@ -115,7 +115,7 @@ public class ParkingSpace implements Space {
 //        this.driverType = driverType;
 //        this.beginTime = simpleDateFormat.parse(startTime);
 //        this.endTime = checkEndDate(simpleDateFormat.parse(endTime));
-//        this.fee = PaymentManager.getFee(this);
+//        this.fee = PaymentServiceImpl.getFee(this);
 //    }
 //
 //    private Date checkEndDate(Date d) throws IncorrectEndDateException {
@@ -142,7 +142,7 @@ public class ParkingSpace implements Space {
 //
 //    public void setEndTime(String endTime) throws ParseException {
 //        this.endTime = simpleDateFormat.parse(endTime);
-//        fee = PaymentManager.getFee(this);
+//        fee = PaymentServiceImpl.getFee(this);
 //    }
 //
 //    public BigDecimal getFee() {

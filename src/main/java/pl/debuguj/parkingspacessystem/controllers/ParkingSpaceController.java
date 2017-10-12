@@ -10,6 +10,7 @@ import pl.debuguj.parkingspacessystem.domain.DriverType;
 import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
+import pl.debuguj.parkingspacessystem.services.PaymentService;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -23,10 +24,12 @@ public class ParkingSpaceController {
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
+    private final PaymentService paymentService;
 
-    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
+    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement,
+                                  PaymentService paymentService) {
         this.parkingSpaceManagement = parkingSpaceManagement;
-
+        this.paymentService = paymentService;
     }
 
     @GetMapping(value="/startMeter")
@@ -43,25 +46,21 @@ public class ParkingSpaceController {
 
             parkingSpaceManagement.reserveParkingSpace(ps);
 
-            //return ps.getFee();
-            return null;
+            return paymentService.getFee(ps);
         } catch (ParseException e) {
             //TODO implement below
             return null;
         } catch (IncorrectEndDateException e) {
             //TODO implement below
             return null;
-
         }
     }
-
 
     @GetMapping("/checkVehicle")
     public boolean checkVehicle(@RequestParam String registrationNumber)
     {
         return parkingSpaceManagement.checkVehicle(registrationNumber);
     }
-
 
     @GetMapping("/stopParkingMeter")
     public BigDecimal stopParkingMeter(@RequestParam String registrationNumber,

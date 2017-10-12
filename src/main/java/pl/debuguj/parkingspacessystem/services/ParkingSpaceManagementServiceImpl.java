@@ -3,7 +3,6 @@ package pl.debuguj.parkingspacessystem.services;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.debuguj.parkingspacessystem.calculations.PaymentManager;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
@@ -20,6 +19,9 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
     @Autowired
     private ParkingSpaceDao parkingSpaceDao;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Override
     public void reserveParkingSpace(ParkingSpace ps) {
@@ -56,7 +58,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
                 .findFirst()
                 .orElse(null);
 
-        return PaymentManager.getFee(ps);
+        return paymentService.getFee(ps);
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
                     return begin.after(ps.getBeginTime())
                         && end.before(ps.getEndTime());
 
-                }).map(ps -> PaymentManager.getFee(ps))
+                }).map(ps -> paymentService.getFee(ps))
                 .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
 
     }
