@@ -7,8 +7,8 @@ import java.math.BigDecimal;
  */
 public enum Currency {
 
-    PL(new BigDecimal("1.0"), "Złoty");
-    //USD(new BigDecimal("3.50"), "Dolar");
+    PLN(new BigDecimal("1.0"), "Złoty"),
+    USD(new BigDecimal("3.50"), "Dolar");
 //    GBP(new BigDecimal("4.50"), "Funt"),
 //    EUR(new BigDecimal("4.30"), "Euro");
 

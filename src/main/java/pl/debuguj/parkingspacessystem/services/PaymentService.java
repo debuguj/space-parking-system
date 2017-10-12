@@ -1,6 +1,7 @@
 package pl.debuguj.parkingspacessystem.services;
 
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.enums.Currency;
 
 import java.math.BigDecimal;
 
@@ -10,4 +11,8 @@ import java.math.BigDecimal;
 public interface PaymentService {
 
     BigDecimal getFee(ParkingSpace parkingSpace);
+
+    void setCurrency(Currency currency);
+
+    Currency getCurrency();
 }

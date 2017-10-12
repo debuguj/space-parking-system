@@ -21,7 +21,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     private static List<ParkingSpace> listParkingSpaces = new ArrayList<>();
 
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static SimpleDateFormat timeDateFormat = new SimpleDateFormat(TIME_PATTERN);;
+    private static SimpleDateFormat timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
 
     static {
         try {
@@ -46,8 +46,8 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     }
 
     @Override
-    public void add(ParkingSpace ps) {
-        listParkingSpaces.add(ps);
+    public void add(ParkingSpace parkingSpace) {
+        listParkingSpaces.add(parkingSpace);
     }
 
     @Override

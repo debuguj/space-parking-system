@@ -16,20 +16,21 @@ import java.math.BigDecimal;
 @Service
 public class PaymentServiceImpl implements PaymentService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
-    private static final BigDecimal BEGIN_REGULAR_FEE = BigDecimal.ONE;
-    private static final BigDecimal FACTOR_REGULAR_FEE = new BigDecimal("2.0");
-    private static final BigDecimal BEGIN_VIP_FEE = BigDecimal.ZERO;
-    private static final BigDecimal FACTOR_VIP_FEE = new BigDecimal("1.5");
 
+    private Currency currency;
 
-    private static Currency currency;
-
-    static {
-        currency = Currency.PL;
+    public PaymentServiceImpl() {
+        currency = Currency.PLN;
     }
 
+    @Override
     public void setCurrency(Currency c) {
         this.currency = c;
+    }
+
+    @Override
+    public Currency getCurrency() {
+        return currency;
     }
 
     @Override
@@ -40,20 +41,24 @@ public class PaymentServiceImpl implements PaymentService {
 
         switch(ps.getDriverType()){
             case REGULAR:
-                fee = getBasicFee(getPeriod(ps), BEGIN_REGULAR_FEE, FACTOR_REGULAR_FEE);
+                fee = getBasicFee(ps);
                 break;
             case VIP:
-                fee = getBasicFee(getPeriod(ps), BEGIN_VIP_FEE, FACTOR_VIP_FEE);
+                fee = getBasicFee(ps);
                 break;
             default:
                 break;
         }
 
-        return fee.multiply(currency.getExchangeRate());
+        return fee.multiply(currency.getExchangeRate()).setScale(1);
     }
 
-    private static BigDecimal getBasicFee(BigDecimal period, BigDecimal startSum, BigDecimal factor)
+    private static BigDecimal getBasicFee(ParkingSpace parkingSpace)
     {
+        BigDecimal period = getPeriod(parkingSpace);
+        BigDecimal startSum = parkingSpace.getDriverType().getBeginValue();
+        BigDecimal factor = parkingSpace.getDriverType().getFactor();
+
         int compResult = period.compareTo(BigDecimal.ONE);
 
         if(compResult == 0) {
@@ -61,12 +66,12 @@ public class PaymentServiceImpl implements PaymentService {
         }
         else if (compResult == 1)
         {
-            BigDecimal current = BigDecimal.ONE;
+            BigDecimal current = new BigDecimal("2.0");
 
             for(int i=1; i<period.intValueExact(); i++)
             {
-                current = current.multiply(factor);
                 startSum = startSum.add(current);
+                current = current.multiply(factor);
             }
             return startSum;
         } else {

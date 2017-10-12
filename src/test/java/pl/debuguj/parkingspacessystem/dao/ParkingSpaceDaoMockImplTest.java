@@ -39,18 +39,22 @@ public class ParkingSpaceDaoMockImplTest {
     public void testAddNewParkingSpace() throws ParseException {
         Date begin = timeDateFormat.parse("2017-10-14 11:15:48");
         Date end = timeDateFormat.parse("2017-10-14 21:35:12");
+
         ParkingSpace ps = new ParkingSpace("56788", begin, end);
 
         parkingSpaceDao.add(ps);
 
-        assertEquals("Should get the same object",ps ,parkingSpaceDao.getParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber()));
+        ParkingSpace psFromDao = parkingSpaceDao.getParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
+
+        assertEquals("Should get the same object", ps, psFromDao);
     }
 
     @Test
     public void testGettingAllParkingSpaces() {
         List<ParkingSpace> list = parkingSpaceDao.getAllParkingSpaces();
         int objectNumber = 5;
-        assertEquals("Should return equals number od object",objectNumber, list.size() );
+
+        assertEquals("Should return equals number od object", objectNumber, list.size() );
     }
 
     @Test
@@ -66,7 +70,7 @@ public class ParkingSpaceDaoMockImplTest {
 
         ParkingSpace psFromDao = parkingSpaceDao.getParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
 
-        assertEquals("Changed end time should be the same", changeDate, psFromDao.getEndTime());
+        assertEquals("New end time should be the same", changeDate, psFromDao.getEndTime());
     }
 
 }
