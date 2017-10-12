@@ -5,7 +5,7 @@ import org.joda.time.Minutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pl.debuguj.parkingspacessystem.domain.Currency;
+import pl.debuguj.parkingspacessystem.enums.Currency;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  * Created by grzesiek on 10.10.17.
  */
 @Service
-public final class PaymentServiceImpl implements PaymentService{
+public class PaymentServiceImpl implements PaymentService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
     private static final BigDecimal BEGIN_REGULAR_FEE = BigDecimal.ONE;
     private static final BigDecimal FACTOR_REGULAR_FEE = new BigDecimal("2.0");

@@ -24,8 +24,9 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     private PaymentService paymentService;
 
     @Override
-    public void reserveParkingSpace(ParkingSpace ps) {
+    public BigDecimal reserveParkingSpace(ParkingSpace ps) {
         parkingSpaceDao.add(ps);
+        return paymentService.getFee(ps);
     }
 
     @Override
@@ -47,10 +48,9 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal stopParkingMeter(String registrationNumber, String date) {
+    public BigDecimal stopParkingMeter(String registrationNumber, Date date) {
 
-
-        parkingSpaceDao.changeStopParkingTimeAt(registrationNumber, date);
+        parkingSpaceDao.changeParkingSpaceEndTime(registrationNumber, date);
 
         ParkingSpace ps = parkingSpaceDao.getAllParkingSpaces()
                 .stream()
@@ -62,33 +62,23 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal checkFee(String startTime, String stopTime) {
+    public BigDecimal checkFee(Date startTime, Date stopTime) {
         return null;
     }
 
     @Override
-    public BigDecimal getIncomePerDay(String timestamp) throws ParseException {
+    public BigDecimal getIncomePerDay(Date timestamp) throws ParseException {
 
-        Date begin = createBeginDate(timestamp);
-        Date end = createEndDate(begin);
+
+        Date end = createEndDate(timestamp);
 
         return parkingSpaceDao.getAllParkingSpaces()
                 .stream()
-                .filter(ps -> {
-                    return begin.after(ps.getBeginTime())
-                        && end.before(ps.getEndTime());
-
-                }).map(ps -> paymentService.getFee(ps))
+                .filter(ps -> timestamp.after(ps.getBeginTime())
+                        && end.before(ps.getEndTime()))
+                .map(ps -> paymentService.getFee(ps))
                 .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
 
-    }
-
-
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
-
-    private Date createBeginDate(String timestamp) throws ParseException {
-        return simpleDateFormat.parse(timestamp);
     }
 
     private Date createEndDate(Date d){

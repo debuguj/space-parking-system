@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.domain;
+package pl.debuguj.parkingspacessystem.enums;
 
 import java.math.BigDecimal;
 

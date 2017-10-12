@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.debuguj.parkingspacessystem.domain.DriverType;
+import pl.debuguj.parkingspacessystem.enums.DriverType;
 import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
@@ -14,6 +14,8 @@ import pl.debuguj.parkingspacessystem.services.PaymentService;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by grzesiek on 07.10.17.
@@ -22,6 +24,10 @@ import java.text.ParseException;
 public class ParkingSpaceController {
 
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
     private final PaymentService paymentService;
@@ -41,12 +47,12 @@ public class ParkingSpaceController {
 
         try {
 
-            ParkingSpace ps = new ParkingSpace(registrationNumber, startTime, stopTime);
+            Date begin = simpleDateFormat.parse(startTime);
+            Date end = simpleDateFormat.parse(stopTime);
+            ParkingSpace ps = new ParkingSpace(registrationNumber, begin, end);
             ps.setDriverType(driverType);
 
-            parkingSpaceManagement.reserveParkingSpace(ps);
-
-            return paymentService.getFee(ps);
+            return parkingSpaceManagement.reserveParkingSpace(ps);
         } catch (ParseException e) {
             //TODO implement below
             return null;
@@ -66,24 +72,40 @@ public class ParkingSpaceController {
     public BigDecimal stopParkingMeter(@RequestParam String registrationNumber,
                                        @RequestParam String timeStamp)
     {
-        return parkingSpaceManagement.stopParkingMeter(registrationNumber, timeStamp);
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(timeStamp);
+            return parkingSpaceManagement.stopParkingMeter(registrationNumber, date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @GetMapping("/checkParkingFee")
-    public void checkParkingFee(@RequestParam String startTime, @RequestParam() String stopTime)
+    public BigDecimal checkParkingFee(@RequestParam String startTime, @RequestParam() String stopTime)
     {
-        parkingSpaceManagement.checkFee(startTime, stopTime);
+        try {
+            Date begin = simpleDateFormat.parse(startTime);
+            Date end = simpleDateFormat.parse(stopTime);
+            return parkingSpaceManagement.checkFee(begin, end);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @GetMapping("/checkIncomePerDay")
     public void checkIncomePerDay(@RequestParam String date)
     {
         try {
-            parkingSpaceManagement.getIncomePerDay(date);
+
+            parkingSpaceManagement.getIncomePerDay(simpleDateFormat.parse(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
-
 
 }

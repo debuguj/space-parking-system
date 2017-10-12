@@ -3,6 +3,7 @@ package pl.debuguj.parkingspacessystem.domain;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import pl.debuguj.parkingspacessystem.enums.DriverType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,22 +15,28 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Created by grzesiek on 12.10.17.
  */
+
 public class ParkingSpaceTest {
 
     private ParkingSpace parkingSpace;
 
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static SimpleDateFormat simpleDateFormat;
+    private static SimpleDateFormat timeDateFormat;
+    private static final String DAY_PATTERN = "yyyy-MM-dd";
+    private static SimpleDateFormat dayDateFormat;
 
     @BeforeClass
     public static void set(){
 
-        simpleDateFormat = new SimpleDateFormat(TIME_PATTERN);
+        timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
+        dayDateFormat = new SimpleDateFormat(DAY_PATTERN);
     }
 
     @Before
     public void setUp() throws ParseException, IncorrectEndDateException {
-        parkingSpace = new ParkingSpace("12345", "2017-10-12 10:15:10", "2017-10-12 14:15:10");
+        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
+        Date end = timeDateFormat.parse("2017-10-12 14:15:10");
+        parkingSpace = new ParkingSpace("12345", begin, end );
 
     }
 
@@ -56,33 +63,26 @@ public class ParkingSpaceTest {
     @Test
     public void testCorrectBeginTime() throws ParseException {
 
-        Date date = simpleDateFormat.parse("2017-10-12 10:15:10");
+        Date date = timeDateFormat.parse("2017-10-12 10:15:10");
         assertEquals("Begin date should be the same", date, parkingSpace.getBeginTime());
 
-        date = simpleDateFormat.parse("2017-10-12 10:15:11");
+        date = timeDateFormat.parse("2017-10-12 10:15:11");
         assertNotEquals("Begin date should not be the same", date, parkingSpace.getBeginTime());
     }
 
     @Test
     public void testCorrectSetOfEndTime() throws ParseException {
 
-        Date date = simpleDateFormat.parse("2017-10-12 14:15:10");
+        Date date = timeDateFormat.parse("2017-10-12 14:15:10");
         assertEquals("End date should be the same", date, parkingSpace.getEndTime());
 
-        date = simpleDateFormat.parse("2017-10-12 14:15:12");
+        date = timeDateFormat.parse("2017-10-12 14:15:12");
         assertNotEquals("End date not should be the same", date, parkingSpace.getEndTime());
     }
 
     @Test(expected = IncorrectEndDateException.class )
     public void testIncorrectSetOfEndTime() throws ParseException, IncorrectEndDateException {
 
-        parkingSpace.setEndTime("2017-10-12 10:00:00");
+        parkingSpace.setEndTime(dayDateFormat.parse("2017-10-12 10:00:00"));
     }
-
-    @Test(expected = ParseException.class )
-    public void testIncorrectEndTimeFormat() throws ParseException, IncorrectEndDateException {
-
-        parkingSpace.setEndTime("201710-12 10:10");
-    }
-
 }

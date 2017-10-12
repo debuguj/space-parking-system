@@ -1,6 +1,8 @@
 package pl.debuguj.parkingspacessystem.domain;
 
 
+import pl.debuguj.parkingspacessystem.enums.DriverType;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,16 +17,14 @@ public class ParkingSpace implements Space {
     private Date beginDate;
     private Date endDate;
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
 
 
     public ParkingSpace(String carRegistrationNumber,
-                        String beginDate,
-                        String endDate) throws ParseException, IncorrectEndDateException {
+                        Date beginDate,
+                        Date endDate) throws ParseException, IncorrectEndDateException {
         this.carRegistrationNumber = carRegistrationNumber;
-        this.beginDate = simpleDateFormat.parse(beginDate);
-        this.endDate = checkEndDate(simpleDateFormat.parse(endDate));
+        this.beginDate = beginDate;
+        this.endDate = checkEndDate(endDate);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class ParkingSpace implements Space {
     }
 
     @Override
-    public void setEndTime(String time) throws ParseException, IncorrectEndDateException {
-        this.endDate = checkEndDate(simpleDateFormat.parse(time));
+    public void setEndTime(Date timestamp) throws ParseException, IncorrectEndDateException {
+        this.endDate = checkEndDate(timestamp);
     }
 
     @Override
@@ -91,8 +91,8 @@ public class ParkingSpace implements Space {
         sb.append("ParkingSpace{")
                 .append(" carRegistrationNumber='").append(carRegistrationNumber)
                 .append(", driverType='").append(driverType)
-                .append(", beginTime=").append(simpleDateFormat.format(beginDate))
-                .append(", endTime=").append(simpleDateFormat.format(endDate))
+                .append(", beginTime=").append(beginDate)
+                .append(", endTime=").append(endDate)
                 .append('}');
 
         return sb.toString();

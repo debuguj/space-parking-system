@@ -12,7 +12,12 @@ public interface ParkingSpaceDao {
 
     void add(ParkingSpace ps);
 
+    ParkingSpace getParkingSpaceByRegistrationNo(String registrationNo);
+
     List<ParkingSpace> getAllParkingSpaces();
 
-    void changeStopParkingTimeAt(String registrationNumber, String date);
+
+    void changeParkingSpaceEndTime(String registrationNumber, Date date);
+
+
 }

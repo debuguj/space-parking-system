@@ -4,6 +4,7 @@ import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Created by grzesiek on 09.10.17.
@@ -17,7 +18,7 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to know how much I have to pay for parking
      */
-    void reserveParkingSpace(ParkingSpace ps);
+    BigDecimal reserveParkingSpace(ParkingSpace ps);
 
     /**
      As a parking operator, I want to check if the vehicle has started the parking meter
@@ -27,14 +28,14 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to stop the parking meter, so that I pay only for the actual parking time
      */
-    BigDecimal stopParkingMeter(String registrationNumber, String date);
+    BigDecimal stopParkingMeter(String registrationNumber, Date date);
 
 
-    BigDecimal checkFee(String startTime, String stopTime);
+    BigDecimal checkFee(Date startTime, Date stopTime);
 
     /**
      As a parking owner, I want to know how much money was earned during a given day
      */
-    BigDecimal getIncomePerDay(String timestamp) throws ParseException;
+    BigDecimal getIncomePerDay(Date timestamp) throws ParseException;
 
 }
