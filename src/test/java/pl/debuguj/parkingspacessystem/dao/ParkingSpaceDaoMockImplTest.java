@@ -34,19 +34,19 @@ public class ParkingSpaceDaoMockImplTest {
     @Before
     public void before() throws ParseException{
 
-        parkingSpaceDao.add(new ParkingSpace("12345",
+        parkingSpaceDao.add(new ParkingSpace("66666",
                     timeDateFormat.parse("2017-10-13 10:25:48"),
                     timeDateFormat.parse("2017-10-13 13:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("11212",
+        parkingSpaceDao.add(new ParkingSpace("77777",
                     timeDateFormat.parse("2017-10-13 12:25:48"),
                     timeDateFormat.parse("2017-10-13 17:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("12344",
+        parkingSpaceDao.add(new ParkingSpace("88888",
                     timeDateFormat.parse("2017-10-13 15:25:48"),
                     timeDateFormat.parse("2017-10-13 16:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("54345",
+        parkingSpaceDao.add(new ParkingSpace("99999",
                     timeDateFormat.parse("2017-10-14 20:25:48"),
                     timeDateFormat.parse("2017-10-14 21:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("12333",
+        parkingSpaceDao.add(new ParkingSpace("99998",
                     timeDateFormat.parse("2017-10-14 11:15:48"),
                     timeDateFormat.parse("2017-10-14 12:35:12")));
 

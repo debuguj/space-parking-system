@@ -3,6 +3,7 @@ package pl.debuguj.parkingspacessystem.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
+import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
@@ -30,13 +31,13 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     @Override
     public boolean checkVehicle(String registrationNumber, Date currentDate) {
 
-        ParkingSpace ps = parkingSpaceDao.findParkingSpaceByRegistrationNumber(registrationNumber);
+        ParkingSpace ps = parkingSpaceDao.findParkingSpaceByRegistrationNo(registrationNumber);
 
         return currentDate.after(ps.getBeginTime()) && currentDate.before(ps.getEndTime());
     }
 
     @Override
-    public BigDecimal stopParkingMeter(String registrationNumber, Date date) {
+    public BigDecimal stopParkingMeter(String registrationNumber, Date date) throws IncorrectEndDateException {
 
         ParkingSpace ps = parkingSpaceDao.changeParkingSpaceEndTime(registrationNumber, date);
 

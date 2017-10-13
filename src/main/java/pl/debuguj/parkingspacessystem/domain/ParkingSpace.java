@@ -12,6 +12,7 @@ import java.util.Date;
  */
 public class ParkingSpace implements Space {
 
+
     private final String carRegistrationNumber;
     private DriverType driverType = DriverType.REGULAR;
     private Date beginDate;
@@ -50,8 +51,13 @@ public class ParkingSpace implements Space {
     }
 
     @Override
-    public void setEndTime(Date timestamp) throws ParseException, IncorrectEndDateException {
-        this.endDate = checkEndDate(timestamp);
+    public void setEndTime(Date timestamp)  {
+
+        try {
+            this.endDate = checkEndDate(timestamp);
+        } catch (IncorrectEndDateException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

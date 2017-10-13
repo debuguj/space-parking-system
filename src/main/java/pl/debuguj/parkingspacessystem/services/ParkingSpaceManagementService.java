@@ -1,5 +1,6 @@
 package pl.debuguj.parkingspacessystem.services;
 
+import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
@@ -28,7 +29,7 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to stop the parking meter, so that I pay only for the actual parking time
      */
-    BigDecimal stopParkingMeter(String registrationNumber, Date date);
+    BigDecimal stopParkingMeter(String registrationNumber, Date date) throws IncorrectEndDateException;
 
     /**
      As a parking owner, I want to know how much money was earned during a given day

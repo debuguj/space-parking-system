@@ -78,7 +78,6 @@ public class ParkingSpaceController {
             @RequestParam final String registrationNumber,
             @RequestParam final String currentDate)
     {
-
         Date date = null;
         try {
              date = simpleDateFormat.parse(currentDate);
@@ -86,9 +85,7 @@ public class ParkingSpaceController {
         } catch (ParseException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
         }
-
     }
 
     @GetMapping(value = URI_STOP_METER)
@@ -103,8 +100,11 @@ public class ParkingSpaceController {
         } catch (ParseException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
+        } catch (IncorrectEndDateException e) {
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(value = URI_CHECK_INCOME_PER_DAY)
@@ -119,5 +119,4 @@ public class ParkingSpaceController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 }

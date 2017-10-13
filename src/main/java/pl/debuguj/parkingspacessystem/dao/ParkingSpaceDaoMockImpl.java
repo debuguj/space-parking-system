@@ -30,6 +30,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
 
     @Override
     public void add(final ParkingSpace parkingSpace) {
+
         listParkingSpaces.add(parkingSpace);
     }
 
@@ -48,24 +49,24 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     }
 
     @Override
-    public ParkingSpace changeParkingSpaceEndTime(final String registrationNumber, final Date timestamp){
+    public ParkingSpace changeParkingSpaceEndTime(
+            final String registrationNumber,
+            final Date timestamp) throws IncorrectEndDateException {
+
+        ParkingSpace ps = findParkingSpaceByRegistrationNo(registrationNumber);
+
+        if(!timestamp.before(ps.getBeginTime())) {
+            throw new IncorrectEndDateException();
+        }
+
         listParkingSpaces
-                .forEach(ps -> {
-                    if(registrationNumber.equals(ps.getCarRegistrationNumber())){
-                        try {
-                            ps.setEndTime(timestamp);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        } catch (IncorrectEndDateException e) {
-                            e.printStackTrace();
-                        }
+                .forEach(s -> {
+                    if (registrationNumber.equals(s.getCarRegistrationNumber())) {
+                        s.setEndTime(timestamp);
                     }
                 });
-        return listParkingSpaces
-                .stream()
-                .filter(parkingSpace -> registrationNumber.equals(parkingSpace.getCarRegistrationNumber()))
-                .findFirst()
-                .orElse(null);
+
+        return findParkingSpaceByRegistrationNo(registrationNumber);
     }
 
     @Override
@@ -106,7 +107,9 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
                     timeDateFormat.parse("2017-10-14 11:15:48"),
                     timeDateFormat.parse("2017-10-14 12:35:12")));
         } catch (ParseException e){
-
+            e.printStackTrace();
+        } catch (IncorrectEndDateException e) {
+            e.printStackTrace();
         }
     }
 }
