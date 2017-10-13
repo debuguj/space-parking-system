@@ -43,7 +43,7 @@ public class ParkingSpaceManagementServiceImplTest {
 
     @Before
     public void before() throws ParseException{
-
+        parkingSpaceManagementService.removeAllParkingSpaces();
         parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("12345",
                 timeDateFormat.parse("2017-10-13 10:25:48"),
                 timeDateFormat.parse("2017-10-13 10:35:12")));

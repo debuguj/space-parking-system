@@ -4,14 +4,12 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +36,7 @@ public class ParkingSpaceDaoMockImplTest {
 
         parkingSpaceDao.add(new ParkingSpace("12345",
                     timeDateFormat.parse("2017-10-13 10:25:48"),
-                    timeDateFormat.parse("2017-10-13 10:35:12")));
+                    timeDateFormat.parse("2017-10-13 13:35:12")));
         parkingSpaceDao.add(new ParkingSpace("11212",
                     timeDateFormat.parse("2017-10-13 12:25:48"),
                     timeDateFormat.parse("2017-10-13 17:35:12")));
@@ -68,7 +66,7 @@ public class ParkingSpaceDaoMockImplTest {
 
         parkingSpaceDao.add(ps);
 
-        ParkingSpace psFromDao = parkingSpaceDao.getParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
+        ParkingSpace psFromDao = parkingSpaceDao.findParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
 
         assertEquals("Should get the same object", ps, psFromDao);
     }
@@ -92,7 +90,7 @@ public class ParkingSpaceDaoMockImplTest {
         Date changeDate = timeDateFormat.parse("2017-10-14 12:15:48");
         parkingSpaceDao.changeParkingSpaceEndTime(ps.getCarRegistrationNumber(), changeDate);
 
-        ParkingSpace psFromDao = parkingSpaceDao.getParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
+        ParkingSpace psFromDao = parkingSpaceDao.findParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
 
         assertEquals("New end time should be the same", changeDate, psFromDao.getEndTime());
     }

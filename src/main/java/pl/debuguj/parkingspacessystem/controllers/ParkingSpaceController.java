@@ -3,6 +3,9 @@ package pl.debuguj.parkingspacessystem.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,8 +47,8 @@ public class ParkingSpaceController {
 
     }
 
-    @GetMapping(value=URI_START_METER)
-    public BigDecimal startParkingMeter(
+    @GetMapping(value = URI_START_METER)
+    public HttpEntity<BigDecimal> startParkingMeter(
             @RequestParam() final String registrationNumber,
             @RequestParam() final DriverType driverType,
             @RequestParam() final String startTime,
@@ -58,55 +61,62 @@ public class ParkingSpaceController {
             ParkingSpace ps = new ParkingSpace(registrationNumber, begin, end);
             ps.setDriverType(driverType);
 
-            return parkingSpaceManagement.reserveParkingSpace(ps);
+            return new HttpEntity(parkingSpaceManagement.reserveParkingSpace(ps));
+
         } catch (ParseException e) {
-            //TODO implement below
-            return null;
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         } catch (IncorrectEndDateException e) {
-            //TODO implement below
-            return null;
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping(URI_CHECK_VEHICLE)
-    public boolean checkVehicle(@RequestParam final String registrationNumber,
-                                @RequestParam final String currentDate)
+    @GetMapping(value = URI_CHECK_VEHICLE)
+    public HttpEntity<Boolean> checkVehicle(
+            @RequestParam final String registrationNumber,
+            @RequestParam final String currentDate)
     {
 
-        try {
-            Date date = simpleDateFormat.parse(currentDate);
-            return parkingSpaceManagement.checkVehicle(registrationNumber, date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-    }
-
-    @GetMapping(URI_STOP_METER)
-    public BigDecimal stopParkingMeter(@RequestParam final String registrationNumber,
-                                       @RequestParam final String timeStamp)
-    {
         Date date = null;
         try {
-            date = simpleDateFormat.parse(timeStamp);
-            return parkingSpaceManagement.stopParkingMeter(registrationNumber, date);
+             date = simpleDateFormat.parse(currentDate);
+            return new HttpEntity(parkingSpaceManagement.checkVehicle(registrationNumber, date));
         } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         }
 
     }
 
-    @GetMapping(URI_CHECK_INCOME_PER_DAY)
-    public BigDecimal checkIncomePerDay(@RequestParam final String date)
+    @GetMapping(value = URI_STOP_METER)
+    public HttpEntity<BigDecimal> stopParkingMeter(
+            @RequestParam final String registrationNumber,
+            @RequestParam final String timeStamp)
+    {
+
+        try {
+            Date date = simpleDateFormat.parse(timeStamp);
+            return new HttpEntity(parkingSpaceManagement.stopParkingMeter(registrationNumber, date));
+        } catch (ParseException e) {
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @GetMapping(value = URI_CHECK_INCOME_PER_DAY)
+    public HttpEntity<BigDecimal> checkIncomePerDay(
+            @RequestParam final String date)
     {
         try {
             BigDecimal sum = parkingSpaceManagement.getIncomePerDay(dayDateFormat.parse(date));
-            return sum;
+            return new HttpEntity(sum);
         } catch (ParseException e) {
-            e.printStackTrace();
-            return BigDecimal.ZERO;
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

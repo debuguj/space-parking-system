@@ -12,12 +12,13 @@ public interface ParkingSpaceDao {
 
     void add(final ParkingSpace parkingSpace);
 
-    ParkingSpace getParkingSpaceByRegistrationNo(final String registrationNo);
+    ParkingSpace findParkingSpaceByRegistrationNo(final String registrationNo);
 
     List<ParkingSpace> getAllParkingSpaces();
 
-    void changeParkingSpaceEndTime(final String registrationNumber, final Date date);
+    ParkingSpace changeParkingSpaceEndTime(final String registrationNumber, final Date date);
 
     void removeAllItems();
 
+    List<ParkingSpace> findParkingSpacesByDate(final Date timestamp);
 }
