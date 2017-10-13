@@ -1,8 +1,6 @@
 package pl.debuguj.parkingspacessystem.dao;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,13 +28,39 @@ public class ParkingSpaceDaoMockImplTest {
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static SimpleDateFormat timeDateFormat;
 
-    @Before
-    public void setup() throws ParseException{
+    @BeforeClass
+    public static void beforeClass(){
         timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
     }
 
+    @Before
+    public void before() throws ParseException{
+
+        parkingSpaceDao.add(new ParkingSpace("12345",
+                    timeDateFormat.parse("2017-10-13 10:25:48"),
+                    timeDateFormat.parse("2017-10-13 10:35:12")));
+        parkingSpaceDao.add(new ParkingSpace("11212",
+                    timeDateFormat.parse("2017-10-13 12:25:48"),
+                    timeDateFormat.parse("2017-10-13 17:35:12")));
+        parkingSpaceDao.add(new ParkingSpace("12344",
+                    timeDateFormat.parse("2017-10-13 15:25:48"),
+                    timeDateFormat.parse("2017-10-13 16:35:12")));
+        parkingSpaceDao.add(new ParkingSpace("54345",
+                    timeDateFormat.parse("2017-10-14 20:25:48"),
+                    timeDateFormat.parse("2017-10-14 21:35:12")));
+        parkingSpaceDao.add(new ParkingSpace("12333",
+                    timeDateFormat.parse("2017-10-14 11:15:48"),
+                    timeDateFormat.parse("2017-10-14 12:35:12")));
+
+    }
+
+    @After
+    public void after(){
+        parkingSpaceDao.removeAllItems();
+    }
+
     @Test
-    public void testAddNewParkingSpace() throws ParseException {
+    public void testAddNewParkingSpace() throws Exception {
         Date begin = timeDateFormat.parse("2017-10-14 11:15:48");
         Date end = timeDateFormat.parse("2017-10-14 21:35:12");
 
@@ -50,15 +74,15 @@ public class ParkingSpaceDaoMockImplTest {
     }
 
     @Test
-    public void testGettingAllParkingSpaces() {
-        List<ParkingSpace> list = parkingSpaceDao.getAllParkingSpaces();
-        int objectNumber = 5;
+    public void testGettingAllParkingSpaces() throws Exception {
 
-        assertEquals("Should return equals number od object", objectNumber, list.size() );
+        int size = parkingSpaceDao.getAllParkingSpaces().size();
+
+        assertEquals("Should return 5 number od object", 5, size);
     }
 
     @Test
-    public void testChangeParkingEndTime() throws ParseException {
+    public void testChangeParkingEndTime() throws Exception  {
         Date begin = timeDateFormat.parse("2017-10-14 11:15:48");
         Date end = timeDateFormat.parse("2017-10-14 13:15:48");
 
@@ -71,6 +95,13 @@ public class ParkingSpaceDaoMockImplTest {
         ParkingSpace psFromDao = parkingSpaceDao.getParkingSpaceByRegistrationNo(ps.getCarRegistrationNumber());
 
         assertEquals("New end time should be the same", changeDate, psFromDao.getEndTime());
+    }
+
+    @Test
+    public void testRemovingAllItems() throws Exception {
+        parkingSpaceDao.removeAllItems();
+
+        assertTrue(0 == parkingSpaceDao.getAllParkingSpaces().size());
     }
 
 }

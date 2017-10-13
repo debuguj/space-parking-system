@@ -56,7 +56,7 @@ public class PaymentServiceImplTest {
 
         BigDecimal fee = new BigDecimal("3.0");
         BigDecimal returnValue = paymentService.getFee(ps);
-        assertEquals("Should return the same fee", fee, returnValue);
+        assertEquals("Should return fee equals 3.0", fee, returnValue);
 
     }
 

@@ -28,6 +28,9 @@ public class ParkingSpaceController {
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
 
+    private static final String TIME_PATTERN = "yyyy-MM-dd";
+    private static final SimpleDateFormat dayDateFormat = new SimpleDateFormat(TIME_PATTERN);
+
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
     private final PaymentService paymentService;
@@ -63,9 +66,18 @@ public class ParkingSpaceController {
     }
 
     @GetMapping("/checkVehicle")
-    public boolean checkVehicle(@RequestParam String registrationNumber)
+    public boolean checkVehicle(@RequestParam String registrationNumber,
+                                @RequestParam String currentDate)
     {
-        return parkingSpaceManagement.checkVehicle(registrationNumber);
+
+        try {
+            Date date = simpleDateFormat.parse(currentDate);
+            return parkingSpaceManagement.checkVehicle(registrationNumber, date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     @GetMapping("/stopParkingMeter")
@@ -83,28 +95,15 @@ public class ParkingSpaceController {
 
     }
 
-    @GetMapping("/checkParkingFee")
-    public BigDecimal checkParkingFee(@RequestParam String startTime, @RequestParam() String stopTime)
-    {
-        try {
-            Date begin = simpleDateFormat.parse(startTime);
-            Date end = simpleDateFormat.parse(stopTime);
-            return parkingSpaceManagement.checkFee(begin, end);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
     @GetMapping("/checkIncomePerDay")
-    public void checkIncomePerDay(@RequestParam String date)
+    public BigDecimal checkIncomePerDay(@RequestParam String date)
     {
         try {
-
-            parkingSpaceManagement.getIncomePerDay(simpleDateFormat.parse(date));
+            BigDecimal sum = parkingSpaceManagement.getIncomePerDay(dayDateFormat.parse(date));
+            return sum;
         } catch (ParseException e) {
             e.printStackTrace();
+            return BigDecimal.ZERO;
         }
     }
 

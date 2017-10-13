@@ -18,4 +18,6 @@ public interface ParkingSpaceDao {
 
     void changeParkingSpaceEndTime(String registrationNumber, Date date);
 
+    void removeAllItems();
+
 }

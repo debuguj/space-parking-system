@@ -9,7 +9,10 @@ import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by grzesiek on 09.10.17.
@@ -30,15 +33,15 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public boolean checkVehicle(String registrationNumber) {
-        Date timestamp = new Date();
+    public boolean checkVehicle(String registrationNumber, Date currentDate) {
+
 
         ParkingSpace ps = parkingSpaceDao.getAllParkingSpaces()
                     .stream()
                     .filter(parkingSpace -> registrationNumber.equals(parkingSpace.getCarRegistrationNumber()))
                     .filter(parkingSpace -> {
-                        return timestamp.after(parkingSpace.getBeginTime())
-                                && timestamp.before(parkingSpace.getEndTime());
+                        return currentDate.after(parkingSpace.getBeginTime())
+                                && currentDate.before(parkingSpace.getEndTime());
                     })
                     .findAny()
                     .orElse(null);
@@ -62,23 +65,30 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal checkFee(Date startTime, Date stopTime) {
-        return null;
-    }
-
-    @Override
     public BigDecimal getIncomePerDay(Date timestamp) throws ParseException {
-
 
         Date end = createEndDate(timestamp);
 
         return parkingSpaceDao.getAllParkingSpaces()
                 .stream()
-                .filter(ps -> timestamp.after(ps.getBeginTime())
-                        && end.before(ps.getEndTime()))
+                .filter(ps -> timestamp.before(ps.getBeginTime())
+                        && end.after(ps.getBeginTime()))
                 .map(ps -> paymentService.getFee(ps))
+
                 .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
 
+
+
+    }
+
+    @Override
+    public int getReservedSpacesCount() {
+        return parkingSpaceDao.getAllParkingSpaces().size();
+    }
+
+    @Override
+    public void removeAllParkingSpaces() {
+        parkingSpaceDao.removeAllItems();
     }
 
     private Date createEndDate(Date d){
