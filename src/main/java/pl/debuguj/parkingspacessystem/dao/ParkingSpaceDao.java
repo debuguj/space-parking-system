@@ -10,13 +10,13 @@ import java.util.List;
  */
 public interface ParkingSpaceDao {
 
-    void add(ParkingSpace parkingSpace);
+    void add(final ParkingSpace parkingSpace);
 
-    ParkingSpace getParkingSpaceByRegistrationNo(String registrationNo);
+    ParkingSpace getParkingSpaceByRegistrationNo(final String registrationNo);
 
     List<ParkingSpace> getAllParkingSpaces();
 
-    void changeParkingSpaceEndTime(String registrationNumber, Date date);
+    void changeParkingSpaceEndTime(final String registrationNumber, final Date date);
 
     void removeAllItems();
 

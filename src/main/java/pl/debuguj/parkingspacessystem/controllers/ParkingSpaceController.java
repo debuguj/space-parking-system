@@ -31,22 +31,25 @@ public class ParkingSpaceController {
     private static final String TIME_PATTERN = "yyyy-MM-dd";
     private static final SimpleDateFormat dayDateFormat = new SimpleDateFormat(TIME_PATTERN);
 
+    public static final String URI_START_METER = "/startMeter";
+    public static final String URI_CHECK_VEHICLE = "/checkVehicle";
+    public static final String URI_STOP_METER = "/stopMeter";
+    public static final String URI_CHECK_INCOME_PER_DAY = "/checkIncomePerDay";
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
-    private final PaymentService paymentService;
 
-    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement,
-                                  PaymentService paymentService) {
+
+    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
         this.parkingSpaceManagement = parkingSpaceManagement;
-        this.paymentService = paymentService;
+
     }
 
-    @GetMapping(value="/startMeter")
+    @GetMapping(value=URI_START_METER)
     public BigDecimal startParkingMeter(
-            @RequestParam() String registrationNumber,
-            @RequestParam() DriverType driverType,
-            @RequestParam() String startTime,
-            @RequestParam() String stopTime)  {
+            @RequestParam() final String registrationNumber,
+            @RequestParam() final DriverType driverType,
+            @RequestParam() final String startTime,
+            @RequestParam() final String stopTime)  {
 
         try {
 
@@ -65,9 +68,9 @@ public class ParkingSpaceController {
         }
     }
 
-    @GetMapping("/checkVehicle")
-    public boolean checkVehicle(@RequestParam String registrationNumber,
-                                @RequestParam String currentDate)
+    @GetMapping(URI_CHECK_VEHICLE)
+    public boolean checkVehicle(@RequestParam final String registrationNumber,
+                                @RequestParam final String currentDate)
     {
 
         try {
@@ -80,9 +83,9 @@ public class ParkingSpaceController {
 
     }
 
-    @GetMapping("/stopParkingMeter")
-    public BigDecimal stopParkingMeter(@RequestParam String registrationNumber,
-                                       @RequestParam String timeStamp)
+    @GetMapping(URI_STOP_METER)
+    public BigDecimal stopParkingMeter(@RequestParam final String registrationNumber,
+                                       @RequestParam final String timeStamp)
     {
         Date date = null;
         try {
@@ -95,8 +98,8 @@ public class ParkingSpaceController {
 
     }
 
-    @GetMapping("/checkIncomePerDay")
-    public BigDecimal checkIncomePerDay(@RequestParam String date)
+    @GetMapping(URI_CHECK_INCOME_PER_DAY)
+    public BigDecimal checkIncomePerDay(@RequestParam final String date)
     {
         try {
             BigDecimal sum = parkingSpaceManagement.getIncomePerDay(dayDateFormat.parse(date));

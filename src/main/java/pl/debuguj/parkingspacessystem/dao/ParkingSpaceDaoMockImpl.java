@@ -24,12 +24,12 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     private static SimpleDateFormat timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
 
     @Override
-    public void add(ParkingSpace parkingSpace) {
+    public void add(final ParkingSpace parkingSpace) {
         listParkingSpaces.add(parkingSpace);
     }
 
     @Override
-    public ParkingSpace getParkingSpaceByRegistrationNo(String registrationNo) {
+    public ParkingSpace getParkingSpaceByRegistrationNo(final String registrationNo) {
         return listParkingSpaces
                 .stream()
                 .filter(ps -> registrationNo.equals(ps.getCarRegistrationNumber()))
@@ -43,7 +43,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     }
 
     @Override
-    public void changeParkingSpaceEndTime(String registrationNumber, Date timestamp){
+    public void changeParkingSpaceEndTime(final String registrationNumber, final Date timestamp){
         listParkingSpaces
                 .forEach(ps -> {
                     if(registrationNumber.equals(ps.getCarRegistrationNumber())){
