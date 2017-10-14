@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,7 +47,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     @Override
     public ParkingSpace changeEndTime(
             final String registrationNumber,
-            final Date timestamp) throws IncorrectEndDateException, ParkingSpaceNotFound {
+            final Date timestamp) throws IncorrectEndDateException, ParkingSpaceNotFoundException {
 
         ParkingSpace ps = findByRegistrationNo(registrationNumber);
 
@@ -66,7 +66,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
 
             return findByRegistrationNo(registrationNumber);
         }
-        throw new ParkingSpaceNotFound();
+        throw new ParkingSpaceNotFoundException();
     }
 
     @Override

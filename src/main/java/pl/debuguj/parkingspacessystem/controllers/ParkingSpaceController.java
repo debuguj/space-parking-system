@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
 
 import java.math.BigDecimal;
@@ -108,7 +108,7 @@ public class ParkingSpaceController {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        } catch (ParkingSpaceNotFound e) {
+        } catch (ParkingSpaceNotFoundException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
