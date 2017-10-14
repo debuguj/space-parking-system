@@ -9,10 +9,7 @@ import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -74,12 +71,14 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
 
     @Override
     public List<ParkingSpace> findByDate(final Date timestamp) {
-        Date end = createEndDate(timestamp);
-        return listParkingSpaces
+        final Date end = createEndDate(timestamp);
+        return Collections.unmodifiableList(
+                listParkingSpaces
                 .stream()
                 .filter(ps -> timestamp.before(ps.getBeginTime())
                         && end.after(ps.getBeginTime()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
     }
 
     private Date createEndDate(final Date d){
@@ -89,12 +88,14 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         try {
+            listParkingSpaces.clear();
+
             listParkingSpaces.add(new ParkingSpace("11111",
                     timeDateFormat.parse("2017-10-13 10:25:48"),
                     timeDateFormat.parse("2017-10-13 10:35:12")));
             listParkingSpaces.add(new ParkingSpace("22222",
                     timeDateFormat.parse("2017-10-13 12:25:48"),
-                    timeDateFormat.parse("2017-10-13 17:35:12")));
+                    timeDateFormat.parse("2017-10-13 13:35:12")));
             listParkingSpaces.add(new ParkingSpace("33333",
                     timeDateFormat.parse("2017-10-13 15:25:48"),
                     timeDateFormat.parse("2017-10-13 16:35:12")));

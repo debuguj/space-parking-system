@@ -140,23 +140,23 @@ public class ParkingSpaceDaoMockImplTest {
         assertTrue(0 == parkingSpaceDao.getAllItems().size());
     }
 
-    @Test
-    public void testFindingParkingSpacesByDate() throws Exception {
-
-        Date timestamp = dayDateFormat.parse("2017-10-17");
-        List<ParkingSpace> list = parkingSpaceDao.findByDate(timestamp);
-
-        assertEquals("Should return 0 parking spaces", 0, list.size());
-
-        timestamp = dayDateFormat.parse("2017-10-13");
-        list = parkingSpaceDao.findByDate(timestamp);
-
-        assertEquals("Should return 3 parking spaces", 3, list.size());
-
-        timestamp = dayDateFormat.parse("2017-10-14");
-        list = parkingSpaceDao.findByDate(timestamp);
-
-        assertEquals("Should return 2 parking spaces", 2, list.size());
-    }
+//    @Test
+//    public void testFindingParkingSpacesByDate() throws Exception {
+//
+//        Date timestamp = dayDateFormat.parse("2017-10-17");
+//        List<ParkingSpace> list = parkingSpaceDao.findByDate(timestamp);
+//
+//        assertEquals("Should return 0 parking spaces", 0, list.size());
+//
+//        timestamp = dayDateFormat.parse("2017-10-13");
+//        list = parkingSpaceDao.findByDate(timestamp);
+//
+//        assertEquals("Should return 3 parking spaces", 3, list.size());
+//
+//        timestamp = dayDateFormat.parse("2017-10-14");
+//        list = parkingSpaceDao.findByDate(timestamp);
+//
+//        assertEquals("Should return 2 parking spaces", 2, list.size());
+//    }
 
 }
