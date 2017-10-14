@@ -31,10 +31,20 @@ public class PaymentServiceImplTest {
     private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static SimpleDateFormat timeDateFormat;
 
+    private ParkingSpace parkingSpace;
+    private String registrationNo;
+    private Date beginDate;
+    private Date endDate;
+
     @Before
-    public void setup() throws ParseException {
+    public void setup() throws Exception {
         timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
         paymentService.setCurrency(Currency.PLN);
+
+        registrationNo = "12345";
+        beginDate = timeDateFormat.parse("2017-10-12 11:15:48");
+        endDate = timeDateFormat.parse("2017-10-12 12:35:12");
+        parkingSpace = new ParkingSpace(registrationNo, beginDate, endDate);
     }
 
     @Test
@@ -46,17 +56,15 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void testCorrectFee() throws Exception {
+    public void testCorrectFeeReturn() throws Exception {
 
-        //TODO: more test data
-        Date begin = timeDateFormat.parse("2017-10-14 10:15:48");
-        Date end = timeDateFormat.parse("2017-10-14 11:35:12");
-        ParkingSpace ps = new ParkingSpace("12414", begin, end);
-
+        //TODO: more parametrized test data
 
         BigDecimal fee = new BigDecimal("3.0");
-        BigDecimal returnValue = paymentService.getFee(ps);
-        assertEquals("Should return fee equals 3.0", fee, returnValue);
+
+        BigDecimal feeFromService = paymentService.getFee(parkingSpace);
+
+        assertEquals("Should return fee equals 3.0", fee, feeFromService);
 
     }
 
