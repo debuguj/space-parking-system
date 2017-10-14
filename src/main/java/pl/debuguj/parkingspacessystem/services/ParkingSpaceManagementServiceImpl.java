@@ -24,13 +24,13 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     private PaymentService paymentService;
 
     @Override
-    public BigDecimal reserveParkingSpace(ParkingSpace ps) {
+    public BigDecimal reserveParkingSpace(final ParkingSpace ps) {
         parkingSpaceDao.add(ps);
         return paymentService.getFee(ps);
     }
 
     @Override
-    public boolean checkVehicle(String registrationNumber, Date currentDate) {
+    public boolean checkVehicle(final String registrationNumber, final Date currentDate) {
 
         ParkingSpace ps = parkingSpaceDao.findByRegistrationNo(registrationNumber);
 
@@ -42,7 +42,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal stopParkingMeter(String registrationNumber, Date date) throws IncorrectEndDateException {
+    public BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException {
 
         ParkingSpace ps = parkingSpaceDao.changeEndTime(registrationNumber, date);
 
@@ -50,7 +50,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal getIncomePerDay(Date timestamp) {
+    public BigDecimal getIncomePerDay(final Date timestamp) {
 
         return parkingSpaceDao.findByDate(timestamp)
                 .stream()

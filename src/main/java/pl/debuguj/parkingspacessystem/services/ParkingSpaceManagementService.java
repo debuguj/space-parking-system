@@ -19,22 +19,22 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to know how much I have to pay for parking
      */
-    BigDecimal reserveParkingSpace(ParkingSpace ps);
+    BigDecimal reserveParkingSpace(final ParkingSpace ps);
 
     /**
      As a parking operator, I want to check if the vehicle has started the parking meter
      */
-    boolean checkVehicle(String registrationNumber, Date currentDate);
+    boolean checkVehicle(final String registrationNumber, final Date currentDate);
 
     /**
      As a driver, I want to stop the parking meter, so that I pay only for the actual parking time
      */
-    BigDecimal stopParkingMeter(String registrationNumber, Date date) throws IncorrectEndDateException;
+    BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException;
 
     /**
      As a parking owner, I want to know how much money was earned during a given day
      */
-    BigDecimal getIncomePerDay(Date timestamp);
+    BigDecimal getIncomePerDay(final Date timestamp);
 
     int getReservedSpacesCount();
 

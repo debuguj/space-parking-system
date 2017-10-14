@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void setCurrency(Currency c) {
+    public void setCurrency(final Currency c) {
         this.currency = c;
     }
 
@@ -34,21 +34,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public BigDecimal getFee(ParkingSpace ps)
+    public BigDecimal getFee(final ParkingSpace parkingSpace)
     {
-
-        BigDecimal fee = BigDecimal.ZERO;
-
-        switch(ps.getDriverType()){
-            case REGULAR:
-                fee = getBasicFee(ps);
-                break;
-            case VIP:
-                fee = getBasicFee(ps);
-                break;
-            default:
-                break;
-        }
+        BigDecimal fee = getBasicFee(parkingSpace);
 
         return fee.multiply(currency.getExchangeRate()).setScale(1);
     }
