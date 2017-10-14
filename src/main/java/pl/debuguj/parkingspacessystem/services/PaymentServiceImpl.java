@@ -36,9 +36,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public BigDecimal getFee(final ParkingSpace parkingSpace)
     {
-        BigDecimal fee = getBasicFee(parkingSpace);
-
-        return fee.multiply(currency.getExchangeRate()).setScale(1);
+        if(null != parkingSpace) {
+            BigDecimal fee = getBasicFee(parkingSpace);
+            return fee.multiply(currency.getExchangeRate()).setScale(1);
+        }
+        return null;
     }
 
     private static BigDecimal getBasicFee(ParkingSpace parkingSpace)

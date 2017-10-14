@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     }
 
     @Override
-    public ParkingSpace findByRegistrationNo(final String registrationNo) {
+    public ParkingSpace findByRegistrationNo(final String registrationNo)  {
         return listParkingSpaces
                 .stream()
                 .filter(ps -> registrationNo.equals(ps.getCarRegistrationNumber()))
@@ -46,22 +47,26 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     @Override
     public ParkingSpace changeEndTime(
             final String registrationNumber,
-            final Date timestamp) throws IncorrectEndDateException {
+            final Date timestamp) throws IncorrectEndDateException, ParkingSpaceNotFound {
 
         ParkingSpace ps = findByRegistrationNo(registrationNumber);
 
-        if(!timestamp.after(ps.getBeginTime())) {
-            throw new IncorrectEndDateException();
+        if(null != ps)
+        {
+            if (!timestamp.after(ps.getBeginTime())) {
+                throw new IncorrectEndDateException();
+            }
+
+            listParkingSpaces
+                    .forEach(s -> {
+                        if (registrationNumber.equals(s.getCarRegistrationNumber())) {
+                            s.setEndTime(timestamp);
+                        }
+                    });
+
+            return findByRegistrationNo(registrationNumber);
         }
-
-        listParkingSpaces
-                .forEach(s -> {
-                    if (registrationNumber.equals(s.getCarRegistrationNumber())) {
-                        s.setEndTime(timestamp);
-                    }
-                });
-
-        return findByRegistrationNo(registrationNumber);
+        throw new ParkingSpaceNotFound();
     }
 
     @Override

@@ -2,6 +2,7 @@ package pl.debuguj.parkingspacessystem.services;
 
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -28,7 +29,7 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to stop the parking meter, so that I pay only for the actual parking time
      */
-    BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException;
+    BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFound;
 
     /**
      As a parking owner, I want to know how much money was earned during a given day

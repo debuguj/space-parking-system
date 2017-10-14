@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
 
 import java.math.BigDecimal;
@@ -95,12 +96,19 @@ public class ParkingSpaceController {
 
         try {
             Date date = simpleDateFormat.parse(timeStamp);
-            return new HttpEntity(parkingSpaceManagement.stopParkingMeter(registrationNumber, date));
+
+            BigDecimal fee = parkingSpaceManagement.stopParkingMeter(registrationNumber, date);
+
+            return new HttpEntity(fee);
         } catch (ParseException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         } catch (IncorrectEndDateException e) {
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } catch (ParkingSpaceNotFound e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

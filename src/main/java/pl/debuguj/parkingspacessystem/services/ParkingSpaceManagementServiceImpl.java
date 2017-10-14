@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -40,11 +41,12 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException {
+    public BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFound {
 
         ParkingSpace ps = parkingSpaceDao.changeEndTime(registrationNumber, date);
-
-        return paymentService.getFee(ps);
+        if(null != ps)
+            return paymentService.getFee(ps);
+        return BigDecimal.ZERO.setScale(1);
     }
 
     @Override

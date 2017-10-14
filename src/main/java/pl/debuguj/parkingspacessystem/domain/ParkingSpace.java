@@ -26,7 +26,7 @@ public class ParkingSpace implements Space {
 
     public ParkingSpace(String carRegistrationNumber,
                         Date beginDate,
-                        Date endDate) throws ParseException, IncorrectEndDateException {
+                        Date endDate) throws IncorrectEndDateException {
         this.carRegistrationNumber = carRegistrationNumber;
         this.beginDate = beginDate;
         this.endDate = checkEndDate(endDate);
@@ -44,7 +44,7 @@ public class ParkingSpace implements Space {
 
     @Override
     public void setDriverType( DriverType dt) {
-        if(dt != null)
+        if(null != dt)
             this.driverType = dt;
     }
 
@@ -58,7 +58,8 @@ public class ParkingSpace implements Space {
     public void setEndTime(Date timestamp)  {
 
         try {
-            this.endDate = checkEndDate(timestamp);
+            if(null != timestamp)
+                endDate = checkEndDate(timestamp);
         } catch (IncorrectEndDateException e) {
             logger.info(e.getMessage());
         }
@@ -82,16 +83,12 @@ public class ParkingSpace implements Space {
 
         ParkingSpace that = (ParkingSpace) o;
 
-        if (carRegistrationNumber != null ? !carRegistrationNumber.equals(that.carRegistrationNumber) : that.carRegistrationNumber != null)
-            return false;
-        return driverType == that.driverType;
+        return carRegistrationNumber != null ? carRegistrationNumber.equals(that.carRegistrationNumber) : that.carRegistrationNumber == null;
     }
 
     @Override
     public int hashCode() {
-        int result = carRegistrationNumber != null ? carRegistrationNumber.hashCode() : 0;
-        result = 31 * result + (driverType != null ? driverType.hashCode() : 0);
-        return result;
+        return carRegistrationNumber != null ? carRegistrationNumber.hashCode() : 0;
     }
 
     @Override
@@ -107,58 +104,5 @@ public class ParkingSpace implements Space {
 
         return sb.toString();
     }
-
-    //    private final String carRegistrationNumber;
-//    private final DriverType driverType;
-//    private final Date beginTime;
-//    private Date endTime;
-//    private BigDecimal fee;
-//
-//    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-//    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
-//
-//    public ParkingSpace(final String registrationNumber,
-//                        final DriverType driverType,
-//                        final String startTime,
-//                        String endTime) throws ParseException, IncorrectEndDateException {
-//        this.carRegistrationNumber = registrationNumber;
-//        this.driverType = driverType;
-//        this.beginTime = simpleDateFormat.parse(startTime);
-//        this.endTime = checkEndDate(simpleDateFormat.parse(endTime));
-//        this.fee = PaymentServiceImpl.getFee(this);
-//    }
-//
-//    private Date checkEndDate(Date d) throws IncorrectEndDateException {
-//        if(d.compareTo(this.getBeginTime()) > 0)
-//            return d;
-//        throw new IncorrectEndDateException();
-//    }
-//
-//    public String getCarRegistrationNumber() {
-//        return carRegistrationNumber;
-//    }
-//
-//    public DriverType getDriverType() {
-//        return driverType;
-//    }
-//
-//    public Date getBeginTime() {
-//        return beginTime;
-//    }
-//
-//    public Date getEndTime() {
-//        return endTime;
-//    }
-//
-//    public void setEndTime(String endTime) throws ParseException {
-//        this.endTime = simpleDateFormat.parse(endTime);
-//        fee = PaymentServiceImpl.getFee(this);
-//    }
-//
-//    public BigDecimal getFee() {
-//        return fee;
-//    }
-
-
 
 }

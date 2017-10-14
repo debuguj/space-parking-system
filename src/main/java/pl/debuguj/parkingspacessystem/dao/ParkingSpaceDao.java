@@ -2,6 +2,7 @@ package pl.debuguj.parkingspacessystem.dao;
 
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFound;
 
 import java.util.Collection;
 import java.util.Date;
@@ -18,7 +19,7 @@ public interface ParkingSpaceDao {
 
     List<ParkingSpace> getAllItems();
 
-    ParkingSpace changeEndTime(final String registrationNumber, final Date date) throws IncorrectEndDateException;
+    ParkingSpace changeEndTime(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFound;
 
     void removeAllItems();
 
