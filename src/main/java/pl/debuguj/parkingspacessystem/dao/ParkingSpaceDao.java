@@ -1,6 +1,6 @@
 package pl.debuguj.parkingspacessystem.dao;
 
-import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.util.Collection;

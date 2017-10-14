@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
-import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.text.ParseException;

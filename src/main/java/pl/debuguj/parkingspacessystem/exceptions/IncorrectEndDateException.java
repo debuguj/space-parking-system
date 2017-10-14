@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.domain;
+package pl.debuguj.parkingspacessystem.exceptions;
 
 /**
  * Created by grzesiek on 11.10.17.

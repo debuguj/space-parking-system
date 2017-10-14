@@ -1,6 +1,7 @@
 package pl.debuguj.parkingspacessystem.domain;
 
 import pl.debuguj.parkingspacessystem.enums.DriverType;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 
 import java.text.ParseException;
 import java.util.Date;

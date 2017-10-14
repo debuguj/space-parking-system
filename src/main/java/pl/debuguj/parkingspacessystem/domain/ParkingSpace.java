@@ -5,9 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.debuguj.parkingspacessystem.controllers.ParkingSpaceController;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**

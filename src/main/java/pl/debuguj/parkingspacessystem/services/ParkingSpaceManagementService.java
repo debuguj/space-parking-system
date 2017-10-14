@@ -1,10 +1,9 @@
 package pl.debuguj.parkingspacessystem.services;
 
-import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 
 /**

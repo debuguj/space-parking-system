@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
-import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
-import pl.debuguj.parkingspacessystem.services.PaymentService;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

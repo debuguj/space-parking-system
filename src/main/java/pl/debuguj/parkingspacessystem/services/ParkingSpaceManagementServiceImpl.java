@@ -3,13 +3,11 @@ package pl.debuguj.parkingspacessystem.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
-import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by grzesiek on 09.10.17.
