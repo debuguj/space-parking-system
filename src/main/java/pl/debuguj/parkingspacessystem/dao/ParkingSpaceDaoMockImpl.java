@@ -55,7 +55,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
 
         ParkingSpace ps = findParkingSpaceByRegistrationNo(registrationNumber);
 
-        if(!timestamp.before(ps.getBeginTime())) {
+        if(!timestamp.after(ps.getBeginTime())) {
             throw new IncorrectEndDateException();
         }
 
