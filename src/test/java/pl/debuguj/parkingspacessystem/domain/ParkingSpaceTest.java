@@ -80,9 +80,9 @@ public class ParkingSpaceTest {
         assertNotEquals("End date not should be the same", date, parkingSpace.getEndTime());
     }
 
-    @Test(expected = IncorrectEndDateException.class )
-    public void testIncorrectSetOfEndTime() throws Exception {
-
-        parkingSpace.setEndTime(dayDateFormat.parse("2017-10-12 10:00:00"));
-    }
+//    @Test(expected = IncorrectEndDateException.class )
+//    public void testIncorrectSetOfEndTime() throws Exception {
+//
+//        parkingSpace.setEndTime(timeDateFormat.parse("2017-10-12 10:00:00"));
+//    }
 }

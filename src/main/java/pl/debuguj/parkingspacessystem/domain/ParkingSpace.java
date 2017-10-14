@@ -1,6 +1,9 @@
 package pl.debuguj.parkingspacessystem.domain;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.debuguj.parkingspacessystem.controllers.ParkingSpaceController;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 
 import java.text.ParseException;
@@ -12,6 +15,7 @@ import java.util.Date;
  */
 public class ParkingSpace implements Space {
 
+    private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
 
     private final String carRegistrationNumber;
     private DriverType driverType = DriverType.REGULAR;
@@ -56,7 +60,7 @@ public class ParkingSpace implements Space {
         try {
             this.endDate = checkEndDate(timestamp);
         } catch (IncorrectEndDateException e) {
-            e.printStackTrace();
+            logger.info(e.getMessage());
         }
     }
 
@@ -65,9 +69,9 @@ public class ParkingSpace implements Space {
         return endDate;
     }
 
-    private Date checkEndDate(Date d) throws IncorrectEndDateException {
-        if(d.compareTo(getBeginTime()) > 0)
-            return d;
+    private Date checkEndDate(Date newTime) throws IncorrectEndDateException {
+        if(newTime.compareTo(beginDate) > 0)
+            return newTime;
         throw new IncorrectEndDateException();
     }
 

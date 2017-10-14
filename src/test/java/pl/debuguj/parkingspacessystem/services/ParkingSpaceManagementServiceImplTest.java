@@ -35,6 +35,11 @@ public class ParkingSpaceManagementServiceImplTest {
     private static final String DAY_PATTERN = "yyyy-MM-dd";
     private static SimpleDateFormat dayDateFormat;
 
+    private ParkingSpace parkingSpace;
+    private String registrationNo;
+    private Date beginDate;
+    private Date endDate;
+
     @BeforeClass
     public static void beforeClass(){
         timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
@@ -44,6 +49,11 @@ public class ParkingSpaceManagementServiceImplTest {
     @Before
     public void before() throws Exception{
 
+        registrationNo = "12345";
+        beginDate = timeDateFormat.parse("2017-10-12 11:15:48");
+        endDate = timeDateFormat.parse("2017-10-12 13:35:12");
+        parkingSpace = new ParkingSpace(registrationNo, beginDate, endDate);
+
         parkingSpaceManagementService.removeAllParkingSpaces();
 
         parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("66666",
@@ -51,7 +61,7 @@ public class ParkingSpaceManagementServiceImplTest {
                 timeDateFormat.parse("2017-10-13 10:35:12")));
         parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("77777",
                 timeDateFormat.parse("2017-10-13 12:25:48"),
-                timeDateFormat.parse("2017-10-13 17:35:12")));
+                timeDateFormat.parse("2017-10-13 14:35:12")));
         parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("88888",
                 timeDateFormat.parse("2017-10-13 15:25:48"),
                 timeDateFormat.parse("2017-10-13 16:35:12")));
@@ -72,28 +82,19 @@ public class ParkingSpaceManagementServiceImplTest {
 
     @Test
     public void testCorrectFeeEstimation() throws Exception {
-        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
-        Date end = timeDateFormat.parse("2017-10-12 11:16:10");
 
-        ParkingSpace ps = new ParkingSpace("12345", begin, end);
-
-        BigDecimal fee = new BigDecimal("3.0");
-        BigDecimal feeFromService = parkingSpaceManagementService.reserveParkingSpace(ps);
+        BigDecimal fee = new BigDecimal("7.0");
+        BigDecimal feeFromService = parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
         assertEquals("Parking fee should be the same", fee, feeFromService);
     }
 
     @Test
     public void testIfVehicleIsRegisteredIntoSystemByTimestamp() throws Exception {
-        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
-        Date end = timeDateFormat.parse("2017-10-12 23:16:10");
 
-        String registrationNo = "12345";
-        ParkingSpace ps = new ParkingSpace(registrationNo, begin, end);
+        parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        parkingSpaceManagementService.reserveParkingSpace(ps);
-
-        Date currentDate = timeDateFormat.parse("2017-10-12 23:10:10");
+        Date currentDate = timeDateFormat.parse("2017-10-12 12:10:10");
         boolean result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
         assertTrue(result);
 
@@ -104,64 +105,83 @@ public class ParkingSpaceManagementServiceImplTest {
 
     @Test
     public void testIfVehicleIsRegisteredIntoSystemByRegistrationNo() throws Exception {
-        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
-        Date end = timeDateFormat.parse("2017-10-12 23:16:10");
 
-        String registrationNo = "12345";
-        ParkingSpace ps = new ParkingSpace(registrationNo, begin, end);
+        parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        parkingSpaceManagementService.reserveParkingSpace(ps);
-
-        Date currentDate = timeDateFormat.parse("2017-10-12 23:10:10");
+        Date currentDate = timeDateFormat.parse("2017-10-12 12:10:10");
         boolean result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
+
         assertTrue(result);
+
+        String tempRegistrationNo = "354677";
+        currentDate = timeDateFormat.parse("2017-10-12 12:10:10");
+        result = parkingSpaceManagementService.checkVehicle(tempRegistrationNo, currentDate);
+
+        assertFalse(result);
 
     }
 
     @Test
     public void testReturnedFeeAfterStopParkingMeter() throws Exception {
-        //TODO: throw exception when new timestamp is smaller than begin time
-        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
-        Date end = timeDateFormat.parse("2017-10-12 11:16:10");
 
-        ParkingSpace ps = new ParkingSpace("9999", begin, end);
+        parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        parkingSpaceManagementService.reserveParkingSpace(ps);
-
-        Date date = timeDateFormat.parse("2017-10-12 11:12:10");
-        BigDecimal fee = new BigDecimal("1.0");
-        BigDecimal feeFromSystem = parkingSpaceManagementService.stopParkingMeter(ps.getCarRegistrationNumber(), date);
+        Date date = timeDateFormat.parse("2017-10-12 12:20:10");
+        BigDecimal fee = new BigDecimal("3.0");
+        BigDecimal feeFromSystem = parkingSpaceManagementService.stopParkingMeter(parkingSpace.getCarRegistrationNumber(), date);
 
         assertEquals("Returned values should be equal", fee, feeFromSystem);
 
+    }
+
+    @Test(expected = IncorrectEndDateException.class)
+    public void testThrowingExceptionWhenIncorrectEndTime() throws Exception {
+
+        parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
+
+        Date date = timeDateFormat.parse("2017-10-12 11:00:10");
+
+        parkingSpaceManagementService.stopParkingMeter(parkingSpace.getCarRegistrationNumber(), date);
     }
 
     @Test
     public void testIncomePerDay() throws Exception {
 
         Date date = dayDateFormat.parse("2017-10-14");
-
         BigDecimal incomeFromSystem = parkingSpaceManagementService.getIncomePerDay(date);
-
         BigDecimal income = new BigDecimal("6.0");
 
-        assertEquals("Should income be the same", income, incomeFromSystem);
+        assertEquals("Income should be the same", income, incomeFromSystem);
 
+        date = dayDateFormat.parse("2017-10-18");
+        incomeFromSystem = parkingSpaceManagementService.getIncomePerDay(date);
+        income = new BigDecimal("0.0");
+
+        assertEquals("Income should be the same", income, incomeFromSystem);
+
+        date = dayDateFormat.parse("2017-10-13");
+        incomeFromSystem = parkingSpaceManagementService.getIncomePerDay(date);
+        income = new BigDecimal("11.0");
+
+        assertEquals("Income should be the same", income, incomeFromSystem);
     }
 
     @Test
-    public void testGettingCountOfReservedSpaces() throws Exception{
+    public void testGettingCountOfReservedSpaces() throws Exception {
+
         int sizeFromSystem = parkingSpaceManagementService.getReservedSpacesCount();
 
         assertEquals("Returned size should be 5",5 ,sizeFromSystem);
     }
+
     @Test
-    public void testRemovingAllParkingSpacesFromSystem() throws Exception{
+    public void testRemovingAllParkingSpacesFromSystem() throws Exception {
+
         parkingSpaceManagementService.removeAllParkingSpaces();
 
         int size = parkingSpaceManagementService.getReservedSpacesCount();
 
-        assertEquals("List should empty size==0", 0,size);
+        assertEquals("List should be empty size==0", 0,size);
     }
 
 }

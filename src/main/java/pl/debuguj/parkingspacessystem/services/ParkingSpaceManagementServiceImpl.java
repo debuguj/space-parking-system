@@ -32,7 +32,11 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
         ParkingSpace ps = parkingSpaceDao.findByRegistrationNo(registrationNumber);
 
+        if(null == ps)
+            return false;
         return currentDate.after(ps.getBeginTime()) && currentDate.before(ps.getEndTime());
+
+
     }
 
     @Override
@@ -49,7 +53,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
         return parkingSpaceDao.findByDate(timestamp)
                 .stream()
                 .map(ps -> paymentService.getFee(ps))
-                .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
+                .reduce(BigDecimal.ZERO.setScale(1), (a,b) -> a.add(b).setScale(1));
     }
 
     @Override
