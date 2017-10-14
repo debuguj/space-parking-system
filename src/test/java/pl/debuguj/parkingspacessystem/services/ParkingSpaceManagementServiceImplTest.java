@@ -43,20 +43,22 @@ public class ParkingSpaceManagementServiceImplTest {
 
     @Before
     public void before() throws Exception{
+
         parkingSpaceManagementService.removeAllParkingSpaces();
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("12345",
+
+        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("66666",
                 timeDateFormat.parse("2017-10-13 10:25:48"),
                 timeDateFormat.parse("2017-10-13 10:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("11212",
+        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("77777",
                 timeDateFormat.parse("2017-10-13 12:25:48"),
                 timeDateFormat.parse("2017-10-13 17:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("12344",
+        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("88888",
                 timeDateFormat.parse("2017-10-13 15:25:48"),
                 timeDateFormat.parse("2017-10-13 16:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("54345",
+        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("99999",
                 timeDateFormat.parse("2017-10-14 20:25:48"),
                 timeDateFormat.parse("2017-10-14 21:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("12333",
+        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("99998",
                 timeDateFormat.parse("2017-10-14 11:15:48"),
                 timeDateFormat.parse("2017-10-14 12:35:12")));
 
@@ -82,18 +84,38 @@ public class ParkingSpaceManagementServiceImplTest {
     }
 
     @Test
-    public void testIfVehicleIsRegisteredIntoSystem() throws Exception {
+    public void testIfVehicleIsRegisteredIntoSystemByTimestamp() throws Exception {
         Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
         Date end = timeDateFormat.parse("2017-10-12 23:16:10");
 
-        ParkingSpace ps = new ParkingSpace("12345", begin, end);
+        String registrationNo = "12345";
+        ParkingSpace ps = new ParkingSpace(registrationNo, begin, end);
 
         parkingSpaceManagementService.reserveParkingSpace(ps);
 
-        //TODO: remove this small date cheating
         Date currentDate = timeDateFormat.parse("2017-10-12 23:10:10");
-        boolean result = parkingSpaceManagementService.checkVehicle(ps.getCarRegistrationNumber(), currentDate);
+        boolean result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
         assertTrue(result);
+
+        currentDate = timeDateFormat.parse("2017-10-12 23:55:10");
+        result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
+        assertFalse(result);
+    }
+
+    @Test
+    public void testIfVehicleIsRegisteredIntoSystemByRegistrationNo() throws Exception {
+        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
+        Date end = timeDateFormat.parse("2017-10-12 23:16:10");
+
+        String registrationNo = "12345";
+        ParkingSpace ps = new ParkingSpace(registrationNo, begin, end);
+
+        parkingSpaceManagementService.reserveParkingSpace(ps);
+
+        Date currentDate = timeDateFormat.parse("2017-10-12 23:10:10");
+        boolean result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
+        assertTrue(result);
+
     }
 
     @Test

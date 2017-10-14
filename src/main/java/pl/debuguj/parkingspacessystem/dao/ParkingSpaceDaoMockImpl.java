@@ -3,12 +3,10 @@ package pl.debuguj.parkingspacessystem.dao;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     }
 
     @Override
-    public ParkingSpace findParkingSpaceByRegistrationNo(final String registrationNo) {
+    public ParkingSpace findByRegistrationNo(final String registrationNo) {
         return listParkingSpaces
                 .stream()
                 .filter(ps -> registrationNo.equals(ps.getCarRegistrationNumber()))
@@ -44,16 +42,16 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     }
 
     @Override
-    public List<ParkingSpace> getAllParkingSpaces() {
+    public List<ParkingSpace> getAllItems() {
         return Collections.unmodifiableList(listParkingSpaces);
     }
 
     @Override
-    public ParkingSpace changeParkingSpaceEndTime(
+    public ParkingSpace changeEndTime(
             final String registrationNumber,
             final Date timestamp) throws IncorrectEndDateException {
 
-        ParkingSpace ps = findParkingSpaceByRegistrationNo(registrationNumber);
+        ParkingSpace ps = findByRegistrationNo(registrationNumber);
 
         if(!timestamp.after(ps.getBeginTime())) {
             throw new IncorrectEndDateException();
@@ -66,7 +64,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
                     }
                 });
 
-        return findParkingSpaceByRegistrationNo(registrationNumber);
+        return findByRegistrationNo(registrationNumber);
     }
 
     @Override
@@ -75,7 +73,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
     }
 
     @Override
-    public List<ParkingSpace> findParkingSpacesByDate(final Date timestamp) {
+    public List<ParkingSpace> findByDate(final Date timestamp) {
         Date end = createEndDate(timestamp);
         return listParkingSpaces
                 .stream()

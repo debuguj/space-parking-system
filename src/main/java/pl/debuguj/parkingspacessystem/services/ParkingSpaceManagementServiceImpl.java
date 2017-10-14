@@ -7,7 +7,6 @@ import pl.debuguj.parkingspacessystem.domain.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 
 /**
@@ -31,7 +30,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     @Override
     public boolean checkVehicle(String registrationNumber, Date currentDate) {
 
-        ParkingSpace ps = parkingSpaceDao.findParkingSpaceByRegistrationNo(registrationNumber);
+        ParkingSpace ps = parkingSpaceDao.findByRegistrationNo(registrationNumber);
 
         return currentDate.after(ps.getBeginTime()) && currentDate.before(ps.getEndTime());
     }
@@ -39,15 +38,15 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     @Override
     public BigDecimal stopParkingMeter(String registrationNumber, Date date) throws IncorrectEndDateException {
 
-        ParkingSpace ps = parkingSpaceDao.changeParkingSpaceEndTime(registrationNumber, date);
+        ParkingSpace ps = parkingSpaceDao.changeEndTime(registrationNumber, date);
 
         return paymentService.getFee(ps);
     }
 
     @Override
-    public BigDecimal getIncomePerDay(Date timestamp) throws ParseException {
+    public BigDecimal getIncomePerDay(Date timestamp) {
 
-        return parkingSpaceDao.findParkingSpacesByDate(timestamp)
+        return parkingSpaceDao.findByDate(timestamp)
                 .stream()
                 .map(ps -> paymentService.getFee(ps))
                 .reduce(BigDecimal.ZERO, (a,b) -> a.add(b));
@@ -55,7 +54,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
     @Override
     public int getReservedSpacesCount() {
-        return parkingSpaceDao.getAllParkingSpaces().size();
+        return parkingSpaceDao.getAllItems().size();
     }
 
     @Override

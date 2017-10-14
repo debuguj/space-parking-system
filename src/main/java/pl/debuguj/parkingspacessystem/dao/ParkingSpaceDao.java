@@ -13,13 +13,13 @@ public interface ParkingSpaceDao {
 
     void add(final ParkingSpace parkingSpace);
 
-    ParkingSpace findParkingSpaceByRegistrationNo(final String registrationNo);
+    ParkingSpace findByRegistrationNo(final String registrationNo);
 
-    List<ParkingSpace> getAllParkingSpaces();
+    List<ParkingSpace> getAllItems();
 
-    ParkingSpace changeParkingSpaceEndTime(final String registrationNumber, final Date date) throws IncorrectEndDateException;
+    ParkingSpace changeEndTime(final String registrationNumber, final Date date) throws IncorrectEndDateException;
 
     void removeAllItems();
 
-    List<ParkingSpace> findParkingSpacesByDate(final Date timestamp);
+    List<ParkingSpace> findByDate(final Date timestamp);
 }

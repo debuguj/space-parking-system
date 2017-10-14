@@ -34,7 +34,7 @@ public interface ParkingSpaceManagementService {
     /**
      As a parking owner, I want to know how much money was earned during a given day
      */
-    BigDecimal getIncomePerDay(Date timestamp) throws ParseException;
+    BigDecimal getIncomePerDay(Date timestamp);
 
     int getReservedSpacesCount();
 
