@@ -82,7 +82,12 @@ public class ParkingSpaceDaoMockImplTest {
 
         ParkingSpace psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
 
+        assertNotNull(psFromDao);
+
         assertEquals("Should get the same object", parkingSpace, psFromDao);
+        assertEquals("Objects should be equal", parkingSpace.getBeginTime(),psFromDao.getBeginTime());
+        assertEquals("Objects should be equal", parkingSpace.getDriverType(),psFromDao.getDriverType());
+        assertEquals("Objects should be equal", parkingSpace.getEndTime(),psFromDao.getEndTime());
     }
 
     @Test
@@ -119,7 +124,11 @@ public class ParkingSpaceDaoMockImplTest {
 
         ParkingSpace psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
 
-        assertEquals("New end time should be the same", newCorrectDate, psFromDao.getEndTime());
+        assertNotNull(psFromDao);
+        assertEquals(parkingSpace, psFromDao);
+        assertEquals(parkingSpace.getBeginTime(), psFromDao.getBeginTime());
+        assertEquals(parkingSpace.getDriverType(), psFromDao.getDriverType());
+        assertEquals(newCorrectDate, psFromDao.getEndTime());
     }
 
     @Test(expected = IncorrectEndDateException.class)
