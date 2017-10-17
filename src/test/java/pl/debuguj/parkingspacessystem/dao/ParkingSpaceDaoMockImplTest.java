@@ -10,7 +10,10 @@ import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -45,126 +48,138 @@ public class ParkingSpaceDaoMockImplTest {
     @Before
     public void before() throws ParseException, IncorrectEndDateException {
 
-        parkingSpaceDao.removeAllItems();
-
         registrationNo = "12345";
         beginDate = timeDateFormat.parse("2017-10-14 11:15:48");
         endDate = timeDateFormat.parse("2017-10-14 21:35:12");
         parkingSpace = new ParkingSpace(registrationNo, beginDate, endDate);
 
-        parkingSpaceDao.add(new ParkingSpace("66666",
-                    timeDateFormat.parse("2017-10-13 10:25:48"),
-                    timeDateFormat.parse("2017-10-13 13:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("77777",
-                    timeDateFormat.parse("2017-10-13 12:25:48"),
-                    timeDateFormat.parse("2017-10-13 17:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("88888",
-                    timeDateFormat.parse("2017-10-13 15:25:48"),
-                    timeDateFormat.parse("2017-10-13 16:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("99999",
-                    timeDateFormat.parse("2017-10-14 20:25:48"),
-                    timeDateFormat.parse("2017-10-14 21:35:12")));
-        parkingSpaceDao.add(new ParkingSpace("99998",
-                    timeDateFormat.parse("2017-10-14 11:15:48"),
-                    timeDateFormat.parse("2017-10-14 12:35:12")));
-
     }
 
     @After
     public void after(){
-        parkingSpaceDao.removeAllItems();
+        parkingSpaceDao.removeAll();
     }
 
     @Test
-    public void testAddNewParkingSpace() throws Exception {
+    public void testCreatingNewParkingSpace() throws Exception {
 
-        parkingSpaceDao.add(parkingSpace);
+        parkingSpaceDao.create(parkingSpace);
 
-        ParkingSpace psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
+        Optional<ParkingSpace> psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
 
         assertNotNull(psFromDao);
 
-        assertEquals("Should get the same object", parkingSpace, psFromDao);
-        assertEquals("Objects should be equal", parkingSpace.getBeginTime(),psFromDao.getBeginTime());
-        assertEquals("Objects should be equal", parkingSpace.getDriverType(),psFromDao.getDriverType());
-        assertEquals("Objects should be equal", parkingSpace.getEndTime(),psFromDao.getEndTime());
+        assertEquals(parkingSpace, psFromDao.get());
+        assertEquals(parkingSpace.getBeginTime(),psFromDao.get().getBeginTime());
+        assertEquals(parkingSpace.getDriverType(),psFromDao.get().getDriverType());
+        assertEquals(parkingSpace.getEndTime(),psFromDao.get().getEndTime());
     }
 
     @Test
     public void testFindingParkingSpaceByRegistrationNo() throws Exception {
 
-        parkingSpaceDao.add(parkingSpace);
+        parkingSpaceDao.create(parkingSpace);
 
-        ParkingSpace psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
+        Optional<ParkingSpace> psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
 
-        assertNotNull("Should return ParkingSpace object",  psFromDao);
+        assertTrue(psFromDao.isPresent());
 
         String registrationNo = "997755";
 
         psFromDao = parkingSpaceDao.findByRegistrationNo(registrationNo);
 
-        assertNull(psFromDao);
+        assertFalse(psFromDao.isPresent());
     }
 
     @Test
     public void testGettingAllParkingSpaces() throws Exception {
+        createTestItems();
 
-        int size = parkingSpaceDao.getAllItems().size();
+        int size = parkingSpaceDao.getAll().size();
 
         assertEquals("Should return 5 number od object", 5, size);
     }   
 
     @Test
-    public void testChangingParkingSpaceEndTimeToNewCorrectEndTime() throws Exception  {
+    public void testUpdatingParkingSpaceEndTimeToNewCorrectEndTime() throws Exception  {
 
-        parkingSpaceDao.add(parkingSpace);
+        parkingSpaceDao.create(parkingSpace);
 
         Date newCorrectDate = timeDateFormat.parse("2017-10-14 12:15:48");
-        parkingSpaceDao.changeEndTime(parkingSpace.getCarRegistrationNumber(), newCorrectDate);
+        parkingSpaceDao.updateEndTime(parkingSpace.getCarRegistrationNumber(), newCorrectDate);
 
-        ParkingSpace psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
+        Optional<ParkingSpace> psFromDao = parkingSpaceDao.findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
 
-        assertNotNull(psFromDao);
-        assertEquals(parkingSpace, psFromDao);
-        assertEquals(parkingSpace.getBeginTime(), psFromDao.getBeginTime());
-        assertEquals(parkingSpace.getDriverType(), psFromDao.getDriverType());
-        assertEquals(newCorrectDate, psFromDao.getEndTime());
+        assertTrue(psFromDao.isPresent());
+        assertEquals(parkingSpace, psFromDao.get());
+        assertEquals(parkingSpace.getBeginTime(), psFromDao.get().getBeginTime());
+        assertEquals(parkingSpace.getDriverType(), psFromDao.get().getDriverType());
+        assertEquals(newCorrectDate, psFromDao.get().getEndTime());
     }
 
     @Test(expected = IncorrectEndDateException.class)
-    public void testChangingParkingSpaceEndTimeToNewIncorrectEndTime() throws Exception  {
+    public void testUpdatingParkingSpaceEndTimeToNewIncorrectEndTime() throws Exception  {
 
-        parkingSpaceDao.add(parkingSpace);
+        parkingSpaceDao.create(parkingSpace);
 
         Date newIncorrectDate = timeDateFormat.parse("2017-10-14 10:15:48");
 
-        parkingSpaceDao.changeEndTime(parkingSpace.getCarRegistrationNumber(), newIncorrectDate);
+        parkingSpaceDao.updateEndTime(parkingSpace.getCarRegistrationNumber(), newIncorrectDate);
 
     }
+
     @Test
     public void testRemovingAllItems() throws Exception {
-        parkingSpaceDao.removeAllItems();
+        createTestItems();
 
-        assertTrue(0 == parkingSpaceDao.getAllItems().size());
+        parkingSpaceDao.removeAll();
+
+        assertTrue(0 == parkingSpaceDao.getAll().size());
     }
 
-//    @Test
-//    public void testFindingParkingSpacesByDate() throws Exception {
-//
-//        Date timestamp = dayDateFormat.parse("2017-10-17");
-//        List<ParkingSpace> list = parkingSpaceDao.findByDate(timestamp);
-//
-//        assertEquals("Should return 0 parking spaces", 0, list.size());
-//
-//        timestamp = dayDateFormat.parse("2017-10-13");
-//        list = parkingSpaceDao.findByDate(timestamp);
-//
-//        assertEquals("Should return 3 parking spaces", 3, list.size());
-//
-//        timestamp = dayDateFormat.parse("2017-10-14");
-//        list = parkingSpaceDao.findByDate(timestamp);
-//
-//        assertEquals("Should return 2 parking spaces", 2, list.size());
-//    }
+
+    @Test
+    public void testFindingByDate() throws Exception{
+        createTestItems();
+
+        Date date = dayDateFormat.parse("2017-10-14");
+        Collection<ParkingSpace> list = parkingSpaceDao.findByDate(date);
+
+        assertFalse(list.isEmpty());
+        assertEquals(2, list.size());
+
+        date = dayDateFormat.parse("2017-10-13");
+        list = parkingSpaceDao.findByDate(date);
+
+        assertFalse(list.isEmpty());
+        assertEquals(3, list.size());
+
+        date = dayDateFormat.parse("2017-10-1");
+        list = parkingSpaceDao.findByDate(date);
+
+        assertTrue(list.isEmpty());
+        assertEquals(0, list.size());
+
+    }
+    private void createTestItems() throws ParseException, IncorrectEndDateException {
+
+        parkingSpaceDao.removeAll();
+
+        parkingSpaceDao.create(new ParkingSpace("66666",
+                timeDateFormat.parse("2017-10-13 10:25:48"),
+                timeDateFormat.parse("2017-10-13 13:35:12")));
+        parkingSpaceDao.create(new ParkingSpace("77777",
+                timeDateFormat.parse("2017-10-13 12:25:48"),
+                timeDateFormat.parse("2017-10-13 17:35:12")));
+        parkingSpaceDao.create(new ParkingSpace("88888",
+                timeDateFormat.parse("2017-10-13 15:25:48"),
+                timeDateFormat.parse("2017-10-13 16:35:12")));
+        parkingSpaceDao.create(new ParkingSpace("99999",
+                timeDateFormat.parse("2017-10-14 20:25:48"),
+                timeDateFormat.parse("2017-10-14 21:35:12")));
+        parkingSpaceDao.create(new ParkingSpace("99998",
+                timeDateFormat.parse("2017-10-14 11:15:48"),
+                timeDateFormat.parse("2017-10-14 12:35:12")));
+    }
 
 }

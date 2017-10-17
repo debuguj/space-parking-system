@@ -7,21 +7,22 @@ import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by grzesiek on 07.10.17.
  */
 public interface ParkingSpaceDao {
 
-    void add(final ParkingSpace parkingSpace);
+    void create(final ParkingSpace parkingSpace);
 
-    ParkingSpace findByRegistrationNo(final String registrationNo);
+    Optional<ParkingSpace> findByRegistrationNo(final String registrationNo);
 
-    List<ParkingSpace> getAllItems();
+    List<ParkingSpace> getAll();
 
-    ParkingSpace changeEndTime(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFoundException;
+    Optional<ParkingSpace> updateEndTime(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFoundException;
 
-    void removeAllItems();
+    void removeAll();
 
     Collection<ParkingSpace> findByDate(final Date timestamp);
 }

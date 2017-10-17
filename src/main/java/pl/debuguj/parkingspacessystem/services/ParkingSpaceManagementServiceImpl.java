@@ -9,6 +9,7 @@ import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Created by grzesiek on 09.10.17.
@@ -24,18 +25,19 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
     @Override
     public BigDecimal reserveParkingSpace(final ParkingSpace ps) {
-        parkingSpaceDao.add(ps);
+        parkingSpaceDao.create(ps);
         return paymentService.getFee(ps);
     }
 
     @Override
     public boolean checkVehicle(final String registrationNumber, final Date currentDate) {
 
-        ParkingSpace ps = parkingSpaceDao.findByRegistrationNo(registrationNumber);
+        Optional<ParkingSpace> ps = parkingSpaceDao.findByRegistrationNo(registrationNumber);
 
-        if(null == ps)
+        if(ps.isPresent())
             return false;
-        return currentDate.after(ps.getBeginTime()) && currentDate.before(ps.getEndTime());
+        return currentDate.after(ps.get().getBeginTime())
+                && currentDate.before(ps.get().getEndTime());
 
 
     }
@@ -43,9 +45,9 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     @Override
     public BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFoundException {
 
-        ParkingSpace ps = parkingSpaceDao.changeEndTime(registrationNumber, date);
-        if(null != ps)
-            return paymentService.getFee(ps);
+        Optional<ParkingSpace> ps = parkingSpaceDao.updateEndTime(registrationNumber, date);
+        if(ps.isPresent())
+            return paymentService.getFee(ps.get());
         return BigDecimal.ZERO.setScale(1);
     }
 
@@ -60,12 +62,12 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
     @Override
     public int getReservedSpacesCount() {
-        return parkingSpaceDao.getAllItems().size();
+        return parkingSpaceDao.getAll().size();
     }
 
     @Override
     public void removeAllParkingSpaces() {
-        parkingSpaceDao.removeAllItems();
+        parkingSpaceDao.removeAll();
     }
 
 

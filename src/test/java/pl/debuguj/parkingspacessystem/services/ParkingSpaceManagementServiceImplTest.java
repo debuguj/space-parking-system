@@ -48,8 +48,8 @@ public class ParkingSpaceManagementServiceImplTest {
     public void before() throws Exception{
 
         registrationNo = "12345";
-        beginDate = timeDateFormat.parse("2017-10-12 11:15:48");
-        endDate = timeDateFormat.parse("2017-10-12 13:35:12");
+        beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
+        endDate = timeDateFormat.parse("2017-10-13 13:35:12");
         parkingSpace = new ParkingSpace(registrationNo, beginDate, endDate);
 
         parkingSpaceManagementService.removeAllParkingSpaces();
@@ -92,11 +92,11 @@ public class ParkingSpaceManagementServiceImplTest {
 
         parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        Date currentDate = timeDateFormat.parse("2017-10-12 12:10:10");
+        Date currentDate = timeDateFormat.parse("2017-10-13 12:10:10");
         boolean result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
         assertTrue(result);
 
-        currentDate = timeDateFormat.parse("2017-10-12 23:55:10");
+        currentDate = timeDateFormat.parse("2017-10-13 23:55:10");
         result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
         assertFalse(result);
     }
@@ -106,13 +106,13 @@ public class ParkingSpaceManagementServiceImplTest {
 
         parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        Date currentDate = timeDateFormat.parse("2017-10-12 12:10:10");
+        Date currentDate = timeDateFormat.parse("2017-10-13 12:10:10");
         boolean result = parkingSpaceManagementService.checkVehicle(registrationNo, currentDate);
 
         assertTrue(result);
 
         String tempRegistrationNo = "354677";
-        currentDate = timeDateFormat.parse("2017-10-12 12:10:10");
+        currentDate = timeDateFormat.parse("2017-10-13 12:10:10");
         result = parkingSpaceManagementService.checkVehicle(tempRegistrationNo, currentDate);
 
         assertFalse(result);
@@ -124,9 +124,11 @@ public class ParkingSpaceManagementServiceImplTest {
 
         parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        Date date = timeDateFormat.parse("2017-10-12 12:20:10");
-        BigDecimal fee = new BigDecimal("3.0");
-        BigDecimal feeFromSystem = parkingSpaceManagementService.stopParkingMeter(parkingSpace.getCarRegistrationNumber(), date);
+        Date date = timeDateFormat.parse("2017-10-13 13:40:10");
+        BigDecimal fee = new BigDecimal("7.0");
+        BigDecimal feeFromSystem = parkingSpaceManagementService
+                .stopParkingMeter(parkingSpace.getCarRegistrationNumber(), date);
+
 
         assertEquals("Returned values should be equal", fee, feeFromSystem);
 
@@ -137,7 +139,7 @@ public class ParkingSpaceManagementServiceImplTest {
 
         parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
 
-        Date date = timeDateFormat.parse("2017-10-12 11:00:10");
+        Date date = timeDateFormat.parse("2017-10-13 11:00:10");
 
         parkingSpaceManagementService.stopParkingMeter(parkingSpace.getCarRegistrationNumber(), date);
     }

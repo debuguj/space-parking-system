@@ -1,14 +1,11 @@
 package pl.debuguj.parkingspacessystem.dao;
 
 import org.joda.time.DateTime;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,45 +18,41 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
 
     private static List<ParkingSpace> listParkingSpaces = new ArrayList<>();
 
-    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static SimpleDateFormat timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
-
     @Override
-    public void add(final ParkingSpace parkingSpace) {
+    public void create(final ParkingSpace parkingSpace) {
 
         listParkingSpaces.add(parkingSpace);
     }
 
     @Override
-    public ParkingSpace findByRegistrationNo(final String registrationNo)  {
+    public Optional<ParkingSpace> findByRegistrationNo(final String registrationNo)  {
         return listParkingSpaces
                 .stream()
-                .filter(ps -> registrationNo.equals(ps.getCarRegistrationNumber()))
-                .findAny()
-                .orElse(null);
+                .filter(ps -> Objects.equals(registrationNo, ps.getCarRegistrationNumber()))
+                .findAny();
     }
 
     @Override
-    public List<ParkingSpace> getAllItems() {
+    public List<ParkingSpace> getAll() {
         return Collections.unmodifiableList(listParkingSpaces);
     }
 
     @Override
-    public ParkingSpace changeEndTime(
+    public Optional<ParkingSpace> updateEndTime(
             final String registrationNumber,
             final Date timestamp) throws IncorrectEndDateException, ParkingSpaceNotFoundException {
 
-        ParkingSpace ps = findByRegistrationNo(registrationNumber);
+        Optional<ParkingSpace> ps = findByRegistrationNo(registrationNumber);
 
-        if(null != ps)
+        if(ps.isPresent())
         {
-            if (!timestamp.after(ps.getBeginTime())) {
+            if (!timestamp.after(ps.get().getBeginTime())) {
                 throw new IncorrectEndDateException();
             }
 
             listParkingSpaces
                     .forEach(s -> {
-                        if (registrationNumber.equals(s.getCarRegistrationNumber())) {
+                        if (Objects.equals(registrationNumber, s.getCarRegistrationNumber())) {
                             s.setEndTime(timestamp);
                         }
                     });
@@ -70,7 +63,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     }
 
     @Override
-    public void removeAllItems() {
+    public void removeAll() {
         listParkingSpaces.clear();
     }
 
@@ -95,19 +88,19 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
 //        try {
 //            listParkingSpaces.clear();
 //
-//            listParkingSpaces.add(new ParkingSpace("11111",
+//            listParkingSpaces.create(new ParkingSpace("11111",
 //                    timeDateFormat.parse("2017-10-13 10:25:48"),
 //                    timeDateFormat.parse("2017-10-13 10:35:12")));
-//            listParkingSpaces.add(new ParkingSpace("22222",
+//            listParkingSpaces.create(new ParkingSpace("22222",
 //                    timeDateFormat.parse("2017-10-13 12:25:48"),
 //                    timeDateFormat.parse("2017-10-13 13:35:12")));
-//            listParkingSpaces.add(new ParkingSpace("33333",
+//            listParkingSpaces.create(new ParkingSpace("33333",
 //                    timeDateFormat.parse("2017-10-13 15:25:48"),
 //                    timeDateFormat.parse("2017-10-13 16:35:12")));
-//            listParkingSpaces.add(new ParkingSpace("44444",
+//            listParkingSpaces.create(new ParkingSpace("44444",
 //                    timeDateFormat.parse("2017-10-14 20:25:48"),
 //                    timeDateFormat.parse("2017-10-14 21:35:12")));
-//            listParkingSpaces.add(new ParkingSpace("55555",
+//            listParkingSpaces.create(new ParkingSpace("55555",
 //                    timeDateFormat.parse("2017-10-14 11:15:48"),
 //                    timeDateFormat.parse("2017-10-14 12:35:12")));
 //        } catch (ParseException e){

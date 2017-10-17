@@ -43,7 +43,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/11111")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-29 10:10:10")
                 .append("&stopTime=2017-10-29 23:20:59")
@@ -66,7 +66,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/11111")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-13 10:10:12")
                 .append("&stopTime=2017-10-13 11")
@@ -85,7 +85,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/11111")
                 .append("?driverType=VI")
                 .append("&startTime=2017-10-13 10:10:12")
                 .append("&stopTime=2017-10-13 23:10:12")
@@ -104,7 +104,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/1234")
+                .append("/1111")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-13 10:10:12")
                 .append("&stopTime=2017-10-13 23:10:12")
@@ -123,7 +123,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/11111")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-13 23:10:12")
                 .append("&stopTime=2017-10-13 22:10:12")
@@ -138,11 +138,11 @@ public class ParkingSpaceControllerTest {
     }
 
     @Test
-    public void testShouldReturnThatVehicleIsRegisteredInSystem() throws Exception {
+    public void shouldReturnThatVehicleIsRegisteredInSystem() throws Exception {
         //GIVEN
         String givenUrlSetData = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/22222")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-15 10:10:12")
                 .append("&stopTime=2017-10-15 12:15:12")
@@ -152,7 +152,7 @@ public class ParkingSpaceControllerTest {
 
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_CHECK_VEHICLE)
-                .append("/12345")
+                .append("/22222")
                 .append("?currentDate=2017-10-15 10:28:48")
                 .toString();
         //WHEN
@@ -169,7 +169,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnThatVehicleIsNotRegisteredInSystem() throws Exception {
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_CHECK_VEHICLE)
-                .append("/12345")
+                .append("/22223")
                 .append("?currentDate=2017-10-13 10:28:48")
                 .toString();
         //WHEN
@@ -186,7 +186,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnBadRequestBecauseOfBadDateFormat() throws Exception {
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_CHECK_VEHICLE)
-                .append("/12345")
+                .append("/22222")
                 .append("?currentDate=2017-10-13 10:28")
                 .toString();
         //WHEN
@@ -201,7 +201,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnNotFoundBecauseOfBadRegistrationNumberFormat() throws Exception {
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_CHECK_VEHICLE)
-                .append("/1235")
+                .append("/2222")
                 .append("?currentDate=2017-10-13 10:28:24")
                 .toString();
         //WHEN
@@ -218,7 +218,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrlSetData = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12347")
+                .append("/33333")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-11 10:10:12")
                 .append("&stopTime=2017-10-11 12:15:12")
@@ -228,7 +228,7 @@ public class ParkingSpaceControllerTest {
 
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_STOP_METER)
-                .append("/12347")
+                .append("/33333")
                 .append("?timeStamp=2017-10-11 10:28:48")
                 .toString();
         //WHEN
@@ -247,18 +247,18 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrlSetData = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/33333")
                 .append("?driverType=VIP")
-                .append("&startTime=2017-10-13 10:10:12")
-                .append("&stopTime=2017-10-13 12:15:12")
+                .append("&startTime=2017-10-10 10:10:12")
+                .append("&stopTime=2017-10-10 12:15:12")
                 .toString();
 
         mockMvc.perform(post(givenUrlSetData));
 
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_STOP_METER)
-                .append("/12345")
-                .append("?timeStamp=2017-10-13 10:05:48")
+                .append("/33333")
+                .append("?timeStamp=2017-10-10 10:05:48")
                 .toString();
         //WHEN
         mockMvc.perform(put(givenUrl))
@@ -273,7 +273,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_STOP_METER)
-                .append("/1234")
+                .append("/3333")
                 .append("?timeStamp=2017-10-13 10:28:48")
                 .toString();
         //WHEN
@@ -285,12 +285,12 @@ public class ParkingSpaceControllerTest {
     }
 
     @Test
-    public void shouldReturnBadRequestBecauseOfBadRegistrationNumberFormatWhenEndDateUpdate() throws Exception {
+    public void shouldReturnBadRequestBecauseOfBadDateFormatWhenEndDateUpdate() throws Exception {
 
         //GIVEN
         String givenUrl = new StringBuilder()
                 .append(ParkingSpaceController.URI_STOP_METER)
-                .append("/12345")
+                .append("/33333")
                 .append("?timeStamp=2017-10-13 10:28")
                 .toString();
         //WHEN
@@ -307,7 +307,7 @@ public class ParkingSpaceControllerTest {
         //GIVEN
         String givenUrlSetData1 = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12345")
+                .append("/44444")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-19 10:10:12")
                 .append("&stopTime=2017-10-19 11:15:12")
@@ -316,7 +316,7 @@ public class ParkingSpaceControllerTest {
 
         String givenUrlSetData2 = new StringBuilder()
                 .append(ParkingSpaceController.URI_START_METER)
-                .append("/12346")
+                .append("/44445")
                 .append("?driverType=REGULAR")
                 .append("&startTime=2017-10-19 10:10:12")
                 .append("&stopTime=2017-10-19 11:15:12")
