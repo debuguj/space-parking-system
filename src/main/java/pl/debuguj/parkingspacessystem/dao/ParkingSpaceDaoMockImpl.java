@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Created by grzesiek on 07.10.17.
  */
 @Service
-public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationListener {
+public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
 
     private static List<ParkingSpace> listParkingSpaces = new ArrayList<>();
 
@@ -90,30 +90,30 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao, ApplicationList
         return (new DateTime(d).plusDays(1)).toDate();
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        try {
-            listParkingSpaces.clear();
-
-            listParkingSpaces.add(new ParkingSpace("11111",
-                    timeDateFormat.parse("2017-10-13 10:25:48"),
-                    timeDateFormat.parse("2017-10-13 10:35:12")));
-            listParkingSpaces.add(new ParkingSpace("22222",
-                    timeDateFormat.parse("2017-10-13 12:25:48"),
-                    timeDateFormat.parse("2017-10-13 13:35:12")));
-            listParkingSpaces.add(new ParkingSpace("33333",
-                    timeDateFormat.parse("2017-10-13 15:25:48"),
-                    timeDateFormat.parse("2017-10-13 16:35:12")));
-            listParkingSpaces.add(new ParkingSpace("44444",
-                    timeDateFormat.parse("2017-10-14 20:25:48"),
-                    timeDateFormat.parse("2017-10-14 21:35:12")));
-            listParkingSpaces.add(new ParkingSpace("55555",
-                    timeDateFormat.parse("2017-10-14 11:15:48"),
-                    timeDateFormat.parse("2017-10-14 12:35:12")));
-        } catch (ParseException e){
-            e.printStackTrace();
-        } catch (IncorrectEndDateException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+//        try {
+//            listParkingSpaces.clear();
+//
+//            listParkingSpaces.add(new ParkingSpace("11111",
+//                    timeDateFormat.parse("2017-10-13 10:25:48"),
+//                    timeDateFormat.parse("2017-10-13 10:35:12")));
+//            listParkingSpaces.add(new ParkingSpace("22222",
+//                    timeDateFormat.parse("2017-10-13 12:25:48"),
+//                    timeDateFormat.parse("2017-10-13 13:35:12")));
+//            listParkingSpaces.add(new ParkingSpace("33333",
+//                    timeDateFormat.parse("2017-10-13 15:25:48"),
+//                    timeDateFormat.parse("2017-10-13 16:35:12")));
+//            listParkingSpaces.add(new ParkingSpace("44444",
+//                    timeDateFormat.parse("2017-10-14 20:25:48"),
+//                    timeDateFormat.parse("2017-10-14 21:35:12")));
+//            listParkingSpaces.add(new ParkingSpace("55555",
+//                    timeDateFormat.parse("2017-10-14 11:15:48"),
+//                    timeDateFormat.parse("2017-10-14 12:35:12")));
+//        } catch (ParseException e){
+//            e.printStackTrace();
+//        } catch (IncorrectEndDateException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

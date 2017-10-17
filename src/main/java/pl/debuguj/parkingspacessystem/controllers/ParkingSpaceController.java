@@ -4,14 +4,12 @@ package pl.debuguj.parkingspacessystem.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.debuguj.parkingspacessystem.config.DriverTypeConverter;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
@@ -49,15 +47,16 @@ public class ParkingSpaceController {
 
     public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
         this.parkingSpaceManagement = parkingSpaceManagement;
-
+        simpleDateFormat.setLenient(false);
+        dayDateFormat.setLenient(false);
     }
 
-    @GetMapping(value = URI_START_METER)
+    @PostMapping( value = URI_START_METER + "/{registrationNumber:[0-9]{5,5}}" )
     public HttpEntity<BigDecimal> startParkingMeter(
-            @RequestParam() final String registrationNumber,
+            @PathVariable() final String registrationNumber,
             @RequestParam() final DriverType driverType,
-            @RequestParam() final String startTime,
-            @RequestParam() final String stopTime)  {
+            @RequestParam() @DateTimeFormat(pattern=DATE_PATTERN) final String startTime,
+            @RequestParam() @DateTimeFormat(pattern=DATE_PATTERN) final String stopTime)  {
 
         try {
 
@@ -66,26 +65,25 @@ public class ParkingSpaceController {
             ParkingSpace ps = new ParkingSpace(registrationNumber, begin, end);
             ps.setDriverType(driverType);
 
-            return new HttpEntity(parkingSpaceManagement.reserveParkingSpace(ps));
+            return new HttpEntity<>( parkingSpaceManagement.reserveParkingSpace(ps));
 
-        } catch (ParseException e) {
+        } catch (IncorrectEndDateException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        } catch (IncorrectEndDateException e) {
+        } catch (ParseException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping(value = URI_CHECK_VEHICLE)
+    @GetMapping(value = URI_CHECK_VEHICLE + "/{registrationNumber:[0-9]{5,5}}")
     public HttpEntity<Boolean> checkVehicle(
-            @RequestParam final String registrationNumber,
-            @RequestParam final String currentDate)
+            @PathVariable final String registrationNumber,
+            @RequestParam @DateTimeFormat(pattern=DATE_PATTERN) final String currentDate)
     {
-        Date date = null;
         try {
-             date = simpleDateFormat.parse(currentDate);
+            Date date = simpleDateFormat.parse(currentDate);
             return new HttpEntity(parkingSpaceManagement.checkVehicle(registrationNumber, date));
         } catch (ParseException e) {
 
@@ -93,10 +91,10 @@ public class ParkingSpaceController {
         }
     }
 
-    @GetMapping(value = URI_STOP_METER)
+    @PutMapping(value = URI_STOP_METER + "/{registrationNumber:[0-9]{5,5}}")
     public HttpEntity<BigDecimal> stopParkingMeter(
-            @RequestParam final String registrationNumber,
-            @RequestParam final String timeStamp)
+            @PathVariable final String registrationNumber,
+            @RequestParam @DateTimeFormat(pattern=DATE_PATTERN) final String timeStamp)
     {
 
         try {
@@ -121,7 +119,7 @@ public class ParkingSpaceController {
 
     @GetMapping(value = URI_CHECK_INCOME_PER_DAY)
     public HttpEntity<BigDecimal> checkIncomePerDay(
-            @RequestParam final String date)
+            @RequestParam @DateTimeFormat(pattern=TIME_PATTERN) final String date)
     {
         try {
             BigDecimal sum = parkingSpaceManagement.getIncomePerDay(dayDateFormat.parse(date));
@@ -136,4 +134,5 @@ public class ParkingSpaceController {
     public void initBuilder(final WebDataBinder webDataBinder){
         webDataBinder.registerCustomEditor(DriverType.class, new DriverTypeConverter());
     }
+
 }

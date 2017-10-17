@@ -9,6 +9,7 @@ import pl.debuguj.parkingspacessystem.enums.Currency;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 /**
  * Created by grzesiek on 10.10.17.
@@ -38,7 +39,8 @@ public class PaymentServiceImpl implements PaymentService {
     {
         if(null != parkingSpace) {
             BigDecimal fee = getBasicFee(parkingSpace);
-            return fee.multiply(currency.getExchangeRate()).setScale(1);
+
+            return fee.multiply(currency.getExchangeRate()).setScale(1, BigDecimal.ROUND_CEILING);
         }
         return null;
     }
