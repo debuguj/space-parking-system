@@ -12,6 +12,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import pl.debuguj.parkingspacessystem.config.DriverTypeConverter;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
+import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
@@ -73,6 +74,10 @@ public class ParkingSpaceController {
 
         } catch (ParseException e) {
 
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } catch (CarRegisteredInSystemException e) {
+            //TODO: implement custom exception thowing
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

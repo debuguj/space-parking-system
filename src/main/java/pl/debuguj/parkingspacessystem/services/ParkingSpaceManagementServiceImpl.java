@@ -3,6 +3,7 @@ package pl.debuguj.parkingspacessystem.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.dao.ParkingSpaceDao;
+import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
@@ -24,7 +25,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     private PaymentService paymentService;
 
     @Override
-    public BigDecimal reserveParkingSpace(final ParkingSpace ps) {
+    public BigDecimal reserveParkingSpace(final ParkingSpace ps) throws CarRegisteredInSystemException {
         parkingSpaceDao.create(ps);
         return paymentService.getFee(ps);
     }

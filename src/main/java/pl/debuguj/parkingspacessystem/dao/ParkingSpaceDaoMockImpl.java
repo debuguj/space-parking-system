@@ -2,6 +2,7 @@ package pl.debuguj.parkingspacessystem.dao;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
@@ -19,9 +20,14 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
     private static List<ParkingSpace> listParkingSpaces = new ArrayList<>();
 
     @Override
-    public void create(final ParkingSpace parkingSpace) {
+    public void create(final ParkingSpace parkingSpace) throws CarRegisteredInSystemException {
 
-        listParkingSpaces.add(parkingSpace);
+        Optional<ParkingSpace> ps =
+                findByRegistrationNo(parkingSpace.getCarRegistrationNumber());
+        if(!ps.isPresent())
+            listParkingSpaces.add(parkingSpace);
+        else
+            throw new CarRegisteredInSystemException();
     }
 
     @Override
@@ -29,7 +35,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
         return listParkingSpaces
                 .stream()
                 .filter(ps -> Objects.equals(registrationNo, ps.getCarRegistrationNumber()))
-                .findAny();
+                .findFirst();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package pl.debuguj.parkingspacessystem.dao;
 
+import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
@@ -14,7 +15,7 @@ import java.util.Optional;
  */
 public interface ParkingSpaceDao {
 
-    void create(final ParkingSpace parkingSpace);
+    void create(final ParkingSpace parkingSpace) throws CarRegisteredInSystemException;
 
     Optional<ParkingSpace> findByRegistrationNo(final String registrationNo);
 

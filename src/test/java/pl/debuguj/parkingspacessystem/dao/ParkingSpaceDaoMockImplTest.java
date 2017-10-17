@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
@@ -75,6 +76,13 @@ public class ParkingSpaceDaoMockImplTest {
         assertEquals(parkingSpace.getEndTime(),psFromDao.get().getEndTime());
     }
 
+    @Test(expected = CarRegisteredInSystemException.class)
+    public void testCreatingNewParkingSpaceException() throws Exception {
+
+        parkingSpaceDao.create(parkingSpace);
+
+        parkingSpaceDao.create(parkingSpace);
+    }
     @Test
     public void testFindingParkingSpaceByRegistrationNo() throws Exception {
 
@@ -161,7 +169,7 @@ public class ParkingSpaceDaoMockImplTest {
         assertEquals(0, list.size());
 
     }
-    private void createTestItems() throws ParseException, IncorrectEndDateException {
+    private void createTestItems() throws ParseException, IncorrectEndDateException, CarRegisteredInSystemException {
 
         parkingSpaceDao.removeAll();
 

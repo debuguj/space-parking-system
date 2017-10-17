@@ -1,5 +1,6 @@
 package pl.debuguj.parkingspacessystem.services;
 
+import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
@@ -19,7 +20,7 @@ public interface ParkingSpaceManagementService {
     /**
      As a driver, I want to know how much I have to pay for parking
      */
-    BigDecimal reserveParkingSpace(final ParkingSpace ps);
+    BigDecimal reserveParkingSpace(final ParkingSpace ps) throws CarRegisteredInSystemException;
 
     /**
      As a parking operator, I want to check if the vehicle has started the parking meter
