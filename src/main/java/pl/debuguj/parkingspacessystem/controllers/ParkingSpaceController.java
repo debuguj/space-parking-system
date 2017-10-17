@@ -3,12 +3,16 @@ package pl.debuguj.parkingspacessystem.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pl.debuguj.parkingspacessystem.config.DriverTypeConverter;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
@@ -27,6 +31,7 @@ import java.util.Date;
 public class ParkingSpaceController {
 
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
+
 
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
@@ -125,5 +130,10 @@ public class ParkingSpaceController {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @InitBinder
+    public void initBuilder(final WebDataBinder webDataBinder){
+        webDataBinder.registerCustomEditor(DriverType.class, new DriverTypeConverter());
     }
 }
