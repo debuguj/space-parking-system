@@ -9,24 +9,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class Constants {
 
-    @Value("${constants.format.time}")
+    @Value("${constants.format.time:yyyy-MM-dd HH:mm:ss}")
     private String timeFormat;
-    @Value("${constants.format.day}")
+
+    @Value("${constants.format.day:yyyy-MM-dd}")
     private String dayFormat;
 
     public String getTimeFormat() {
         return timeFormat;
     }
 
-    public void setTimeFormat(String timeFormat) {
-        this.timeFormat = timeFormat;
-    }
-
     public String getDayFormat() {
         return dayFormat;
     }
 
-    public void setDayFormat(String dayFormat) {
-        this.dayFormat = dayFormat;
-    }
 }
