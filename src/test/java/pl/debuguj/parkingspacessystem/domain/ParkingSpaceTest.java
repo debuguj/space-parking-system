@@ -3,6 +3,11 @@ package pl.debuguj.parkingspacessystem.domain;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import pl.debuguj.parkingspacessystem.config.Constants;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 
 import java.text.ParseException;
@@ -15,25 +20,22 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Created by grzesiek on 12.10.17.
  */
-
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class ParkingSpaceTest {
 
     private ParkingSpace parkingSpace;
 
-    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    @Autowired
+    private Constants constants;
+
     private static SimpleDateFormat timeDateFormat;
-    private static final String DAY_PATTERN = "yyyy-MM-dd";
-    private static SimpleDateFormat dayDateFormat;
-
-    @BeforeClass
-    public static void set(){
-
-        timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
-        dayDateFormat = new SimpleDateFormat(DAY_PATTERN);
-    }
 
     @Before
     public void setUp() throws Exception {
+
+        timeDateFormat = new SimpleDateFormat(constants.getTimeFormat());
+
         Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
         Date end = timeDateFormat.parse("2017-10-12 14:15:10");
         parkingSpace = new ParkingSpace("12345", begin, end );

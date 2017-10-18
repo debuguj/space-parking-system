@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.debuguj.parkingspacessystem.config.Constants;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 
@@ -27,10 +28,11 @@ public class ParkingSpaceManagementServiceImplTest {
     @Autowired
     ParkingSpaceManagementService parkingSpaceManagementService;
 
-    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    @Autowired
+    private Constants constants;
+
     private static SimpleDateFormat timeDateFormat;
 
-    private static final String DAY_PATTERN = "yyyy-MM-dd";
     private static SimpleDateFormat dayDateFormat;
 
     private ParkingSpace parkingSpace;
@@ -38,14 +40,11 @@ public class ParkingSpaceManagementServiceImplTest {
     private Date beginDate;
     private Date endDate;
 
-    @BeforeClass
-    public static void beforeClass(){
-        timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
-        dayDateFormat = new SimpleDateFormat(DAY_PATTERN);
-    }
-
     @Before
     public void before() throws Exception{
+
+        timeDateFormat = new SimpleDateFormat(constants.getTimeFormat());
+        dayDateFormat = new SimpleDateFormat(constants.getDayFormat());
 
         registrationNo = "12345";
         beginDate = timeDateFormat.parse("2017-10-13 11:15:48");

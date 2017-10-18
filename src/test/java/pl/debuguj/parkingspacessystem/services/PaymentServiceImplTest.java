@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.debuguj.parkingspacessystem.config.Constants;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.enums.Currency;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
@@ -28,7 +29,9 @@ public class PaymentServiceImplTest {
     @Autowired
     PaymentService paymentService;
 
-    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    @Autowired
+    private Constants constants;
+
     private static SimpleDateFormat timeDateFormat;
 
     private ParkingSpace parkingSpace;
@@ -38,7 +41,7 @@ public class PaymentServiceImplTest {
 
     @Before
     public void setup() throws Exception {
-        timeDateFormat = new SimpleDateFormat(TIME_PATTERN);
+        timeDateFormat = new SimpleDateFormat(constants.getTimeFormat());
         paymentService.setCurrency(Currency.PLN);
 
         registrationNo = "12345";

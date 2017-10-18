@@ -4,12 +4,13 @@ package pl.debuguj.parkingspacessystem.controllers;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import pl.debuguj.parkingspacessystem.config.Constants;
 import pl.debuguj.parkingspacessystem.config.DriverTypeConverter;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
@@ -19,8 +20,6 @@ import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -31,13 +30,6 @@ public class ParkingSpaceController {
 
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
 
-
-    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
-
-    private static final String TIME_PATTERN = "yyyy-MM-dd";
-    private static final SimpleDateFormat dayDateFormat = new SimpleDateFormat(TIME_PATTERN);
-
     public static final String URI_START_METER = "/startMeter";
     public static final String URI_CHECK_VEHICLE = "/checkVehicle";
     public static final String URI_STOP_METER = "/stopMeter";
@@ -45,11 +37,13 @@ public class ParkingSpaceController {
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
 
+    @Autowired
+    private Constants constants;
+
 
     public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
         this.parkingSpaceManagement = parkingSpaceManagement;
-        simpleDateFormat.setLenient(false);
-        dayDateFormat.setLenient(false);
+
     }
 
     @PostMapping( value = URI_START_METER + "/{registrationNumber:[0-9]{5}}" )
@@ -60,9 +54,8 @@ public class ParkingSpaceController {
             @RequestParam() final String stopTime)  {
 
         try {
-
-            Date begin = validateDate(startTime, DATE_PATTERN);
-            Date end = validateDate(stopTime, DATE_PATTERN);
+            Date begin = validateDate(startTime, constants.getTimeFormat());
+            Date end = validateDate(stopTime, constants.getTimeFormat());
 
             if(begin != null && end != null)
             {
@@ -70,21 +63,20 @@ public class ParkingSpaceController {
                 ps.setDriverType(driverType);
 
                 return new HttpEntity<>( parkingSpaceManagement.reserveParkingSpace(ps));
-            }
-            else
-            {
+            } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (IncorrectEndDateException e) {
-
+        }
+        catch (IncorrectEndDateException e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        } catch (CarRegisteredInSystemException e) {
-            //TODO: implement custom exception throwing
+        }
+        catch (CarRegisteredInSystemException e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        } catch (Exception e){
-
+        }
+        catch (Exception e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -95,7 +87,7 @@ public class ParkingSpaceController {
             @RequestParam final String currentDate)
     {
         try {
-            Date date = validateDate(currentDate, DATE_PATTERN);
+            Date date = validateDate(currentDate, constants.getTimeFormat());
             if(date != null)
             {
                 return new HttpEntity(parkingSpaceManagement.checkVehicle(registrationNumber, date));
@@ -104,8 +96,9 @@ public class ParkingSpaceController {
             {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception e) {
-
+        }
+        catch (Exception e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -115,9 +108,8 @@ public class ParkingSpaceController {
             @PathVariable final String registrationNumber,
             @RequestParam final String timeStamp)
     {
-
         try {
-            Date date = validateDate(timeStamp, DATE_PATTERN);
+            Date date = validateDate(timeStamp, constants.getTimeFormat());
             if(date != null)
             {
                 BigDecimal fee = parkingSpaceManagement.stopParkingMeter(registrationNumber, date);
@@ -127,16 +119,17 @@ public class ParkingSpaceController {
             {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
-        } catch (IncorrectEndDateException e) {
-
+        }
+        catch (IncorrectEndDateException e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        } catch (ParkingSpaceNotFoundException e) {
-
+        }
+        catch (ParkingSpaceNotFoundException e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-
+        }
+        catch (Exception e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -146,7 +139,7 @@ public class ParkingSpaceController {
             @RequestParam final String date)
     {
         try {
-            Date tempDate = validateDate(date, TIME_PATTERN);
+            Date tempDate = validateDate(date, constants.getDayFormat());
 
             if(date != null) {
 
@@ -155,8 +148,9 @@ public class ParkingSpaceController {
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception e) {
-
+        }
+        catch (Exception e)
+        {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
