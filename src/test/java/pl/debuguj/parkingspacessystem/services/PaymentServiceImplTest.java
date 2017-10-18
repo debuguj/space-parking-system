@@ -52,19 +52,19 @@ public class PaymentServiceImplTest {
         Currency c = Currency.USD;
         paymentService.setCurrency(c);
 
-        assertEquals("Should have the same currency", c, paymentService.getCurrency());
+        assertEquals( c, paymentService.getCurrency());
     }
 
     @Test
     public void testCorrectFeeReturn() throws Exception {
 
-        //TODO: more parametrized test data
+        //TODO: more parametrized tests
 
         BigDecimal fee = new BigDecimal("3.0");
 
         BigDecimal feeFromService = paymentService.getFee(parkingSpace);
 
-        assertEquals("Should return fee equals 3.0", fee, feeFromService);
+        assertEquals(fee, feeFromService);
 
     }
 

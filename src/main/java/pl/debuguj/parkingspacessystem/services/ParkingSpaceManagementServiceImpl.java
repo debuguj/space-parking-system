@@ -35,7 +35,7 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
 
         Optional<ParkingSpace> ps = parkingSpaceDao.findByRegistrationNo(registrationNumber);
 
-        if(ps.isPresent())
+        if(!ps.isPresent())
             return false;
         return currentDate.after(ps.get().getBeginTime())
                 && currentDate.before(ps.get().getEndTime());
