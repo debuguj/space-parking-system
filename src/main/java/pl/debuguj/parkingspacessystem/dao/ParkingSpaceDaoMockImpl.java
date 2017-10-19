@@ -27,7 +27,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
         if(!ps.isPresent())
             listParkingSpaces.add(parkingSpace);
         else
-            throw new CarRegisteredInSystemException();
+            throw new CarRegisteredInSystemException("Car is registered into system");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
         if(ps.isPresent())
         {
             if (!timestamp.after(ps.get().getBeginTime())) {
-                throw new IncorrectEndDateException();
+                throw new IncorrectEndDateException("Incorrect update time");
             }
 
             listParkingSpaces
@@ -65,7 +65,7 @@ public class ParkingSpaceDaoMockImpl implements ParkingSpaceDao {
 
             return findByRegistrationNo(registrationNumber);
         }
-        throw new ParkingSpaceNotFoundException();
+        throw new ParkingSpaceNotFoundException("Parking space not found");
     }
 
     @Override

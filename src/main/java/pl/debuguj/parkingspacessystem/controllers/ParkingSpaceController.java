@@ -15,6 +15,7 @@ import pl.debuguj.parkingspacessystem.config.DriverTypeConverter;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
 import pl.debuguj.parkingspacessystem.enums.DriverType;
 import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
+import pl.debuguj.parkingspacessystem.exceptions.IncorrectDateException;
 import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
 import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
@@ -40,118 +41,83 @@ public class ParkingSpaceController {
     @Autowired
     private Constants constants;
 
-
     public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
         this.parkingSpaceManagement = parkingSpaceManagement;
-
     }
 
     @PostMapping( value = URI_START_METER + "/{registrationNumber:[0-9]{5}}" )
-    public HttpEntity<BigDecimal> startParkingMeter(
+    public HttpEntity<?> startParkingMeter(
             @PathVariable() final String registrationNumber,
             @RequestParam() final DriverType driverType,
             @RequestParam() final String startTime,
-            @RequestParam() final String stopTime)  {
+            @RequestParam() final String stopTime)
+                throws IncorrectEndDateException, CarRegisteredInSystemException, IncorrectDateException
+    {
+        Date begin = validateDate(startTime, constants.getTimeFormat());
+        Date end = validateDate(stopTime, constants.getTimeFormat());
 
-        try {
-            Date begin = validateDate(startTime, constants.getTimeFormat());
-            Date end = validateDate(stopTime, constants.getTimeFormat());
+        if(begin != null && end != null)
+        {
+            ParkingSpace ps = new ParkingSpace(registrationNumber, begin, end);
+            ps.setDriverType(driverType);
 
-            if(begin != null && end != null)
-            {
-                ParkingSpace ps = new ParkingSpace(registrationNumber, begin, end);
-                ps.setDriverType(driverType);
-
-                return new HttpEntity<>( parkingSpaceManagement.reserveParkingSpace(ps));
-            } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
-        catch (IncorrectEndDateException e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        catch (CarRegisteredInSystemException e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>( parkingSpaceManagement.reserveParkingSpace(ps), HttpStatus.OK);
+        } else {
+            throw new IncorrectDateException("Incorrect date format");
         }
     }
 
     @GetMapping(value = URI_CHECK_VEHICLE + "/{registrationNumber:[0-9]{5}}")
-    public HttpEntity<Boolean> checkVehicle(
+    public HttpEntity<?> checkVehicle(
             @PathVariable final String registrationNumber,
             @RequestParam final String currentDate)
+            throws IncorrectDateException
     {
-        try {
-            Date date = validateDate(currentDate, constants.getTimeFormat());
-            if(date != null)
-            {
-                return new HttpEntity(parkingSpaceManagement.checkVehicle(registrationNumber, date));
-            }
-            else
-            {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
-        catch (Exception e)
+        Date date = validateDate(currentDate, constants.getTimeFormat());
+
+        if(date != null)
         {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            boolean b = parkingSpaceManagement.checkVehicle(registrationNumber, date);
+            return new ResponseEntity<>(b, HttpStatus.OK);
+        }
+        else {
+            throw new IncorrectDateException("Incorrect date format");
         }
     }
 
     @PutMapping(value = URI_STOP_METER + "/{registrationNumber:[0-9]{5}}")
-    public HttpEntity<BigDecimal> stopParkingMeter(
+    public HttpEntity<?> stopParkingMeter(
             @PathVariable final String registrationNumber,
             @RequestParam final String timeStamp)
+            throws IncorrectEndDateException, IncorrectDateException, ParkingSpaceNotFoundException
     {
-        try {
-            Date date = validateDate(timeStamp, constants.getTimeFormat());
-            if(date != null)
-            {
-                BigDecimal fee = parkingSpaceManagement.stopParkingMeter(registrationNumber, date);
-                return new HttpEntity(fee);
-            }
-            else
-            {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
-        catch (IncorrectEndDateException e)
+
+        Date date = validateDate(timeStamp, constants.getTimeFormat());
+
+        if(date != null)
         {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            BigDecimal fee = parkingSpaceManagement.stopParkingMeter(registrationNumber, date);
+            return new ResponseEntity<>(fee, HttpStatus.OK);
         }
-        catch (ParkingSpaceNotFoundException e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception e)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        else {
+            throw new IncorrectDateException("Incorrect date format");
         }
     }
 
     @GetMapping(value = URI_CHECK_INCOME_PER_DAY)
-    public HttpEntity<BigDecimal> checkIncomePerDay(
+    public HttpEntity<?> checkIncomePerDay(
             @RequestParam final String date)
+            throws IncorrectDateException
     {
-        try {
-            Date tempDate = validateDate(date, constants.getDayFormat());
+        Date tempDate = validateDate(date, constants.getDayFormat());
 
-            if(date != null) {
-
-                BigDecimal sum = parkingSpaceManagement.getIncomePerDay(tempDate);
-                return new HttpEntity(sum);
-            } else {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }
-        catch (Exception e)
+        if(date != null)
         {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            BigDecimal sum = parkingSpaceManagement.getIncomePerDay(tempDate);
+            return new ResponseEntity<>(sum, HttpStatus.OK);
+        }
+        else {
+            throw new IncorrectDateException("Incorrect date format");
         }
     }
 
@@ -161,12 +127,19 @@ public class ParkingSpaceController {
     }
 
 
-    private Date validateDate(String possibleDate, String format){
+    private Date validateDate(String possibleDate, String format)
+        throws IncorrectDateException {
 
-        DateTimeFormatter fmt =
-            org.joda.time.format.DateTimeFormat.forPattern(format);
+        Date date = null;
+        try {
+            DateTimeFormatter fmt =
+                    org.joda.time.format.DateTimeFormat.forPattern(format);
+            date = fmt.parseDateTime(possibleDate).toDate();
+        } catch (Exception e) {
+            throw new IncorrectDateException("Incorrect date format");
 
-        return fmt.parseDateTime(possibleDate).toDate();
+        }
+        return date;
 
     }
 }

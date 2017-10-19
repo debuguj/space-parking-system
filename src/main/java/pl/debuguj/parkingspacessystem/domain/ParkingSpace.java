@@ -73,7 +73,7 @@ public class ParkingSpace implements Space {
     private Date checkEndDate(Date newTime) throws IncorrectEndDateException {
         if(newTime.compareTo(beginDate) > 0)
             return newTime;
-        throw new IncorrectEndDateException();
+        throw new IncorrectEndDateException("Date "+newTime+" should be after " + beginDate);
     }
 
     @Override

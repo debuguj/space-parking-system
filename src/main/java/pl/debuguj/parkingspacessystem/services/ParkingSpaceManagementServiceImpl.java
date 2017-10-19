@@ -44,7 +44,8 @@ public class ParkingSpaceManagementServiceImpl implements ParkingSpaceManagement
     }
 
     @Override
-    public BigDecimal stopParkingMeter(final String registrationNumber, final Date date) throws IncorrectEndDateException, ParkingSpaceNotFoundException {
+    public BigDecimal stopParkingMeter(final String registrationNumber, final Date date)
+            throws IncorrectEndDateException, ParkingSpaceNotFoundException {
 
         Optional<ParkingSpace> ps = parkingSpaceDao.updateEndTime(registrationNumber, date);
         if(ps.isPresent())
