@@ -4,7 +4,6 @@ package pl.debuguj.parkingspacessystem.controllers;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +36,11 @@ public class ParkingSpaceController {
     public static final String URI_CHECK_INCOME_PER_DAY = "/checkIncomePerDay";
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
+    private final Constants constants;
 
-    @Autowired
-    private Constants constants;
-
-    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
+    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement, Constants constants) {
         this.parkingSpaceManagement = parkingSpaceManagement;
+        this.constants = constants;
     }
 
     @PostMapping( value = URI_START_METER + "/{registrationNumber:[0-9]{5}}" )
@@ -130,14 +128,13 @@ public class ParkingSpaceController {
     private Date validateDate(String possibleDate, String format)
         throws IncorrectDateException {
 
-        Date date = null;
+        Date date;
         try {
             DateTimeFormatter fmt =
                     org.joda.time.format.DateTimeFormat.forPattern(format);
             date = fmt.parseDateTime(possibleDate).toDate();
         } catch (Exception e) {
             throw new IncorrectDateException("Incorrect date format");
-
         }
         return date;
 
