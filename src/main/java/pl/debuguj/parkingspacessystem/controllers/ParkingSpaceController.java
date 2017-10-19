@@ -60,7 +60,8 @@ public class ParkingSpaceController {
             ps.setDriverType(driverType);
 
             return new ResponseEntity<>( parkingSpaceManagement.reserveParkingSpace(ps), HttpStatus.OK);
-        } else {
+        }
+        else {
             throw new IncorrectDateException("Incorrect date format");
         }
     }
@@ -89,7 +90,6 @@ public class ParkingSpaceController {
             @RequestParam final String timeStamp)
             throws IncorrectEndDateException, IncorrectDateException, ParkingSpaceNotFoundException
     {
-
         Date date = validateDate(timeStamp, constants.getTimeFormat());
 
         if(date != null)
@@ -133,10 +133,10 @@ public class ParkingSpaceController {
             DateTimeFormatter fmt =
                     org.joda.time.format.DateTimeFormat.forPattern(format);
             date = fmt.parseDateTime(possibleDate).toDate();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IncorrectDateException("Incorrect date format");
         }
         return date;
-
     }
 }

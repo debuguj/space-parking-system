@@ -336,9 +336,9 @@ public class ParkingSpaceControllerTest {
                 .andDo(print())
                 .andReturn();
     }
+
     @Test
     public void shouldReturnIncomeEquals0PerDaySecond() throws Exception {
-
         //GIVEN
         String getVehicleStatus = new StringBuilder()
                 .append(ParkingSpaceController.URI_CHECK_INCOME_PER_DAY)
@@ -346,7 +346,7 @@ public class ParkingSpaceControllerTest {
                 .toString();
         //WHEN
         mockMvc.perform(get(getVehicleStatus))
-                //THEN
+        //THEN
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().string("0.0"))

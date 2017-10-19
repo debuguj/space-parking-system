@@ -5,11 +5,10 @@ import org.joda.time.Minutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pl.debuguj.parkingspacessystem.enums.Currency;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.enums.Currency;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 /**
  * Created by grzesiek on 10.10.17.

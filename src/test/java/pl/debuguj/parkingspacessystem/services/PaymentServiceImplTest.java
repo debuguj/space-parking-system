@@ -1,10 +1,8 @@
 package pl.debuguj.parkingspacessystem.services;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -15,8 +13,6 @@ import pl.debuguj.parkingspacessystem.enums.DriverType;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 public class PaymentServiceImplTest {
 
-
     @Autowired
     PaymentService paymentService;
 
@@ -37,21 +32,15 @@ public class PaymentServiceImplTest {
 
     private static SimpleDateFormat timeDateFormat;
 
-    private ParkingSpace parkingSpace;
     private String registrationNo;
-    private Date beginDate;
-    private Date endDate;
-
 
     @Before
     public void setup() throws Exception {
         timeDateFormat = new SimpleDateFormat(constants.getTimeFormat());
+
         paymentService.setCurrency(Currency.PLN);
 
         registrationNo = "12345";
-        beginDate = timeDateFormat.parse("2017-10-12 11:15:48");
-        endDate = timeDateFormat.parse("2017-10-12 12:35:12");
-        parkingSpace = new ParkingSpace(registrationNo, beginDate, endDate);
     }
 
     @Test
