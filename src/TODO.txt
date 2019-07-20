@@ -1,0 +1,3 @@
+- Java Bean Validation
+- updata data model, rem interfaces
+- add sending data in json and xml not uri
