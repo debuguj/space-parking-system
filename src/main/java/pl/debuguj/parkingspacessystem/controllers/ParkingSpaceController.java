@@ -1,9 +1,11 @@
 package pl.debuguj.parkingspacessystem.controllers;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +28,8 @@ import java.util.Date;
  * Created by grzesiek on 07.10.17.
  */
 @RestController
+@Slf4j
 public class ParkingSpaceController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
 
     public static final String URI_START_METER = "/startMeter";
     public static final String URI_CHECK_VEHICLE = "/checkVehicle";
@@ -45,10 +46,10 @@ public class ParkingSpaceController {
 
     @PostMapping( value = URI_START_METER + "/{registrationNumber:[0-9]{5}}" )
     public HttpEntity<?> startParkingMeter(
-            @PathVariable() final String registrationNumber,
-            @RequestParam() final DriverType driverType,
-            @RequestParam() final String startTime,
-            @RequestParam() final String stopTime)
+            @PathVariable() String registrationNumber,
+            @RequestParam() DriverType driverType,
+            @RequestParam() String startTime,
+            @RequestParam() String stopTime)
                 throws IncorrectEndDateException, CarRegisteredInSystemException, IncorrectDateException
     {
         Date begin = validateDate(startTime, constants.getTimeFormat());
@@ -68,26 +69,23 @@ public class ParkingSpaceController {
 
     @GetMapping(value = URI_CHECK_VEHICLE + "/{registrationNumber:[0-9]{5}}")
     public HttpEntity<?> checkVehicle(
-            @PathVariable final String registrationNumber,
-            @RequestParam final String currentDate)
-            throws IncorrectDateException
-    {
+            @PathVariable String registrationNumber,
+            @RequestParam String currentDate)
+            throws IncorrectDateException {
         Date date = validateDate(currentDate, constants.getTimeFormat());
 
-        if(date != null)
-        {
+        if (date != null) {
             boolean b = parkingSpaceManagement.checkVehicle(registrationNumber, date);
             return new ResponseEntity<>(b, HttpStatus.OK);
-        }
-        else {
+        } else {
             throw new IncorrectDateException("Incorrect date format");
         }
     }
 
     @PutMapping(value = URI_STOP_METER + "/{registrationNumber:[0-9]{5}}")
     public HttpEntity<?> stopParkingMeter(
-            @PathVariable final String registrationNumber,
-            @RequestParam final String timeStamp)
+            @PathVariable String registrationNumber,
+            @RequestParam String timeStamp)
             throws IncorrectEndDateException, IncorrectDateException, ParkingSpaceNotFoundException
     {
         Date date = validateDate(timeStamp, constants.getTimeFormat());
@@ -104,7 +102,7 @@ public class ParkingSpaceController {
 
     @GetMapping(value = URI_CHECK_INCOME_PER_DAY)
     public HttpEntity<?> checkIncomePerDay(
-            @RequestParam final String date)
+            @RequestParam String date)
             throws IncorrectDateException
     {
         Date tempDate = validateDate(date, constants.getDayFormat());
@@ -135,6 +133,7 @@ public class ParkingSpaceController {
             date = fmt.parseDateTime(possibleDate).toDate();
         }
         catch (Exception e) {
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simple exception test", e);
             throw new IncorrectDateException("Incorrect date format");
         }
         return date;

@@ -13,6 +13,7 @@ import java.util.Date;
 /**
  * Created by grzesiek on 07.10.17.
  */
+
 public class ParkingSpace implements Space {
 
     private static final Logger logger = LoggerFactory.getLogger(ParkingSpaceController.class);
