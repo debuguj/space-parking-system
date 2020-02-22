@@ -11,7 +11,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import pl.debuguj.parkingspacessystem.ParkingspacessystemApplication;
+import pl.debuguj.parkingspacessystem.ParkingSpacesSystemApplication;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by grzesiek on 14.10.17.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ParkingspacessystemApplication.class)
+@SpringBootTest(classes = ParkingSpacesSystemApplication.class)
 @WebAppConfiguration
 public class ParkingSpaceControllerTest {
 
