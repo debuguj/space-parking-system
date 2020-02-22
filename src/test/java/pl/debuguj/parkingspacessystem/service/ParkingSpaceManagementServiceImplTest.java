@@ -1,16 +1,18 @@
-package pl.debuguj.parkingspacessystem.services;
+package pl.debuguj.parkingspacessystem.service;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.debuguj.parkingspacessystem.config.Constants;
-import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.repository.impl.ParkingSpaceRepoStub;
+import pl.debuguj.parkingspacessystem.service.enums.DriverType;
+import pl.debuguj.parkingspacessystem.service.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
+import pl.debuguj.parkingspacessystem.service.impl.ParkingSpaceManagementServiceImpl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -19,17 +21,18 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 /**
- * Created by grzesiek on 12.10.17.
+ * Created by GB on 12.10.17.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ParkingSpaceManagementServiceImplTest {
 
-    @Autowired
-    ParkingSpaceManagementService parkingSpaceManagementService;
+    private ParkingSpaceRepoStub parkingSpaceRepoStub = new ParkingSpaceRepoStub();
+    private PaymentService paymentService = Mockito.mock(PaymentService.class);
+    private ParkingSpaceManagementServiceImpl parkingSpaceManagementService = new ParkingSpaceManagementServiceImpl(parkingSpaceRepoStub, paymentService);
 
-    @Autowired
-    private Constants constants;
+    //@Autowired
+    //private Constants constants;
 
     private static SimpleDateFormat timeDateFormat;
 
@@ -43,45 +46,43 @@ public class ParkingSpaceManagementServiceImplTest {
     @Before
     public void before() throws Exception{
 
-        timeDateFormat = new SimpleDateFormat(constants.getTimeFormat());
-        dayDateFormat = new SimpleDateFormat(constants.getDayFormat());
+        timeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         registrationNo = "12345";
         beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         endDate = timeDateFormat.parse("2017-10-13 13:35:12");
-        parkingSpace = new ParkingSpace(registrationNo, beginDate, endDate);
+        parkingSpace = new ParkingSpace(registrationNo, DriverType.REGULAR, beginDate, null);
 
-        parkingSpaceManagementService.removeAllParkingSpaces();
-
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("66666",
-                timeDateFormat.parse("2017-10-13 10:25:48"),
-                timeDateFormat.parse("2017-10-13 10:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("77777",
-                timeDateFormat.parse("2017-10-13 12:25:48"),
-                timeDateFormat.parse("2017-10-13 14:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("88888",
-                timeDateFormat.parse("2017-10-13 15:25:48"),
-                timeDateFormat.parse("2017-10-13 16:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("99999",
-                timeDateFormat.parse("2017-10-14 20:25:48"),
-                timeDateFormat.parse("2017-10-14 21:35:12")));
-        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("99998",
-                timeDateFormat.parse("2017-10-14 11:15:48"),
-                timeDateFormat.parse("2017-10-14 12:35:12")));
+//        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("66666",
+//                timeDateFormat.parse("2017-10-13 10:25:48"),
+//                timeDateFormat.parse("2017-10-13 10:35:12")));
+//        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("77777",
+//                timeDateFormat.parse("2017-10-13 12:25:48"),
+//                timeDateFormat.parse("2017-10-13 14:35:12")));
+//        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("88888",
+//                timeDateFormat.parse("2017-10-13 15:25:48"),
+//                timeDateFormat.parse("2017-10-13 16:35:12")));
+//        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("99999",
+//                timeDateFormat.parse("2017-10-14 20:25:48"),
+//                timeDateFormat.parse("2017-10-14 21:35:12")));
+//        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("99998",
+//                timeDateFormat.parse("2017-10-14 11:15:48"),
+//                timeDateFormat.parse("2017-10-14 12:35:12")));
 
     }
 
     @After
     public void after(){
-        parkingSpaceManagementService.removeAllParkingSpaces();
+
     }
 
 
     @Test
     public void testCorrectFeeEstimation() throws Exception {
-
         BigDecimal fee = new BigDecimal("7.0");
-        BigDecimal feeFromService = parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
+        parkingSpaceManagementService.reserveParkingSpace(parkingSpace);
+        BigDecimal feeFromService =parkingSpaceManagementService.stopParkingMeter(parkingSpace.getCarRegistrationNumber(), endDate);
 
         assertEquals("Parking fee should be the same", fee, feeFromService);
     }
@@ -165,22 +166,22 @@ public class ParkingSpaceManagementServiceImplTest {
         assertEquals("Income should be the same", income, incomeFromSystem);
     }
 
-    @Test
-    public void testGettingCountOfReservedSpaces() throws Exception {
-
-        int sizeFromSystem = parkingSpaceManagementService.getReservedSpacesCount();
-
-        assertEquals("Returned size should be 5",5 ,sizeFromSystem);
-    }
-
-    @Test
-    public void testRemovingAllParkingSpacesFromSystem() throws Exception {
-
-        parkingSpaceManagementService.removeAllParkingSpaces();
-
-        int size = parkingSpaceManagementService.getReservedSpacesCount();
-
-        assertEquals("List should be empty size==0", 0,size);
-    }
+//    @Test
+//    public void testGettingCountOfReservedSpaces() throws Exception {
+//
+//        int sizeFromSystem = parkingSpaceManagementService.getReservedSpacesCount();
+//
+//        assertEquals("Returned size should be 5",5 ,sizeFromSystem);
+//    }
+//
+//    @Test
+//    public void testRemovingAllParkingSpacesFromSystem() throws Exception {
+//
+//        parkingSpaceManagementService.removeAllParkingSpaces();
+//
+//        int size = parkingSpaceManagementService.getReservedSpacesCount();
+//
+//        assertEquals("List should be empty size==0", 0,size);
+//    }
 
 }

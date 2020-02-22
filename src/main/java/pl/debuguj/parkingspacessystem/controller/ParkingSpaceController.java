@@ -1,27 +1,23 @@
-package pl.debuguj.parkingspacessystem.controllers;
+package pl.debuguj.parkingspacessystem.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import pl.debuguj.parkingspacessystem.config.Constants;
 import pl.debuguj.parkingspacessystem.config.DriverTypeConverter;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.enums.DriverType;
-import pl.debuguj.parkingspacessystem.exceptions.CarRegisteredInSystemException;
-import pl.debuguj.parkingspacessystem.exceptions.IncorrectDateException;
-import pl.debuguj.parkingspacessystem.exceptions.IncorrectEndDateException;
-import pl.debuguj.parkingspacessystem.exceptions.ParkingSpaceNotFoundException;
-import pl.debuguj.parkingspacessystem.services.ParkingSpaceManagementService;
+import pl.debuguj.parkingspacessystem.service.ParkingSpaceManagementService;
+import pl.debuguj.parkingspacessystem.service.enums.DriverType;
+import pl.debuguj.parkingspacessystem.service.exceptions.IncorrectDateException;
+import pl.debuguj.parkingspacessystem.service.exceptions.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.service.exceptions.ParkingSpaceNotFoundException;
+import pl.debuguj.parkingspacessystem.service.exceptions.VehicleIsAlreadyActiveInSystemException;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -37,11 +33,15 @@ public class ParkingSpaceController {
     public static final String URI_CHECK_INCOME_PER_DAY = "/checkIncomePerDay";
 
     private final ParkingSpaceManagementService parkingSpaceManagement;
-    private final Constants constants;
+    private static SimpleDateFormat timeDateFormat;
+    private static SimpleDateFormat dayDateFormat;
 
-    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement, Constants constants) {
+    public ParkingSpaceController(ParkingSpaceManagementService parkingSpaceManagement) {
         this.parkingSpaceManagement = parkingSpaceManagement;
-        this.constants = constants;
+
+        timeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     }
 
     @PostMapping( value = URI_START_METER + "/{registrationNumber:[0-9]{5}}" )
@@ -50,17 +50,16 @@ public class ParkingSpaceController {
             @RequestParam() DriverType driverType,
             @RequestParam() String startTime,
             @RequestParam() String stopTime)
-                throws IncorrectEndDateException, CarRegisteredInSystemException, IncorrectDateException
+                throws VehicleIsAlreadyActiveInSystemException, IncorrectDateException
     {
-        Date begin = validateDate(startTime, constants.getTimeFormat());
-        Date end = validateDate(stopTime, constants.getTimeFormat());
+        Date begin = validateDate(startTime, timeDateFormat);
+        Date end = validateDate(stopTime, timeDateFormat);
 
         if(begin != null && end != null)
         {
-            ParkingSpace ps = new ParkingSpace(registrationNumber, begin, end);
-            ps.setDriverType(driverType);
-
-            return new ResponseEntity<>( parkingSpaceManagement.reserveParkingSpace(ps), HttpStatus.OK);
+            ParkingSpace ps = new ParkingSpace(registrationNumber, driverType, begin, null);
+            parkingSpaceManagement.reserveParkingSpace(ps);
+            return new ResponseEntity<>(ps , HttpStatus.OK);
         }
         else {
             throw new IncorrectDateException("Incorrect date format");
@@ -72,7 +71,7 @@ public class ParkingSpaceController {
             @PathVariable String registrationNumber,
             @RequestParam String currentDate)
             throws IncorrectDateException {
-        Date date = validateDate(currentDate, constants.getTimeFormat());
+        Date date = validateDate(currentDate, timeDateFormat);
 
         if (date != null) {
             boolean b = parkingSpaceManagement.checkVehicle(registrationNumber, date);
@@ -88,7 +87,7 @@ public class ParkingSpaceController {
             @RequestParam String timeStamp)
             throws IncorrectEndDateException, IncorrectDateException, ParkingSpaceNotFoundException
     {
-        Date date = validateDate(timeStamp, constants.getTimeFormat());
+        Date date = validateDate(timeStamp, timeDateFormat);
 
         if(date != null)
         {
@@ -105,7 +104,7 @@ public class ParkingSpaceController {
             @RequestParam String date)
             throws IncorrectDateException
     {
-        Date tempDate = validateDate(date, constants.getDayFormat());
+        Date tempDate = validateDate(date, dayDateFormat);
 
         if(date != null)
         {
@@ -123,14 +122,15 @@ public class ParkingSpaceController {
     }
 
 
-    private Date validateDate(String possibleDate, String format)
+    private Date validateDate(String possibleDate, SimpleDateFormat format)
         throws IncorrectDateException {
 
         Date date;
         try {
-            DateTimeFormatter fmt =
-                    org.joda.time.format.DateTimeFormat.forPattern(format);
-            date = fmt.parseDateTime(possibleDate).toDate();
+            date = format.parse(possibleDate);
+//            DateTimeFormatter fmt =
+//                    org.joda.time.format.DateTimeFormat.forPattern(format);
+//            date = fmt.parseDateTime(possibleDate).toDate();
         }
         catch (Exception e) {
             //throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Simple exception test", e);

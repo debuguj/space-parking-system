@@ -1,15 +1,16 @@
-package pl.debuguj.parkingspacessystem.services;
+package pl.debuguj.parkingspacessystem.service;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.debuguj.parkingspacessystem.config.Constants;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.enums.Currency;
-import pl.debuguj.parkingspacessystem.enums.DriverType;
+import pl.debuguj.parkingspacessystem.service.enums.Currency;
+import pl.debuguj.parkingspacessystem.service.enums.DriverType;
+import pl.debuguj.parkingspacessystem.service.impl.PaymentServiceImpl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -18,35 +19,31 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by grzesiek on 12.10.17.
+ * Created by GB on 12.10.17.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@PropertySource("classpath:constants.properties")
 public class PaymentServiceImplTest {
 
-    @Autowired
-    PaymentService paymentService;
+    private final PaymentServiceImpl paymentService = new PaymentServiceImpl();
+    @Value("${format.time}")
+    private String timeFormat;
 
-    @Autowired
-    private Constants constants;
+    private SimpleDateFormat timeDateFormat;
 
-    private static SimpleDateFormat timeDateFormat;
-
-    private String registrationNo;
+    private String registrationNo = "12345";
 
     @Before
     public void setup() throws Exception {
-        timeDateFormat = new SimpleDateFormat(constants.getTimeFormat());
-
+        timeDateFormat = new SimpleDateFormat(timeFormat);
         paymentService.setCurrency(Currency.PLN);
-
-        registrationNo = "12345";
     }
 
     @Test
     public void shouldReturnCorrectCurrency() throws Exception {
-        Currency c = Currency.USD;
-        paymentService.setCurrency(c);
+        final Currency c = Currency.USD;
+        paymentService.setCurrency(Currency.USD);
 
         assertEquals( c, paymentService.getCurrency());
     }
@@ -71,7 +68,7 @@ public class PaymentServiceImplTest {
         {
             Date start = timeDateFormat.parse(beginDates[i]);
             Date stop = timeDateFormat.parse(endDates[i]);
-            ParkingSpace ps = new ParkingSpace(registrationNo, start, stop);
+            ParkingSpace ps = new ParkingSpace(registrationNo,DriverType.REGULAR, start, stop);
 
             BigDecimal fee = paymentService.getFee(ps);
 
@@ -99,8 +96,7 @@ public class PaymentServiceImplTest {
         {
             Date start = timeDateFormat.parse(beginDates[i]);
             Date stop = timeDateFormat.parse(endDates[i]);
-            ParkingSpace ps = new ParkingSpace(registrationNo, start, stop);
-            ps.setDriverType(DriverType.VIP);
+            ParkingSpace ps = new ParkingSpace(registrationNo, DriverType.VIP,start, stop);
 
             BigDecimal fee = paymentService.getFee(ps);
 

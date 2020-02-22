@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.controllers;
+package pl.debuguj.parkingspacessystem.controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import pl.debuguj.parkingspacessystem.ParkingspacessystemApplication;
@@ -17,8 +16,6 @@ import pl.debuguj.parkingspacessystem.ParkingspacessystemApplication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by grzesiek on 14.10.17.

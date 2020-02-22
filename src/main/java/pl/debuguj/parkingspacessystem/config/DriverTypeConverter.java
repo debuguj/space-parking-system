@@ -1,6 +1,6 @@
 package pl.debuguj.parkingspacessystem.config;
 
-import pl.debuguj.parkingspacessystem.enums.DriverType;
+import pl.debuguj.parkingspacessystem.service.enums.DriverType;
 
 import java.beans.PropertyEditorSupport;
 

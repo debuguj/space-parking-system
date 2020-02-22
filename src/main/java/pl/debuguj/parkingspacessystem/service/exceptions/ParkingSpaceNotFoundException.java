@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.exceptions;
+package pl.debuguj.parkingspacessystem.service.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ParkingSpaceNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;
 
-    public ParkingSpaceNotFoundException(String message) {
-        super(message);
+    public ParkingSpaceNotFoundException() {
     }
 }

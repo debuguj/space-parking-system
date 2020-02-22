@@ -1,21 +1,22 @@
-package pl.debuguj.parkingspacessystem.services;
+package pl.debuguj.parkingspacessystem.service.impl;
 
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.enums.Currency;
+import pl.debuguj.parkingspacessystem.service.PaymentService;
+import pl.debuguj.parkingspacessystem.service.enums.Currency;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Created by grzesiek on 10.10.17.
  */
+@Slf4j
 @Service
 public class PaymentServiceImpl implements PaymentService {
-    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
     private Currency currency;
 
@@ -76,10 +77,11 @@ public class PaymentServiceImpl implements PaymentService {
      */
     private static BigDecimal getPeriod(ParkingSpace ps)
     {
-        DateTime dt1 = new DateTime(ps.getBeginTime());
-        DateTime dt2 = new DateTime(ps.getEndTime());
+        LocalDateTime from = ps.getBeginDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime to= ps.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-        BigDecimal minutes = new BigDecimal(Minutes.minutesBetween(dt1, dt2).getMinutes());
+        //BigDecimal minutes = new BigDecimal(Minutes.minutesBetween(dt1, dt2).getMinutes());
+        BigDecimal minutes = new BigDecimal(from.until(to, ChronoUnit.MINUTES));
         BigDecimal div = new BigDecimal(60);
 
         return minutes.divide(div, BigDecimal.ROUND_CEILING);

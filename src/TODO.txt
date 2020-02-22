@@ -1,3 +1,15 @@
+BASIC
+- lombok
 - Java Bean Validation
-- updata data model, rem interfaces
+- update data model
+    - rem interfaces,
+    -
 - add sending data in json and xml not uri
+    - test for json
+- add 2 profile: with h2 database, without database
+- add gui eg. thymeleaf
+
+EXTRA
+- add some jms feature (activemq or rabbitmq)
+- simple client for test ??
+-

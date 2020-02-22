@@ -1,7 +1,7 @@
-package pl.debuguj.parkingspacessystem.services;
+package pl.debuguj.parkingspacessystem.service;
 
 import pl.debuguj.parkingspacessystem.domain.ParkingSpace;
-import pl.debuguj.parkingspacessystem.enums.Currency;
+import pl.debuguj.parkingspacessystem.service.enums.Currency;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.enums;
+package pl.debuguj.parkingspacessystem.service.enums;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
