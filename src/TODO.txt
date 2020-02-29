@@ -1,9 +1,6 @@
 BASIC
-- lombok
+
 - Java Bean Validation
-- update data model
-    - rem interfaces,
-    -
 - add sending data in json and xml not uri
     - test for json
 - add 2 profile: with h2 database, without database
