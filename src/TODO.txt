@@ -1,5 +1,7 @@
 BASIC
-
+- test for domain classes
+- remove exceptions?
+-
 - Java Bean Validation
 - add sending data in json and xml not uri
     - test for json
