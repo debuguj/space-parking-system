@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.spaces.impl;
+package pl.debuguj.parkingspacessystem.spaces;
 
 import org.springframework.stereotype.Repository;
 import pl.debuguj.parkingspacessystem.spaces.SpaceActive;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * Created by GB on 07.10.17.
  */
 @Repository
-public class ParkingSpaceRepoStub implements SpaceRepo {
+public class SpaceRepoImplStub implements SpaceRepo {
 
     private static final int MAX_ACTIVE_PARKING_SPACE = 1_000;
 
@@ -66,9 +66,5 @@ public class ParkingSpaceRepoStub implements SpaceRepo {
     private Date createEndDate(final Date d) {
         final LocalDateTime endDateTime = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         return Date.from(endDateTime.plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public void removeAll() {
-        mapParkingSpacesFinished.clear();
     }
 }

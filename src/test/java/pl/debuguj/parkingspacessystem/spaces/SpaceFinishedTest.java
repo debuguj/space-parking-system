@@ -12,28 +12,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpaceFinishedTest {
 
-    private SpaceFinished spaceFinished;
-
-    private SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    private final String registrationNo = "12345";
+    private SpaceFinished parkingSpaceFinished;
+    private final SimpleDateFormat simpleDataTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private final String registrationNo = "WZE12345";
+    private Date startDate;
+    private Date finishDate;
 
     @BeforeEach
     public void setup() throws Exception {
-
-        Date begin = timeDateFormat.parse("2017-10-12 10:15:10");
-        Date end = timeDateFormat.parse("2017-10-12 14:15:10");
-        spaceFinished = new SpaceFinished(registrationNo, DriverType.REGULAR, begin, end);
+        startDate = simpleDataTimeFormatter.parse("2017-10-12T10:15:10");
+        finishDate = simpleDataTimeFormatter.parse("2017-10-12T14:15:10");
+        parkingSpaceFinished = new SpaceFinished(registrationNo, DriverType.REGULAR, startDate, finishDate);
     }
 
     @Test
-    public void testSerialization() throws Exception {
-        SpaceFinished other = (SpaceFinished) SerializationUtils.deserialize(SerializationUtils.serialize(spaceFinished));
+    public void testSerialization() {
+        SpaceFinished other = (SpaceFinished) SerializationUtils.deserialize(SerializationUtils.serialize(parkingSpaceFinished));
 
-        assertThat(other.getUuid()).isEqualTo(spaceFinished.getUuid());
-        assertThat(other.getVehicleRegistrationNumber()).isEqualTo(spaceFinished.getVehicleRegistrationNumber());
-        assertThat(other.getDriverType()).isEqualTo(spaceFinished.getDriverType());
-        assertThat(other.getBeginDate()).isEqualTo(spaceFinished.getBeginDate());
-        assertThat(other.getFinishDate()).isEqualTo(spaceFinished.getFinishDate());
+        assertThat(other.getUuid()).isEqualTo(parkingSpaceFinished.getUuid());
+        assertThat(other.getVehicleRegistrationNumber()).isEqualTo(parkingSpaceFinished.getVehicleRegistrationNumber());
+        assertThat(other.getDriverType()).isEqualTo(parkingSpaceFinished.getDriverType());
+        assertThat(other.getBeginDate()).isEqualTo(parkingSpaceFinished.getBeginDate());
+        assertThat(other.getFinishDate()).isEqualTo(parkingSpaceFinished.getFinishDate());
+    }
+
+    @Test
+    public void shouldBeSetCorrectParameters() {
+        assertThat(parkingSpaceFinished.getVehicleRegistrationNumber()).isEqualTo(registrationNo);
+        assertThat(parkingSpaceFinished.getDriverType()).isEqualTo(DriverType.REGULAR);
+        assertThat(parkingSpaceFinished.getDriverType()).isNotEqualTo(DriverType.VIP);
+        assertThat(parkingSpaceFinished.getBeginDate()).isEqualTo(startDate);
+        assertThat(parkingSpaceFinished.getFinishDate()).isEqualTo(finishDate);
     }
 }

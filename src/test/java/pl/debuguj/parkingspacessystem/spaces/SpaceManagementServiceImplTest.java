@@ -9,7 +9,6 @@ import pl.debuguj.parkingspacessystem.spaces.enums.DriverType;
 import pl.debuguj.parkingspacessystem.spaces.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.spaces.exceptions.ParkingSpaceNotFoundException;
 import pl.debuguj.parkingspacessystem.spaces.exceptions.VehicleIsAlreadyActiveInSystemException;
-import pl.debuguj.parkingspacessystem.spaces.impl.SpaceManagementServiceImpl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -23,8 +22,6 @@ import static org.mockito.Mockito.when;
  * Created by GB on 12.10.17.
  */
 @RunWith(MockitoJUnitRunner.class)
-//@SpringBootTest
-
 public class SpaceManagementServiceImplTest {
 
     @Mock

@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 class PaymentCalculator {
@@ -25,19 +27,20 @@ class PaymentCalculator {
         return currency;
     }
 
-    public BigDecimal getFee(final SpaceFinished spaceFinished) {
-        if (null != spaceFinished) {
+    public Optional<BigDecimal> getFee(final SpaceFinished spaceFinished) {
+
+        if (Objects.nonNull(spaceFinished)) {
             BigDecimal fee = getBasicFee(spaceFinished);
 
-            return fee.multiply(currency.getExchangeRate()).setScale(1, BigDecimal.ROUND_CEILING);
+            return Optional.ofNullable(fee.multiply(currency.getExchangeRate()).setScale(1, BigDecimal.ROUND_CEILING));
         }
-        return null;
+        return Optional.empty();
     }
 
     private BigDecimal getBasicFee(final SpaceFinished spaceFinished) {
-        BigDecimal period = getPeriod(spaceFinished);
+        final BigDecimal period = getPeriod(spaceFinished);
         BigDecimal startSum = spaceFinished.getDriverType().getBeginValue();
-        BigDecimal factor = spaceFinished.getDriverType().getFactor();
+        final BigDecimal factor = spaceFinished.getDriverType().getFactor();
 
         int compResult = period.compareTo(BigDecimal.ONE);
 
@@ -57,7 +60,7 @@ class PaymentCalculator {
     }
 
     /**
-     * Return period round to ceil (hours)
+     * Return period rounds to ceil (hours)
      *
      * @param ps Parking space object
      * @return Period of parking time in hours
@@ -66,7 +69,6 @@ class PaymentCalculator {
         LocalDateTime from = ps.getBeginDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime to = ps.getFinishDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-        //BigDecimal minutes = new BigDecimal(Minutes.minutesBetween(dt1, dt2).getMinutes());
         BigDecimal minutes = new BigDecimal(from.until(to, ChronoUnit.MINUTES));
         BigDecimal div = new BigDecimal(60);
 

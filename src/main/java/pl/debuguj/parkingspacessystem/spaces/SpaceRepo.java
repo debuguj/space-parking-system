@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * Created by grzesiek on 07.10.17.
+ * Created by GB on 07.10.17.
  */
 public interface SpaceRepo {
 

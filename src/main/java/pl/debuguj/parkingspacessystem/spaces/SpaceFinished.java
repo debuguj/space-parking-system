@@ -3,7 +3,6 @@ package pl.debuguj.parkingspacessystem.spaces;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import pl.debuguj.parkingspacessystem.spaces.enums.DriverType;
-import pl.debuguj.parkingspacessystem.spaces.validation.ValidParkingSpaceFinished;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,7 +11,6 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
-@ValidParkingSpaceFinished
 public class SpaceFinished implements Serializable {
     private final UUID uuid = UUID.randomUUID();
     private String vehicleRegistrationNumber;

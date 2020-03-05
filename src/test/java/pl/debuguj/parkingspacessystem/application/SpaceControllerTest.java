@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -15,18 +16,29 @@ import pl.debuguj.parkingspacessystem.ParkingSpacesSystemApplication;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by grzesiek on 14.10.17.
+ * Created by GB on 14.10.17.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ParkingSpacesSystemApplication.class)
 @WebAppConfiguration
-public class ParkingSpaceControllerTest {
+
+public class SpaceControllerTest {
 
     @Autowired
     private WebApplicationContext context;
+
+    @Value("${uri.start.meter}")
+    private String uriStartMeter;
+    @Value("${uri.check.vehicle}")
+    private String uriCheckVehicle;
+    @Value("${uri.stop.meter}")
+    private String uriStopMeter;
+    @Value("${uri.check.income.per.day}")
+    private String uriCheckIncomePerDay;
 
     private MockMvc mockMvc;
 
@@ -62,7 +74,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnBadRequestBecauseOfBadDayFormat() throws Exception {
         //GIVEN
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_START_METER)
+                .append(uriStartMeter)
                 .append("/11111")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-13 10:10:12")
@@ -81,7 +93,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnBadRequestBecauseOfIncorrectDriverType() throws Exception {
         //GIVEN
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_START_METER)
+                .append(uriStartMeter)
                 .append("/11111")
                 .append("?driverType=VI")
                 .append("&startTime=2017-10-13 10:10:12")
@@ -100,7 +112,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnNotFoundBecauseOfIncorrectRegistrationNumber() throws Exception {
         //GIVEN
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_START_METER)
+                .append(uriStartMeter)
                 .append("/1111")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-13 10:10:12")
@@ -138,7 +150,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnThatVehicleIsRegisteredInSystem() throws Exception {
         //GIVEN
         String givenUrlSetData = new StringBuilder()
-                .append(SpaceController.URI_START_METER)
+                .append(uriStartMeter)
                 .append("/22222")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-15 10:10:12")
@@ -148,7 +160,7 @@ public class ParkingSpaceControllerTest {
         mockMvc.perform(post(givenUrlSetData));
 
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_CHECK_VEHICLE)
+                .append(uriCheckVehicle)
                 .append("/22222")
                 .append("?currentDate=2017-10-15 10:28:48")
                 .toString();
@@ -165,7 +177,7 @@ public class ParkingSpaceControllerTest {
     @Test
     public void shouldReturnThatVehicleIsNotRegisteredInSystem() throws Exception {
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_CHECK_VEHICLE)
+                .append(uriCheckVehicle)
                 .append("/22223")
                 .append("?currentDate=2017-10-13 10:28:48")
                 .toString();
@@ -182,7 +194,7 @@ public class ParkingSpaceControllerTest {
     @Test
     public void shouldReturnBadRequestBecauseOfBadDateFormat() throws Exception {
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_CHECK_VEHICLE)
+                .append(uriCheckVehicle)
                 .append("/22222")
                 .append("?currentDate=2017-10-13 10:28")
                 .toString();
@@ -197,7 +209,7 @@ public class ParkingSpaceControllerTest {
     @Test
     public void shouldReturnNotFoundBecauseOfBadRegistrationNumberFormat() throws Exception {
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_CHECK_VEHICLE)
+                .append(uriCheckVehicle)
                 .append("/2222")
                 .append("?currentDate=2017-10-13 10:28:24")
                 .toString();
@@ -214,7 +226,7 @@ public class ParkingSpaceControllerTest {
 
         //GIVEN
         String givenUrlSetData = new StringBuilder()
-                .append(SpaceController.URI_START_METER)
+                .append(uriStartMeter)
                 .append("/33333")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-11 10:10:12")
@@ -224,7 +236,7 @@ public class ParkingSpaceControllerTest {
         mockMvc.perform(post(givenUrlSetData));
 
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_STOP_METER)
+                .append(uriStopMeter)
                 .append("/33333")
                 .append("?timeStamp=2017-10-11 10:28:48")
                 .toString();
@@ -243,7 +255,7 @@ public class ParkingSpaceControllerTest {
 
         //GIVEN
         String givenUrlSetData = new StringBuilder()
-                .append(SpaceController.URI_START_METER)
+                .append(uriStartMeter)
                 .append("/33333")
                 .append("?driverType=VIP")
                 .append("&startTime=2017-10-10 10:10:12")
@@ -253,7 +265,7 @@ public class ParkingSpaceControllerTest {
         mockMvc.perform(post(givenUrlSetData));
 
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_STOP_METER)
+                .append(uriStopMeter)
                 .append("/33333")
                 .append("?timeStamp=2017-10-10 10:05:48")
                 .toString();
@@ -269,7 +281,7 @@ public class ParkingSpaceControllerTest {
 
         //GIVEN
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_STOP_METER)
+                .append(uriStopMeter)
                 .append("/3333")
                 .append("?timeStamp=2017-10-13 10:28:48")
                 .toString();
@@ -286,7 +298,7 @@ public class ParkingSpaceControllerTest {
 
         //GIVEN
         String givenUrl = new StringBuilder()
-                .append(SpaceController.URI_STOP_METER)
+                .append(uriStopMeter)
                 .append("/33333")
                 .append("?timeStamp=2017-10-13 10:28")
                 .toString();
@@ -338,7 +350,7 @@ public class ParkingSpaceControllerTest {
     public void shouldReturnIncomeEquals0PerDaySecond() throws Exception {
         //GIVEN
         String getVehicleStatus = new StringBuilder()
-                .append(SpaceController.URI_CHECK_INCOME_PER_DAY)
+                .append(uriCheckIncomePerDay)
                 .append("?date=2017-10-13")
                 .toString();
         //WHEN

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * Created by grzesiek on 09.10.17.
+ * Created by GB on 09.10.17.
  */
 public interface SpaceManagementService {
 
