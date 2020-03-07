@@ -9,7 +9,7 @@ import java.util.Optional;
  */
 public interface SpaceRepo {
 
-    boolean save(final SpaceActive parkingSpaceActive);
+    Optional<Boolean> save(final SpaceActive parkingSpaceActive);
 
     Optional<SpaceFinished> updateToFinish(final String registrationNo, final Date finishDate);
 

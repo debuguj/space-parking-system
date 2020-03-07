@@ -27,7 +27,7 @@ public class SpaceManagementServiceImpl implements SpaceManagementService {
     public boolean reserveParkingSpace(final SpaceActive ps) {
         Optional<SpaceActive> osa = parkingSpaceRepo.findActive(ps.getVehicleRegistrationNumber());
         if (!osa.isPresent()) {
-            return parkingSpaceRepo.save(ps);
+            return parkingSpaceRepo.save(ps).get();
         }
         return false;
     }

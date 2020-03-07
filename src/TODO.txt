@@ -1,8 +1,7 @@
-BASIC
-- test for domain classes
-- remove exceptions?
+Q
 -
-- Java Bean Validation
+BASIC
+- test in spock
 - add sending data in json and xml not uri
     - test for json
 - add 2 profile: with h2 database, without database

@@ -1,14 +1,16 @@
 package pl.debuguj.parkingspacessystem.spaces;
 
-import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import pl.debuguj.parkingspacessystem.spaces.enums.DriverType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -16,6 +18,7 @@ import static org.junit.Assert.*;
 /**
  * Created by GB on 05.03.2020.
  */
+
 public class SpaceRepoImplStubTest {
 
     private final SpaceRepoImplStub parkingSpaceRepo = new SpaceRepoImplStub();
@@ -24,16 +27,16 @@ public class SpaceRepoImplStubTest {
     private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private SpaceActive parkingSpaceActive;
-    private String registrationNo;
+    private String registrationNumber;
     private Date beginDate;
     private Date endDate;
 
     @BeforeEach
     public void before() throws ParseException {
-        registrationNo = "WZE12345";
+        registrationNumber = "WZE12345";
         beginDate = timeDateFormat.parse("2017-10-14T11:15:48");
         endDate = timeDateFormat.parse("2017-10-14T21:35:12");
-        parkingSpaceActive = new SpaceActive(registrationNo, DriverType.REGULAR, beginDate);
+        parkingSpaceActive = new SpaceActive(registrationNumber, DriverType.REGULAR, beginDate);
 
     }
 
@@ -43,25 +46,31 @@ public class SpaceRepoImplStubTest {
     }
 
     @Test
-    public void testCreatingNewActiveParkingSpace() throws Exception {
+    public void shouldReturnEmptyOptional() {
+        Optional<Boolean> opt = parkingSpaceRepo.save(parkingSpaceActive);
+
+        assertFalse(opt.isPresent());
+    }
+
+    @Test
+    public void shouldSaveNewActiveParkingSpace() {
 
         parkingSpaceRepo.save(parkingSpaceActive);
 
-        Optional<SpaceActive> psFromRepo = parkingSpaceRepo.findActive(parkingSpaceActive.getVehicleRegistrationNumber());
+        Optional<SpaceActive> psFromRepo = parkingSpaceRepo.findActive(registrationNumber);
 
         assertNotNull(psFromRepo);
 
         assertEquals(parkingSpaceActive, psFromRepo.get());
         assertEquals(parkingSpaceActive.getBeginDate(), psFromRepo.get().getBeginDate());
         assertEquals(parkingSpaceActive.getDriverType(), psFromRepo.get().getDriverType());
-        //assertEquals(parkingSpaceActive.getEndDate(),psFromRepo.get().getEndDate());
     }
 
     @Test
-    public void testFindingParkingSpaceByRegistrationNo() throws Exception {
+    public void testFindingParkingSpaceByRegistrationNo() {
 
         parkingSpaceRepo.save(parkingSpaceActive);
-        Optional<SpaceActive> psFromDao = parkingSpaceRepo.findActive(parkingSpaceActive.getVehicleRegistrationNumber());
+        Optional<SpaceActive> psFromDao = parkingSpaceRepo.findActive(registrationNumber);
 
         assertTrue(psFromDao.isPresent());
 

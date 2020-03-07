@@ -1,5 +1,7 @@
 package pl.debuguj.parkingspacessystem.spaces;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
 import pl.debuguj.parkingspacessystem.spaces.SpaceActive;
 import pl.debuguj.parkingspacessystem.spaces.SpaceFinished;
@@ -12,23 +14,26 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * Created by GB on 07.10.17.
+ * Created by GB on 05.03.2020.
  */
 @Repository
 public class SpaceRepoImplStub implements SpaceRepo {
 
-    private static final int MAX_ACTIVE_PARKING_SPACE = 1_000;
+    private int maxActiveSpaces = 1_000;
 
     private static Map<String, SpaceActive> mapParkingSpacesActive = new ConcurrentHashMap<>();
     private static Map<UUID, SpaceFinished> mapParkingSpacesFinished = new ConcurrentHashMap<>();
 
     @Override
-    public boolean save(final SpaceActive ps) {
-        if (mapParkingSpacesActive.size() < MAX_ACTIVE_PARKING_SPACE) {
-            mapParkingSpacesActive.put(ps.getVehicleRegistrationNumber(), ps);
-            return true;
+    public Optional<Boolean> save(final SpaceActive ps) {
+        if (Objects.nonNull(ps)) {
+            if (mapParkingSpacesActive.size() < maxActiveSpaces) {
+                mapParkingSpacesActive.put(ps.getVehicleRegistrationNumber(), ps);
+                return Optional.of(Boolean.TRUE);
+            }
+            return Optional.of(Boolean.FALSE);
         }
-        return false;
+        return Optional.empty();
     }
 
     @Override
