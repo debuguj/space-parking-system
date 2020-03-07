@@ -1,17 +1,17 @@
-package pl.debuguj.parkingspacessystem.spaces.validation;
+package pl.debuguj.parkingspacessystem.spot.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateTimeFormatValidator implements ConstraintValidator<DateTimeFormat, String> {
+public class DateFormatValidator implements ConstraintValidator<DateFormat, String> {
 
     private String pattern;
 
     @Override
-    public void initialize(DateTimeFormat dateTimeFormat) {
-        this.pattern = dateTimeFormat.pattern();
+    public void initialize(DateFormat dateFormat) {
+        this.pattern = dateFormat.pattern();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class DateTimeFormatValidator implements ConstraintValidator<DateTimeForm
         }
 
         try {
-            //TODO update checking algorithm
+            //TODO update function
             Date date = new SimpleDateFormat(pattern).parse(object);
             return true;
         } catch (Exception e) {

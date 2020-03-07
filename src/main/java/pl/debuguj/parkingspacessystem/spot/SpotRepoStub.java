@@ -1,11 +1,6 @@
-package pl.debuguj.parkingspacessystem.spaces;
+package pl.debuguj.parkingspacessystem.spot;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
-import pl.debuguj.parkingspacessystem.spaces.SpaceActive;
-import pl.debuguj.parkingspacessystem.spaces.SpaceFinished;
-import pl.debuguj.parkingspacessystem.spaces.SpaceRepo;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -17,15 +12,15 @@ import java.util.stream.Collectors;
  * Created by GB on 05.03.2020.
  */
 @Repository
-public class SpaceRepoImplStub implements SpaceRepo {
+public class SpotRepoStub implements SpotRepo {
 
     private int maxActiveSpaces = 1_000;
 
-    private static Map<String, SpaceActive> mapParkingSpacesActive = new ConcurrentHashMap<>();
-    private static Map<UUID, SpaceFinished> mapParkingSpacesFinished = new ConcurrentHashMap<>();
+    private static Map<String, Spot> mapParkingSpacesActive = new ConcurrentHashMap<>();
+    private static Map<UUID, Spot> mapParkingSpacesFinished = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<Boolean> save(final SpaceActive ps) {
+    public Optional<Boolean> save(final Spot ps) {
         if (Objects.nonNull(ps)) {
             if (mapParkingSpacesActive.size() < maxActiveSpaces) {
                 mapParkingSpacesActive.put(ps.getVehicleRegistrationNumber(), ps);
@@ -37,7 +32,7 @@ public class SpaceRepoImplStub implements SpaceRepo {
     }
 
     @Override
-    public Optional<SpaceActive> findActive(final String registrationNo) {
+    public Optional<Spot> find(final String registrationNo) {
         return mapParkingSpacesActive.values()
                 .stream()
                 .filter(parkingSpace -> registrationNo.equals(parkingSpace.getVehicleRegistrationNumber()))
@@ -45,11 +40,11 @@ public class SpaceRepoImplStub implements SpaceRepo {
     }
 
     @Override
-    public Optional<SpaceFinished> updateToFinish(final String registrationNo, final Date finishDate) {
-        SpaceActive psa = mapParkingSpacesActive.get(registrationNo);
+    public Optional<Spot> updateFinishDate(final String registrationNo, final Date finishDate) {
+        Spot psa = mapParkingSpacesActive.get(registrationNo);
 
         if (Objects.nonNull(psa)) {
-            SpaceFinished psf = new SpaceFinished(psa.getVehicleRegistrationNumber(), psa.getDriverType(), psa.getBeginDate(), finishDate);
+            Spot psf = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType(), psa.getBeginDate(), finishDate);
 
             mapParkingSpacesActive.remove(registrationNo);
             mapParkingSpacesFinished.put(psf.getUuid(), psf);
@@ -60,7 +55,7 @@ public class SpaceRepoImplStub implements SpaceRepo {
     }
 
     @Override
-    public Collection<SpaceFinished> findAllFinished(final Date date) {
+    public Collection<Spot> findAllFinished(final Date date) {
         final Date end = createEndDate(date);
         return mapParkingSpacesFinished.values()
                 .stream()

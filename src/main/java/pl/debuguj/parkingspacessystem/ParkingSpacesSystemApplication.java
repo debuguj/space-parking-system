@@ -8,22 +8,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-
 public class ParkingSpacesSystemApplication implements CommandLineRunner{
-
 
 	private static final Logger logger = LoggerFactory.getLogger(ParkingSpacesSystemApplication.class);
 	public static void main(String[] args) {
 		SpringApplication.run(ParkingSpacesSystemApplication.class, args);
 	}
 
-
-//	@Autowired
-//	private Constants constants;
-
 	@Override
-	public void run(String... strings) throws Exception {
-//		logger.info("CONSTANT "+constants.getDayFormat());
-//		logger.info("CONSTANT "+constants.getTimeFormat());
+	public void run(String... strings) {
+
 	}
 }

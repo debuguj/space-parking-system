@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ParkingSpacesSystemApplication.class)
 @WebAppConfiguration
 
-public class SpaceControllerTest {
+public class SpotControllerTest {
 
     @Autowired
     private WebApplicationContext context;

@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.spaces.enums;
+package pl.debuguj.parkingspacessystem.spot;
 
 import lombok.Getter;
 

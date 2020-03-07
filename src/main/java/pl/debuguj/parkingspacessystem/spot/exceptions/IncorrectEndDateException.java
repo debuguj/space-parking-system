@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.spaces.exceptions;
+package pl.debuguj.parkingspacessystem.spot.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -1,12 +1,8 @@
-package pl.debuguj.parkingspacessystem.spaces;
+package pl.debuguj.parkingspacessystem.spot;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import pl.debuguj.parkingspacessystem.spaces.enums.DriverType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,14 +15,14 @@ import static org.junit.Assert.*;
  * Created by GB on 05.03.2020.
  */
 
-public class SpaceRepoImplStubTest {
+public class SpotRepoStubTest {
 
-    private final SpaceRepoImplStub parkingSpaceRepo = new SpaceRepoImplStub();
+    private final SpotRepoStub parkingSpaceRepo = new SpotRepoStub();
 
     private final SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    private SpaceActive parkingSpaceActive;
+    private Spot parkingSpaceActive;
     private String registrationNumber;
     private Date beginDate;
     private Date endDate;
@@ -36,7 +32,7 @@ public class SpaceRepoImplStubTest {
         registrationNumber = "WZE12345";
         beginDate = timeDateFormat.parse("2017-10-14T11:15:48");
         endDate = timeDateFormat.parse("2017-10-14T21:35:12");
-        parkingSpaceActive = new SpaceActive(registrationNumber, DriverType.REGULAR, beginDate);
+        parkingSpaceActive = new Spot(registrationNumber, DriverType.REGULAR, beginDate, null);
 
     }
 
@@ -57,7 +53,7 @@ public class SpaceRepoImplStubTest {
 
         parkingSpaceRepo.save(parkingSpaceActive);
 
-        Optional<SpaceActive> psFromRepo = parkingSpaceRepo.findActive(registrationNumber);
+        Optional<Spot> psFromRepo = parkingSpaceRepo.find(registrationNumber);
 
         assertNotNull(psFromRepo);
 
@@ -70,12 +66,12 @@ public class SpaceRepoImplStubTest {
     public void testFindingParkingSpaceByRegistrationNo() {
 
         parkingSpaceRepo.save(parkingSpaceActive);
-        Optional<SpaceActive> psFromDao = parkingSpaceRepo.findActive(registrationNumber);
+        Optional<Spot> psFromDao = parkingSpaceRepo.find(registrationNumber);
 
         assertTrue(psFromDao.isPresent());
 
         String registrationNo = "997755";
-        psFromDao = parkingSpaceRepo.findActive(registrationNo);
+        psFromDao = parkingSpaceRepo.find(registrationNo);
 
         assertFalse(psFromDao.isPresent());
     }
@@ -107,25 +103,25 @@ public class SpaceRepoImplStubTest {
 
     private void createTestItems() throws ParseException {
 
-        SpaceActive ps0 = new SpaceActive("WWW66666", DriverType.REGULAR, timeDateFormat.parse("2017-10-13T10:25:48"));
+        Spot ps0 = new Spot("WWW66666", DriverType.REGULAR, timeDateFormat.parse("2017-10-13T10:25:48"), null);
         parkingSpaceRepo.save(ps0);
-        parkingSpaceRepo.updateToFinish(ps0.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-13T13:35:12"));
+        parkingSpaceRepo.updateFinishDate(ps0.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-13T13:35:12"));
 
-        SpaceActive ps1 = new SpaceActive("WSQ77777", DriverType.REGULAR, timeDateFormat.parse("2017-10-13T12:25:48"));
+        Spot ps1 = new Spot("WSQ77777", DriverType.REGULAR, timeDateFormat.parse("2017-10-13T12:25:48"), null);
         parkingSpaceRepo.save(ps1);
-        parkingSpaceRepo.updateToFinish(ps1.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-13T17:35:12"));
+        parkingSpaceRepo.updateFinishDate(ps1.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-13T17:35:12"));
 
-        SpaceActive ps2 = new SpaceActive("QAZ88888", DriverType.REGULAR, timeDateFormat.parse("2017-10-13T15:25:48"));
+        Spot ps2 = new Spot("QAZ88888", DriverType.REGULAR, timeDateFormat.parse("2017-10-13T15:25:48"), null);
         parkingSpaceRepo.save(ps2);
-        parkingSpaceRepo.updateToFinish(ps2.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-13T16:35:12"));
+        parkingSpaceRepo.updateFinishDate(ps2.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-13T16:35:12"));
 
-        SpaceActive ps3 = new SpaceActive("EDC99999", DriverType.REGULAR, timeDateFormat.parse("2017-10-14T20:25:48"));
+        Spot ps3 = new Spot("EDC99999", DriverType.REGULAR, timeDateFormat.parse("2017-10-14T20:25:48"), null);
         parkingSpaceRepo.save(ps3);
-        parkingSpaceRepo.updateToFinish(ps3.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-14T21:35:12"));
+        parkingSpaceRepo.updateFinishDate(ps3.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-14T21:35:12"));
 
-        SpaceActive ps4 = new SpaceActive("FDR99998", DriverType.REGULAR, timeDateFormat.parse("2017-10-14T11:15:48"));
+        Spot ps4 = new Spot("FDR99998", DriverType.REGULAR, timeDateFormat.parse("2017-10-14T11:15:48"), null);
         parkingSpaceRepo.save(ps4);
-        parkingSpaceRepo.updateToFinish(ps4.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-14T12:35:12"));
+        parkingSpaceRepo.updateFinishDate(ps4.getVehicleRegistrationNumber(), timeDateFormat.parse("2017-10-14T12:35:12"));
 
 //                parkingSpaceRepo.save(new ParkingSpaceActive("66666", DriverType.REGULAR,
 //                timeDateFormat.parse("2017-10-13 10:25:48"),

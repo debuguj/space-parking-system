@@ -1,14 +1,13 @@
-package pl.debuguj.parkingspacessystem.spaces;
+package pl.debuguj.parkingspacessystem.spot;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import pl.debuguj.parkingspacessystem.spaces.enums.DriverType;
-import pl.debuguj.parkingspacessystem.spaces.exceptions.IncorrectEndDateException;
-import pl.debuguj.parkingspacessystem.spaces.exceptions.ParkingSpaceNotFoundException;
-import pl.debuguj.parkingspacessystem.spaces.exceptions.VehicleIsAlreadyActiveInSystemException;
+import pl.debuguj.parkingspacessystem.spot.exceptions.IncorrectEndDateException;
+import pl.debuguj.parkingspacessystem.spot.exceptions.ParkingSpaceNotFoundException;
+import pl.debuguj.parkingspacessystem.spot.exceptions.VehicleIsAlreadyActiveInSystemException;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -22,10 +21,10 @@ import static org.mockito.Mockito.when;
  * Created by GB on 12.10.17.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SpaceManagementServiceImplTest {
+public class SpotManagementServiceImplTest {
 
     @Mock
-    private SpaceRepo spaceRepo;
+    private SpotRepo spotRepo;
 
     private SpaceManagementServiceImpl spaceManagementService;
 
@@ -33,7 +32,7 @@ public class SpaceManagementServiceImplTest {
 
     private static SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    private SpaceActive parkingSpaceActive;
+    private Spot parkingSpaceActive;
     private String registrationNo = "12345";
     private Date beginDate;
     private Date endDate;
@@ -41,11 +40,11 @@ public class SpaceManagementServiceImplTest {
     @Before
     public void before() throws Exception {
         //MockitoAnnotations.initMocks(this);
-        spaceManagementService = new SpaceManagementServiceImpl(spaceRepo);
+        spaceManagementService = new SpaceManagementServiceImpl(spotRepo);
 
         beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         endDate = timeDateFormat.parse("2017-10-13 13:35:12");
-        parkingSpaceActive = new SpaceActive(registrationNo, DriverType.REGULAR, beginDate);
+        parkingSpaceActive = new Spot(registrationNo, DriverType.REGULAR, beginDate, endDate);
 
 //        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("66666",
 //                timeDateFormat.parse("2017-10-13 10:25:48"),
@@ -116,9 +115,9 @@ public class SpaceManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         Date currentDate = timeDateFormat.parse("2017-10-13 13:34:12");
 
-        SpaceActive psa = new SpaceActive("12345", DriverType.REGULAR, beginDate);
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
         //WHEN
-        when(spaceRepo.findActive(psa.getVehicleRegistrationNumber())).thenReturn(Optional.of(psa));
+        when(spotRepo.find(psa.getVehicleRegistrationNumber())).thenReturn(Optional.of(psa));
         //THEN
         boolean exists = spaceManagementService.checkVehicle(psa.getVehicleRegistrationNumber(), currentDate);
         assertTrue("Vehicle should exists in database", exists);
@@ -131,9 +130,9 @@ public class SpaceManagementServiceImplTest {
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
         Date currentDate = timeDateFormat.parse("2017-10-13 13:34:12");
 
-        SpaceActive psa = new SpaceActive("12345", DriverType.REGULAR, beginDate);
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
         //WHEN
-        when(spaceRepo.findActive(psa.getVehicleRegistrationNumber())).thenReturn(Optional.empty());
+        when(spotRepo.find(psa.getVehicleRegistrationNumber())).thenReturn(Optional.empty());
         //THEN
         boolean exists = spaceManagementService.checkVehicle(psa.getVehicleRegistrationNumber(), currentDate);
         assertFalse("Vehicle shouldn't exists in database", exists);
@@ -147,14 +146,14 @@ public class SpaceManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
 
-        SpaceActive psa = new SpaceActive("12345", DriverType.REGULAR, beginDate);
-        SpaceFinished spaceFinishedUpdated = new SpaceFinished(psa.getVehicleRegistrationNumber(), psa.getDriverType()
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
+        Spot spotFinishedUpdated = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType()
                 , psa.getBeginDate(), finishDate);
         //WHEN
-        when(spaceRepo.updateToFinish(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spaceFinishedUpdated));
+        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spotFinishedUpdated));
 
         //THEN,
-        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(parkingSpaceActive.getVehicleRegistrationNumber(), finishDate);
+        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(parkingSpaceActive.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
 
         assertEquals("Parking fee should be the same", fee, feeFromService);
     }
@@ -165,11 +164,11 @@ public class SpaceManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
 
-        SpaceActive psa = new SpaceActive("12345", DriverType.REGULAR, beginDate);
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
         //WHEN
-        when(spaceRepo.updateToFinish(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.empty());
+        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.empty());
         //THEN
-        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(psa.getVehicleRegistrationNumber(), finishDate);
+        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(psa.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
     }
 
     @Test(expected = IncorrectEndDateException.class)
@@ -178,13 +177,13 @@ public class SpaceManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 14:15:48");
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
 
-        SpaceActive psa = new SpaceActive("12345", DriverType.REGULAR, beginDate);
-        SpaceFinished spaceFinishedUpdated = new SpaceFinished(psa.getVehicleRegistrationNumber(), psa.getDriverType()
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
+        Spot spotFinishedUpdated = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType()
                 , psa.getBeginDate(), finishDate);
         //WHEN
-        when(spaceRepo.updateToFinish(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spaceFinishedUpdated));
+        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spotFinishedUpdated));
         //THEN
-        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(psa.getVehicleRegistrationNumber(), finishDate);
+        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(psa.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
     }
 
     @Test
@@ -193,14 +192,14 @@ public class SpaceManagementServiceImplTest {
         Date date = dayDateFormat.parse("2017-10-14");
         BigDecimal income = new BigDecimal("6.0");
 
-        List<SpaceFinished> list = new ArrayList<>();
-        list.add(new SpaceFinished("99998", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 11:15:48"), timeDateFormat.parse("2017-10-14 12:35:12")));
-        list.add(new SpaceFinished("99999", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 20:25:48"), timeDateFormat.parse("2017-10-14 21:35:12")));
+        List<Spot> list = new ArrayList<>();
+        list.add(new Spot("99998", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 11:15:48"), timeDateFormat.parse("2017-10-14 12:35:12")));
+        list.add(new Spot("99999", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 20:25:48"), timeDateFormat.parse("2017-10-14 21:35:12")));
 
         //WHEN
-        when(spaceRepo.findAllFinished(date)).thenReturn(list);
+        when(spotRepo.findAllFinished(date)).thenReturn(list);
 
-        BigDecimal incomeFromSystem = spaceManagementService.getIncomePerDay(date);
+        BigDecimal incomeFromSystem = spaceManagementService.getIncomePerDay(date, Currency.PLN);
         //THEN
         assertEquals("Income should be the same", income, incomeFromSystem);
 

@@ -1,4 +1,4 @@
-package pl.debuguj.parkingspacessystem.spaces.validation;
+package pl.debuguj.parkingspacessystem.spot.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

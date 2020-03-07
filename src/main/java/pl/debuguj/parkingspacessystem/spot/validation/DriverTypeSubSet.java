@@ -1,6 +1,6 @@
-package pl.debuguj.parkingspacessystem.spaces.validation;
+package pl.debuguj.parkingspacessystem.spot.validation;
 
-import pl.debuguj.parkingspacessystem.spaces.enums.DriverType;
+import pl.debuguj.parkingspacessystem.spot.DriverType;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
