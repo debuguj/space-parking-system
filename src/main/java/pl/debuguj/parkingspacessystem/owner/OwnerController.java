@@ -24,6 +24,7 @@ import java.util.Date;
 @Validated
 @PropertySource("classpath:global.properties")
 public class OwnerController {
+
     private final SpaceManagementService spaceManagement;
 
     public OwnerController(SpaceManagementService spaceManagement) {

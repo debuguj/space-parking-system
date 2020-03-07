@@ -1,7 +1,7 @@
 Q
 -
 BASIC
-- test in spock
+- add config for currency or request with currency value
 - update pattern for registration plate
 - add sending data in json and xml not uri
     - test for json
@@ -11,4 +11,4 @@ BASIC
 EXTRA
 - add some jms feature (activemq or rabbitmq)
 - simple client for test ??
--
+- test in spock

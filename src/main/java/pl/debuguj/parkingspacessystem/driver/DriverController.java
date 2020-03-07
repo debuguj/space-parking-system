@@ -46,8 +46,7 @@ public class DriverController {
             @RequestParam() @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                     Date startTime) {
 
-        //TODO remove this strange null
-        Spot sa = new Spot(registrationNumber, driverType, startTime, null);
+        Spot sa = new Spot(registrationNumber, driverType, startTime);
         try {
             if (spaceManagement.reserveParkingSpace(sa))
                 return new ResponseEntity<>(sa, HttpStatus.OK);

@@ -1,8 +1,6 @@
 package pl.debuguj.parkingspacessystem.spot;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,15 +12,20 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@AllArgsConstructor
 @Getter
 public class Spot implements Serializable {
 
     private final UUID uuid = UUID.randomUUID();
-    private String vehicleRegistrationNumber;
-    private DriverType driverType;
-    private Date beginDate;
+    private final String vehicleRegistrationNumber;
+    private final DriverType driverType;
+    private final Date beginDate;
     private Date finishDate;
+
+    public Spot(final String vehicleRegistrationNumber, final DriverType driverType, final Date beginDate) {
+        this.vehicleRegistrationNumber = vehicleRegistrationNumber;
+        this.driverType = driverType;
+        this.beginDate = beginDate;
+    }
 
     public void setFinishDate(final Date finishDate) {
         this.finishDate = finishDate;

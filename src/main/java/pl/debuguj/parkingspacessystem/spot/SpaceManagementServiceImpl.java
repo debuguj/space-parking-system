@@ -14,6 +14,7 @@ import java.util.stream.Stream;
  * Created by GB on 09.10.17.
  */
 @Service
+//TODO remove this class from project
 public class SpaceManagementServiceImpl implements SpaceManagementService {
 
     private final SpotRepo parkingSpotRepo;
@@ -39,7 +40,6 @@ public class SpaceManagementServiceImpl implements SpaceManagementService {
     @Override
     public BigDecimal stopParkingMeter(final String registrationNumber, final Date finishDate, final Currency currency)
             throws IncorrectEndDateException, ParkingSpaceNotFoundException {
-
 
         Optional<Spot> osf = parkingSpotRepo.updateFinishDate(registrationNumber, finishDate);
         if (osf.isPresent()) {

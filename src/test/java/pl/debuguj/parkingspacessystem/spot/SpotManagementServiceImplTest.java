@@ -32,7 +32,7 @@ public class SpotManagementServiceImplTest {
 
     private static SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    private Spot parkingSpaceActive;
+    private Spot spot;
     private String registrationNo = "12345";
     private Date beginDate;
     private Date endDate;
@@ -44,8 +44,8 @@ public class SpotManagementServiceImplTest {
 
         beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         endDate = timeDateFormat.parse("2017-10-13 13:35:12");
-        parkingSpaceActive = new Spot(registrationNo, DriverType.REGULAR, beginDate, endDate);
-
+        spot = new Spot(registrationNo, DriverType.REGULAR, beginDate);
+        spot.setFinishDate(endDate);
 //        parkingSpaceManagementService.reserveParkingSpace(new ParkingSpace("66666",
 //                timeDateFormat.parse("2017-10-13 10:25:48"),
 //                timeDateFormat.parse("2017-10-13 10:35:12")));
@@ -115,11 +115,11 @@ public class SpotManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         Date currentDate = timeDateFormat.parse("2017-10-13 13:34:12");
 
-        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
+        Spot spot = new Spot("12345", DriverType.REGULAR, beginDate);
         //WHEN
-        when(spotRepo.find(psa.getVehicleRegistrationNumber())).thenReturn(Optional.of(psa));
+        when(spotRepo.find(spot.getVehicleRegistrationNumber())).thenReturn(Optional.of(spot));
         //THEN
-        boolean exists = spaceManagementService.checkVehicle(psa.getVehicleRegistrationNumber(), currentDate);
+        boolean exists = spaceManagementService.checkVehicle(spot.getVehicleRegistrationNumber(), currentDate);
         assertTrue("Vehicle should exists in database", exists);
     }
 
@@ -130,11 +130,11 @@ public class SpotManagementServiceImplTest {
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
         Date currentDate = timeDateFormat.parse("2017-10-13 13:34:12");
 
-        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
+        Spot spot = new Spot("12345", DriverType.REGULAR, beginDate);
         //WHEN
-        when(spotRepo.find(psa.getVehicleRegistrationNumber())).thenReturn(Optional.empty());
+        when(spotRepo.find(spot.getVehicleRegistrationNumber())).thenReturn(Optional.empty());
         //THEN
-        boolean exists = spaceManagementService.checkVehicle(psa.getVehicleRegistrationNumber(), currentDate);
+        boolean exists = spaceManagementService.checkVehicle(spot.getVehicleRegistrationNumber(), currentDate);
         assertFalse("Vehicle shouldn't exists in database", exists);
     }
 
@@ -146,14 +146,15 @@ public class SpotManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
 
-        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
-        Spot spotFinishedUpdated = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType()
-                , psa.getBeginDate(), finishDate);
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate);
+        Spot spot = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType()
+                , psa.getBeginDate());
+        spot.setFinishDate(finishDate);
         //WHEN
-        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spotFinishedUpdated));
+        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spot));
 
         //THEN,
-        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(parkingSpaceActive.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
+        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(this.spot.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
 
         assertEquals("Parking fee should be the same", fee, feeFromService);
     }
@@ -164,11 +165,11 @@ public class SpotManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 11:15:48");
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
 
-        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
+        Spot spot = new Spot("12345", DriverType.REGULAR, beginDate);
         //WHEN
-        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.empty());
+        when(spotRepo.updateFinishDate(spot.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.empty());
         //THEN
-        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(psa.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
+        BigDecimal feeFromService = spaceManagementService.stopParkingMeter(spot.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
     }
 
     @Test(expected = IncorrectEndDateException.class)
@@ -177,11 +178,12 @@ public class SpotManagementServiceImplTest {
         Date beginDate = timeDateFormat.parse("2017-10-13 14:15:48");
         Date finishDate = timeDateFormat.parse("2017-10-13 13:35:12");
 
-        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate, null);
-        Spot spotFinishedUpdated = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType()
-                , psa.getBeginDate(), finishDate);
+        Spot psa = new Spot("12345", DriverType.REGULAR, beginDate);
+        Spot spot = new Spot(psa.getVehicleRegistrationNumber(), psa.getDriverType()
+                , psa.getBeginDate());
+        spot.setFinishDate(finishDate);
         //WHEN
-        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spotFinishedUpdated));
+        when(spotRepo.updateFinishDate(psa.getVehicleRegistrationNumber(), finishDate)).thenReturn(Optional.of(spot));
         //THEN
         BigDecimal feeFromService = spaceManagementService.stopParkingMeter(psa.getVehicleRegistrationNumber(), finishDate, Currency.PLN);
     }
@@ -193,8 +195,13 @@ public class SpotManagementServiceImplTest {
         BigDecimal income = new BigDecimal("6.0");
 
         List<Spot> list = new ArrayList<>();
-        list.add(new Spot("99998", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 11:15:48"), timeDateFormat.parse("2017-10-14 12:35:12")));
-        list.add(new Spot("99999", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 20:25:48"), timeDateFormat.parse("2017-10-14 21:35:12")));
+
+        Spot spot1 = new Spot("99998", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 11:15:48"));
+        spot1.setFinishDate(timeDateFormat.parse("2017-10-14 12:35:12"));
+        list.add(spot1);
+        Spot spot2 = new Spot("99999", DriverType.REGULAR, timeDateFormat.parse("2017-10-14 20:25:48"));
+        spot1.setFinishDate(timeDateFormat.parse("2017-10-14 21:35:12"));
+        list.add(spot2);
 
         //WHEN
         when(spotRepo.findAllFinished(date)).thenReturn(list);

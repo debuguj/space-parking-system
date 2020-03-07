@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * Created by GB on 05.03.2020.
  */
 @Repository
-public class SpotRepoStub implements SpotRepo {
+public class SpotRepoStubImpl implements SpotRepo {
 
     private int maxActiveSpaces = 1_000;
 
