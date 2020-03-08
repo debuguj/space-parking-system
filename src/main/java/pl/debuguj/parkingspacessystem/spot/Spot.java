@@ -2,9 +2,10 @@ package pl.debuguj.parkingspacessystem.spot;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pl.debuguj.parkingspacessystem.spot.validation.DateTimeFormat;
 import pl.debuguj.parkingspacessystem.spot.validation.DriverTypeSubSet;
+import pl.debuguj.parkingspacessystem.spot.validation.FarePeriod;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+@FarePeriod
 @AllArgsConstructor
 @Getter
 public class Spot implements Serializable {
@@ -29,10 +31,7 @@ public class Spot implements Serializable {
     @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
     private final DriverType driverType;
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private final Date beginDate;
-    @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date finishDate;
 
     public Spot(final String vehicleRegistrationNumber, final DriverType driverType, final Date beginDate) {
@@ -55,8 +54,13 @@ public class Spot implements Serializable {
     }
 
     public Optional<BigDecimal> getFee(final Currency currency) {
-        BigDecimal fee = getBasicFee();
-        return Optional.ofNullable(fee.multiply(currency.getExchangeRate()).setScale(1, BigDecimal.ROUND_CEILING));
+        if (Objects.nonNull(getFinishDate())) {
+            BigDecimal fee = getBasicFee();
+            return Optional.ofNullable(fee.multiply(currency.getExchangeRate()).setScale(1, BigDecimal.ROUND_CEILING));
+        } else {
+            return Optional.empty();
+        }
+
     }
 
     private BigDecimal getBasicFee() {

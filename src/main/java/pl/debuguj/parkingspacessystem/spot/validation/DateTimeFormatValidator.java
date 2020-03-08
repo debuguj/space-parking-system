@@ -3,30 +3,18 @@ package pl.debuguj.parkingspacessystem.spot.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class DateTimeFormatValidator implements ConstraintValidator<DateTimeFormat, String> {
+public class DateTimeFormatValidator implements ConstraintValidator<DateTimeFormat, Date> {
 
-    private String pattern;
 
     @Override
-    public void initialize(DateTimeFormat dateTimeFormat) {
-        this.pattern = dateTimeFormat.pattern();
+    public void initialize(DateTimeFormat constraintAnnotation) {
+
     }
 
     @Override
-    public boolean isValid(String object, ConstraintValidatorContext constraintValidatorContext) {
-        if (object == null) {
-            return false;
-        }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(pattern);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean isValid(Date date, ConstraintValidatorContext constraintValidatorContext) {
+        return false;
     }
 }
