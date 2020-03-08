@@ -117,7 +117,7 @@ public class SpotManagementServiceImplTest {
 
         Spot spot = new Spot("12345", DriverType.REGULAR, beginDate);
         //WHEN
-        when(spotRepo.find(spot.getVehicleRegistrationNumber())).thenReturn(Optional.of(spot));
+        when(spotRepo.findActive(spot.getVehicleRegistrationNumber())).thenReturn(Optional.of(spot));
         //THEN
         boolean exists = spaceManagementService.checkVehicle(spot.getVehicleRegistrationNumber(), currentDate);
         assertTrue("Vehicle should exists in database", exists);
@@ -132,7 +132,7 @@ public class SpotManagementServiceImplTest {
 
         Spot spot = new Spot("12345", DriverType.REGULAR, beginDate);
         //WHEN
-        when(spotRepo.find(spot.getVehicleRegistrationNumber())).thenReturn(Optional.empty());
+        when(spotRepo.findActive(spot.getVehicleRegistrationNumber())).thenReturn(Optional.empty());
         //THEN
         boolean exists = spaceManagementService.checkVehicle(spot.getVehicleRegistrationNumber(), currentDate);
         assertFalse("Vehicle shouldn't exists in database", exists);
@@ -201,7 +201,7 @@ public class SpotManagementServiceImplTest {
         list.add(spot2);
 
         //WHEN
-        when(spotRepo.findAllFinished(date)).thenReturn(list);
+        when(spotRepo.findAllFinished(date)).thenReturn(list.stream());
 
         BigDecimal incomeFromSystem = spaceManagementService.getIncomePerDay(date, Currency.PLN);
         //THEN

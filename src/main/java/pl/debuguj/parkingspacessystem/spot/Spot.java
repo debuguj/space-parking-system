@@ -5,7 +5,6 @@ import lombok.Getter;
 import pl.debuguj.parkingspacessystem.spot.validation.DriverTypeSubSet;
 import pl.debuguj.parkingspacessystem.spot.validation.FarePeriod;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;

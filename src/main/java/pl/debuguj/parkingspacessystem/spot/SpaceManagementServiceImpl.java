@@ -5,7 +5,6 @@ import pl.debuguj.parkingspacessystem.spot.exceptions.IncorrectEndDateException;
 import pl.debuguj.parkingspacessystem.spot.exceptions.ParkingSpaceNotFoundException;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,7 +24,7 @@ public class SpaceManagementServiceImpl implements SpaceManagementService {
 
     @Override
     public boolean reserveParkingSpace(final Spot ps) {
-        Optional<Spot> osa = parkingSpotRepo.find(ps.getVehicleRegistrationNumber());
+        Optional<Spot> osa = parkingSpotRepo.findActive(ps.getVehicleRegistrationNumber());
         if (!osa.isPresent()) {
             return parkingSpotRepo.save(ps).get();
         }
@@ -34,7 +33,7 @@ public class SpaceManagementServiceImpl implements SpaceManagementService {
 
     @Override
     public boolean checkVehicle(final String registrationNumber, final Date currentDate) {
-        return parkingSpotRepo.find(registrationNumber).isPresent();
+        return parkingSpotRepo.findActive(registrationNumber).isPresent();
     }
 
     @Override
@@ -59,9 +58,7 @@ public class SpaceManagementServiceImpl implements SpaceManagementService {
 
     @Override
     public BigDecimal getIncomePerDay(final Date timestamp, final Currency currency) {
-        Collection<Spot> c = parkingSpotRepo.findAllFinished(timestamp);
-        return c
-                .stream()
+        return parkingSpotRepo.findAllFinished(timestamp)
                 .map(s -> s.getFee(currency))
                 .flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
                 .reduce(BigDecimal.ZERO.setScale(1, BigDecimal.ROUND_CEILING), (a, b) -> a.add(b).setScale(1, BigDecimal.ROUND_CEILING));
