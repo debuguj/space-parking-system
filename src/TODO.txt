@@ -1,6 +1,7 @@
 Q
 -
 BASIC
+- add validation format tests
 - add config for currency or request with currency value
 - update pattern for registration plate
 - add sending data in json and xml not uri

@@ -3,7 +3,6 @@ package pl.debuguj.parkingspacessystem.spot.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class DateTimeFormatValidator implements ConstraintValidator<DateTimeFormat, String> {
 
@@ -20,9 +19,10 @@ public class DateTimeFormatValidator implements ConstraintValidator<DateTimeForm
             return false;
         }
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        dateFormat.setLenient(false);
         try {
-            //TODO update checking algorithm
-            Date date = new SimpleDateFormat(pattern).parse(object);
+            dateFormat.parse(pattern);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

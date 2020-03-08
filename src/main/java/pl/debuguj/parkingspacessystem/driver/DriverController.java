@@ -31,6 +31,7 @@ import java.util.Date;
 @Validated
 @PropertySource("classpath:global.properties")
 public class DriverController {
+
     private final SpaceManagementService spaceManagement;
 
     public DriverController(SpaceManagementService spaceManagement) {
@@ -39,12 +40,9 @@ public class DriverController {
 
     @PostMapping("${uri.start.meter}")
     public HttpEntity<Spot> startParkingMeter(
-            @PathVariable() @NotNull @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
-                    String registrationNumber,
-            @RequestParam() @NotNull @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
-                    DriverType driverType,
-            @RequestParam() @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                    Date startTime) {
+            @PathVariable String registrationNumber,
+            @RequestParam DriverType driverType,
+            @RequestParam Date startTime) {
 
         Spot sa = new Spot(registrationNumber, driverType, startTime);
         try {
@@ -58,10 +56,8 @@ public class DriverController {
 
     @PutMapping("${uri.stop.meter}")
     public HttpEntity<BigDecimal> stopParkingMeter(
-            @PathVariable @NotNull @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
-                    String registrationNumber,
-            @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                    Date timeStamp) {
+            @PathVariable String registrationNumber,
+            @RequestParam Date timeStamp) {
         try {
             //TODO remove constant currency
             BigDecimal fee = spaceManagement.stopParkingMeter(registrationNumber, timeStamp, Currency.PLN);

@@ -1,7 +1,12 @@
 package pl.debuguj.parkingspacessystem.spot;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import pl.debuguj.parkingspacessystem.spot.validation.DateTimeFormat;
+import pl.debuguj.parkingspacessystem.spot.validation.DriverTypeSubSet;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,23 +17,28 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+@AllArgsConstructor
 @Getter
 public class Spot implements Serializable {
 
     private final UUID uuid = UUID.randomUUID();
+    @NotNull
+    @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
     private final String vehicleRegistrationNumber;
+    @NotNull
+    @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
     private final DriverType driverType;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private final Date beginDate;
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private Date finishDate;
 
     public Spot(final String vehicleRegistrationNumber, final DriverType driverType, final Date beginDate) {
         this.vehicleRegistrationNumber = vehicleRegistrationNumber;
         this.driverType = driverType;
         this.beginDate = beginDate;
-    }
-
-    public void setFinishDate(final Date finishDate) {
-        this.finishDate = finishDate;
     }
 
     @Override

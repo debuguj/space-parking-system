@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpotTest {
 
-    private Spot parkingSpotFinished;
+    private Spot spot;
     private final SimpleDateFormat simpleDataTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final String registrationNo = "WZE12345";
     private Date startDate;
@@ -21,26 +21,26 @@ public class SpotTest {
     public void setup() throws Exception {
         startDate = simpleDataTimeFormatter.parse("2017-10-12T10:15:10");
         finishDate = simpleDataTimeFormatter.parse("2017-10-12T14:15:10");
-        parkingSpotFinished = new Spot(registrationNo, DriverType.REGULAR, startDate, finishDate);
+        spot = new Spot(registrationNo, DriverType.REGULAR, startDate, finishDate);
     }
 
     @Test
     public void testSerialization() {
-        Spot other = (Spot) SerializationUtils.deserialize(SerializationUtils.serialize(parkingSpotFinished));
+        Spot other = (Spot) SerializationUtils.deserialize(SerializationUtils.serialize(spot));
 
-        assertThat(other.getUuid()).isEqualTo(parkingSpotFinished.getUuid());
-        assertThat(other.getVehicleRegistrationNumber()).isEqualTo(parkingSpotFinished.getVehicleRegistrationNumber());
-        assertThat(other.getDriverType()).isEqualTo(parkingSpotFinished.getDriverType());
-        assertThat(other.getBeginDate()).isEqualTo(parkingSpotFinished.getBeginDate());
-        assertThat(other.getFinishDate()).isEqualTo(parkingSpotFinished.getFinishDate());
+        assertThat(other.getUuid()).isEqualTo(spot.getUuid());
+        assertThat(other.getVehicleRegistrationNumber()).isEqualTo(spot.getVehicleRegistrationNumber());
+        assertThat(other.getDriverType()).isEqualTo(spot.getDriverType());
+        assertThat(other.getBeginDate()).isEqualTo(spot.getBeginDate());
+        assertThat(other.getFinishDate()).isEqualTo(spot.getFinishDate());
     }
 
     @Test
     public void shouldBeSetCorrectParameters() {
-        assertThat(parkingSpotFinished.getVehicleRegistrationNumber()).isEqualTo(registrationNo);
-        assertThat(parkingSpotFinished.getDriverType()).isEqualTo(DriverType.REGULAR);
-        assertThat(parkingSpotFinished.getDriverType()).isNotEqualTo(DriverType.VIP);
-        assertThat(parkingSpotFinished.getBeginDate()).isEqualTo(startDate);
-        assertThat(parkingSpotFinished.getFinishDate()).isEqualTo(finishDate);
+        assertThat(spot.getVehicleRegistrationNumber()).isEqualTo(registrationNo);
+        assertThat(spot.getDriverType()).isEqualTo(DriverType.REGULAR);
+        assertThat(spot.getDriverType()).isNotEqualTo(DriverType.VIP);
+        assertThat(spot.getBeginDate()).isEqualTo(startDate);
+        assertThat(spot.getFinishDate()).isEqualTo(finishDate);
     }
 }
