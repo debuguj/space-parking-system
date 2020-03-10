@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.debuguj.parkingspacessystem.spot.Currency;
-import pl.debuguj.parkingspacessystem.spot.SpaceManagementService;
+import pl.debuguj.parkingspacessystem.spot.Spot;
+import pl.debuguj.parkingspacessystem.spot.SpotRepo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.stream.Stream;
 
 /**
  * Created by GB on 07.03.20.
@@ -25,10 +27,10 @@ import java.util.Date;
 @PropertySource("classpath:global.properties")
 public class OwnerController {
 
-    private final SpaceManagementService spaceManagement;
+    private final SpotRepo spotRepo;
 
-    public OwnerController(SpaceManagementService spaceManagement) {
-        this.spaceManagement = spaceManagement;
+    public OwnerController(SpotRepo spotRepo) {
+        this.spotRepo = spotRepo;
     }
 
     @GetMapping("${uri.check.income.per.day}")
@@ -36,8 +38,15 @@ public class OwnerController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                     Date date) {
 
+        Stream<Spot> spotStream = spotRepo.findAllFinished(date);
+        if (spotStream.count() > 0) {
+            BigDecimal income = spotRepo.findAllFinished(date)
+                    .map(s -> s.getFee(Currency.PLN).get())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            return new ResponseEntity<>(income, HttpStatus.FOUND);
+        } else {
+            return new ResponseEntity<>(BigDecimal.ZERO, HttpStatus.NOT_FOUND);
+        }
         //TODO remove constant currency
-        BigDecimal sum = spaceManagement.getIncomePerDay(date, Currency.PLN);
-        return new ResponseEntity<>(sum, HttpStatus.OK);
     }
 }

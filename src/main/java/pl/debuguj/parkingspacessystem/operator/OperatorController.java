@@ -2,20 +2,18 @@ package pl.debuguj.parkingspacessystem.operator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.debuguj.parkingspacessystem.spot.SpaceManagementService;
+import pl.debuguj.parkingspacessystem.spot.Spot;
+import pl.debuguj.parkingspacessystem.spot.SpotRepo;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.util.Date;
+import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -23,20 +21,21 @@ import java.util.Date;
 @PropertySource("classpath:global.properties")
 public class OperatorController {
 
-    private final SpaceManagementService spaceManagement;
+    private final SpotRepo spotRepo;
 
-    public OperatorController(SpaceManagementService spaceManagement) {
-        this.spaceManagement = spaceManagement;
+    public OperatorController(SpotRepo spotRepo) {
+        this.spotRepo = spotRepo;
     }
 
     @GetMapping("${uri.check.vehicle}")
-    public HttpEntity checkVehicle(
-            @PathVariable @NotNull @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
-                    String registrationNumber,
-            @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                    Date currentDate) {
+    public HttpEntity checkVehicle(@RequestBody @Valid Spot spot) {
 
-        boolean b = spaceManagement.checkVehicle(registrationNumber, currentDate);
-        return new ResponseEntity<>(b, HttpStatus.OK);
+        Optional<Spot> os = spotRepo.findActive(spot.getVehicleRegistrationNumber());
+        if (os.isPresent()) {
+            return new ResponseEntity<>(os.get(), HttpStatus.FOUND);
+        } else {
+            //TODO: remove null
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 }

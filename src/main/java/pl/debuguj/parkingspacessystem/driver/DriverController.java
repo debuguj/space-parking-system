@@ -6,16 +6,16 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import pl.debuguj.parkingspacessystem.spot.*;
-import pl.debuguj.parkingspacessystem.spot.exceptions.IncorrectEndDateException;
-import pl.debuguj.parkingspacessystem.spot.exceptions.ParkingSpaceNotFoundException;
-import pl.debuguj.parkingspacessystem.spot.exceptions.VehicleIsAlreadyActiveInSystemException;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import pl.debuguj.parkingspacessystem.spot.Currency;
+import pl.debuguj.parkingspacessystem.spot.Spot;
+import pl.debuguj.parkingspacessystem.spot.SpotRepo;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Optional;
 
 /**
