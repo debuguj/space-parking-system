@@ -18,22 +18,20 @@ public class SpotRepoStubImpl implements SpotRepo {
     private static Map<UUID, Spot> mapParkingSpots = new ConcurrentHashMap<>();
 
     @Override
-    public Optional<Boolean> save(final Spot spot) {
-        if (Objects.nonNull(spot)) {
-            Optional<Spot> found = mapParkingSpots.values()
-                    .stream()
-                    .filter(s -> Objects.isNull(s.getFinishDate()))
-                    .filter(s -> spot.getVehicleRegistrationNumber().equals(s.getVehicleRegistrationNumber()))
-                    .findAny();
+    public Optional<Spot> save(final Spot spot) {
 
-            if (found.isPresent()) {
-                return Optional.of(Boolean.FALSE);
-            } else {
-                mapParkingSpots.put(spot.getUuid(), spot);
-                return Optional.of(Boolean.TRUE);
-            }
+        Optional<Spot> found = mapParkingSpots.values()
+                .stream()
+                .filter(s -> Objects.isNull(s.getFinishDate()))
+                .filter(s -> spot.getVehicleRegistrationNumber().equals(s.getVehicleRegistrationNumber()))
+                .findAny();
+
+        if (found.isPresent()) {
+            return Optional.empty();
+        } else {
+            mapParkingSpots.put(spot.getUuid(), spot);
+            return Optional.of(spot);
         }
-        return Optional.empty();
     }
 
     @Override
@@ -46,16 +44,16 @@ public class SpotRepoStubImpl implements SpotRepo {
     }
 
     @Override
-    public Optional<Spot> updateFinishDate(final String registrationNumber, final Date finishDate) {
+    public Optional<Spot> updateFinishDateByPlate(final String plate, final Date date) {
 
         Optional<Spot> os = mapParkingSpots.values()
                 .stream()
-                .filter(s -> registrationNumber.equals(s.getVehicleRegistrationNumber()))
+                .filter(s -> plate.equals(s.getVehicleRegistrationNumber()))
                 .filter(s -> Objects.isNull(s.getFinishDate()))
                 .findAny();
 
         if (os.isPresent()) {
-            Spot newSpot = new Spot(os.get().getVehicleRegistrationNumber(), os.get().getDriverType(), os.get().getBeginDate(), finishDate);
+            Spot newSpot = new Spot(os.get().getVehicleRegistrationNumber(), os.get().getDriverType(), os.get().getBeginDate(), date);
             mapParkingSpots.remove(os.get().getUuid());
             mapParkingSpots.put(newSpot.getUuid(), newSpot);
             return Optional.of(newSpot);

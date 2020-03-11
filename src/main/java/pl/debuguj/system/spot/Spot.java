@@ -2,6 +2,7 @@ package pl.debuguj.system.spot;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import pl.debuguj.system.spot.validation.DriverTypeSubSet;
 import pl.debuguj.system.spot.validation.FarePeriod;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @FarePeriod
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class Spot implements Serializable {
@@ -25,12 +27,12 @@ public class Spot implements Serializable {
     private final UUID uuid = UUID.randomUUID();
     @NotNull
     @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
-    private final String vehicleRegistrationNumber;
+    private String vehicleRegistrationNumber;
     @NotNull
     @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
-    private final DriverType driverType;
+    private DriverType driverType;
     @NotNull
-    private final Date beginDate;
+    private Date beginDate;
     private Date finishDate;
 
     public Spot(final String vehicleRegistrationNumber, final DriverType driverType, final Date beginDate) {

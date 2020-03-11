@@ -43,7 +43,7 @@ public class SpotRepoStubImplTest {
 
     @Test
     public void shouldReturnEmptyOptional() {
-        Optional<Boolean> opt = parkingSpaceRepo.save(null);
+        Optional<Spot> opt = parkingSpaceRepo.save(null);
         assertFalse(opt.isPresent());
     }
 
@@ -52,17 +52,17 @@ public class SpotRepoStubImplTest {
         Spot spot1 = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
         parkingSpaceRepo.save(spot1);
         Spot spot2 = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
-        Optional<Boolean> opt = parkingSpaceRepo.save(spot2);
+        Optional<Spot> opt = parkingSpaceRepo.save(spot2);
 
-        assertFalse(opt.get().booleanValue());
+        assertFalse(opt.isPresent());
     }
 
     @Test
     public void shouldReturnTrueBecauseVehicleIsNotActive() {
         Spot spot = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
-        Optional<Boolean> opt = parkingSpaceRepo.save(spot);
+        Optional<Spot> opt = parkingSpaceRepo.save(spot);
 
-        assertTrue(opt.get().booleanValue());
+        assertTrue(opt.isPresent());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class SpotRepoStubImplTest {
         for (int i = 0; i < registrationNumbers.length; i++) {
             Spot spot = new Spot(registrationNumbers[i], driverTypes[i], timeDateFormat.parse(datesBegin[i]));
             parkingSpaceRepo.save(spot);
-            parkingSpaceRepo.updateFinishDate(spot.getVehicleRegistrationNumber(), timeDateFormat.parse(datesFinish[i]));
+            parkingSpaceRepo.updateFinishDateByPlate(spot.getVehicleRegistrationNumber(), timeDateFormat.parse(datesFinish[i]));
         }
     }
 }

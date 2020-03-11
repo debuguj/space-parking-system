@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 @Repository
 public interface SpotRepo {
 
-    Optional<Boolean> save(final Spot parkingSpaceActive);
+    Optional<Spot> save(final Spot parkingSpaceActive);
 
-    Optional<Spot> updateFinishDate(final String registrationNo, final Date finishDate);
+    Optional<Spot> updateFinishDateByPlate(final String plate, final Date date);
 
     Optional<Spot> findActive(final String registrationNo);
 
