@@ -10,12 +10,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import pl.debuguj.system.spot.Currency;
-import pl.debuguj.system.spot.Spot;
-import pl.debuguj.system.spot.SpotRepo;
+import pl.debuguj.system.spot.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -27,26 +26,27 @@ import java.util.stream.Stream;
 @PropertySource("classpath:global.properties")
 public class OwnerController {
 
-    private final SpotRepo spotRepo;
+    private final ArchivedSpotRepo archivedSpotRepo;
 
-    public OwnerController(SpotRepo spotRepo) {
-        this.spotRepo = spotRepo;
+    public OwnerController(ArchivedSpotRepo archivedSpotRepo) {
+        this.archivedSpotRepo = archivedSpotRepo;
     }
 
     @GetMapping("${uri.owner.income}")
     public HttpEntity<DailyIncome> getIncomePerDay(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 
-        Stream<Spot> spotStream = spotRepo.findAllFinished(date);
+        Stream<ArchivedSpot> archivedSpotStream = archivedSpotRepo.getAllByDay(date);
 
-        if (spotStream.count() > 0) {
-            BigDecimal income = spotRepo.findAllFinished(date)
-                    .map(s -> s.getFee(Currency.PLN).get())
+        if (archivedSpotStream.count() > 0) {
+            BigDecimal income = archivedSpotStream
+                    .map(ArchivedSpot::getFee)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            DailyIncome dailyIncome = new DailyIncome(date, income);
-            return new ResponseEntity<>(dailyIncome, HttpStatus.OK);
+            return new ResponseEntity<>(new DailyIncome(date, income), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         //TODO remove constant currency
     }

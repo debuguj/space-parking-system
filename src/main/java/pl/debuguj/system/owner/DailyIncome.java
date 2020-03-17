@@ -10,7 +10,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 public class DailyIncome implements Serializable {
-    public static final DailyIncome EMPTY = new DailyIncome(null, BigDecimal.ZERO);
-    private Date date;
-    private BigDecimal income;
+    private final Date date;
+    private final BigDecimal income;
 }
