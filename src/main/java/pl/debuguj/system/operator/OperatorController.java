@@ -13,13 +13,12 @@ import pl.debuguj.system.spot.Spot;
 import pl.debuguj.system.spot.SpotRepo;
 
 import javax.validation.constraints.Pattern;
-import java.util.Optional;
 
 @RestController
 @Slf4j
 @Validated
 @PropertySource("classpath:global.properties")
-public class OperatorController {
+class OperatorController {
 
     private final SpotRepo spotRepo;
 
@@ -30,11 +29,8 @@ public class OperatorController {
     @GetMapping("${uri.operator.check}")
     public HttpEntity<Spot> checkVehicleByPlate(@PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate) {
 
-        Optional<Spot> os = spotRepo.findByPlate(plate);
-        if (os.isPresent()) {
-            return new ResponseEntity<>(os.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        final Spot spot = spotRepo.findByPlate(plate).orElseThrow(() -> new VehicleNotFoundException(plate));
+
+        return new ResponseEntity<>(spot, HttpStatus.OK);
     }
 }

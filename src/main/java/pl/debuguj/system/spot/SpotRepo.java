@@ -7,14 +7,12 @@ import java.util.Optional;
 /**
  * Created by GB on 07.03.2020.
  */
-@Repository
-public interface SpotRepo {
 
+public interface SpotRepo {
 
     Optional<Spot> save(final Spot parkingSpaceActive);
 
     Optional<Spot> findByPlate(final String vehiclePlate);
 
     Optional<Spot> delete(final String plate);
-
 }

@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Validated
 @PropertySource("classpath:global.properties")
-public class OwnerController {
+class OwnerController {
 
     private final ArchivedSpotRepo archivedSpotRepo;
 

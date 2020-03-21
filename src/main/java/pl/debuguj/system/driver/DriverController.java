@@ -14,7 +14,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * Created by GB on 07.03.20.
@@ -23,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 @Validated
 @PropertySource("classpath:global.properties")
-public class DriverController {
+class DriverController {
 
     private final SpotRepo spotRepo;
     private final ArchivedSpotRepo archivedSpotRepo;
@@ -35,12 +34,12 @@ public class DriverController {
 
     @PostMapping(value = "${uri.driver.start}")
     public HttpEntity<Spot> startParkingMeter(@RequestBody @Valid Spot spot) {
-        Optional<Spot> os = spotRepo.save(spot);
-        if (os.isPresent()) {
-            return new ResponseEntity<>(spot, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(spot, HttpStatus.FOUND);
-        }
+
+        spotRepo.findByPlate(spot.getVehiclePlate()).orElseThrow(() -> new VehicleActiveInDbException(spot.getVehiclePlate()));
+
+        final Spot registeredSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
+
+        return new ResponseEntity<>(registeredSpot, HttpStatus.OK);
     }
 
     @PatchMapping("${uri.driver.stop}")
@@ -48,25 +47,19 @@ public class DriverController {
             @PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String vehiclePlate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date finishDate) {
 
-        final Optional<Spot> oSpot = spotRepo.findByPlate(vehiclePlate);
+        final Spot spot = spotRepo.findByPlate(vehiclePlate).orElseThrow(() -> new VehicleNotExistsInDbException(vehiclePlate));
 
-        if (oSpot.isPresent()) {
-            final Spot spot = oSpot.get();
-            final ArchivedSpot archivedSpot = new ArchivedSpot(spot.getVehiclePlate(), spot.getDriverType(), spot.getBeginDate(), finishDate);
-            archivedSpotRepo.save(archivedSpot);
-            spotRepo.delete(vehiclePlate);
-            Fee fee = new Fee(archivedSpot.getVehiclePlate(), archivedSpot.getBeginDate(), archivedSpot.getFinishDate(), archivedSpot.getFee().get());
-            return new ResponseEntity(fee, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        final ArchivedSpot archivedSpot = new ArchivedSpot(spot.getVehiclePlate(), spot.getDriverType(), spot.getBeginDate(), finishDate);
+
+        archivedSpotRepo.save(archivedSpot);
+        spotRepo.delete(vehiclePlate);
+
+        return new ResponseEntity(new Fee(archivedSpot), HttpStatus.OK);
     }
-
 
     @PostMapping(value = "${uri.simple}")
     public HttpEntity<?> simpleReturn(@PathVariable("plate") @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate) {
 
         return new ResponseEntity<>(BigDecimal.TEN, HttpStatus.OK);
     }
-
 }

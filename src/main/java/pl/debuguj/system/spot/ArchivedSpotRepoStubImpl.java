@@ -1,5 +1,7 @@
 package pl.debuguj.system.spot;
 
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -9,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+@Repository
 public class ArchivedSpotRepoStubImpl implements ArchivedSpotRepo {
     private static Map<UUID, ArchivedSpot> mapParkingSpots = new ConcurrentHashMap<>();
 
