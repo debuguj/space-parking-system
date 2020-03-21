@@ -48,6 +48,5 @@ class OwnerController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        //TODO remove constant currency
     }
 }
