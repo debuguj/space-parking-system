@@ -1,7 +1,5 @@
 package pl.debuguj.system.driver;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import pl.debuguj.system.spot.ArchivedSpot;
 
 import java.math.BigDecimal;

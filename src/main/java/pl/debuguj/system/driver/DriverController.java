@@ -35,7 +35,7 @@ class DriverController {
     @PostMapping(value = "${uri.driver.start}")
     public HttpEntity<Spot> startParkingMeter(@RequestBody @Valid Spot spot) {
 
-        spotRepo.findByPlate(spot.getVehiclePlate()).orElseThrow(() -> new VehicleActiveInDbException(spot.getVehiclePlate()));
+        spotRepo.findByVehiclePlate(spot.getVehiclePlate()).orElseThrow(() -> new VehicleActiveInDbException(spot.getVehiclePlate()));
 
         final Spot registeredSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
 
@@ -47,7 +47,7 @@ class DriverController {
             @PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String vehiclePlate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date finishDate) {
 
-        final Spot spot = spotRepo.findByPlate(vehiclePlate).orElseThrow(() -> new VehicleNotExistsInDbException(vehiclePlate));
+        final Spot spot = spotRepo.findByVehiclePlate(vehiclePlate).orElseThrow(() -> new VehicleNotExistsInDbException(vehiclePlate));
 
         final ArchivedSpot archivedSpot = new ArchivedSpot(spot.getVehiclePlate(), spot.getDriverType(), spot.getBeginDate(), finishDate);
 

@@ -12,7 +12,7 @@ public interface SpotRepo {
 
     Optional<Spot> save(final Spot parkingSpaceActive);
 
-    Optional<Spot> findByPlate(final String vehiclePlate);
+    Optional<Spot> findByVehiclePlate(final String vehiclePlate);
 
     Optional<Spot> delete(final String plate);
 }

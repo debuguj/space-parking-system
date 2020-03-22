@@ -8,31 +8,25 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpotTest {
 
     private final SimpleDateFormat simpleDateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final String registrationNumber = "WZE12345";
     private Date startDate;
-    private Date finishDate;
-    private Date invalidFinishDate;
 
     private Validator validator;
 
     public SpotTest() {
         try {
             startDate = simpleDateTimeFormatter.parse("2017-10-12T10:15:10");
-            finishDate = simpleDateTimeFormatter.parse("2017-10-12T14:15:10");
-            invalidFinishDate = simpleDateTimeFormatter.parse("2017-10-12T09:15:10");
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -45,15 +39,13 @@ public class SpotTest {
     }
 
     @Test
-    public void testSerialization() {
+    public void shouldBeSerializable() {
         Spot spot = new Spot(registrationNumber, DriverType.REGULAR, startDate);
         Spot other = (Spot) SerializationUtils.deserialize(SerializationUtils.serialize(spot));
 
-//        assertThat(other.getUuid()).isEqualTo(spot.getUuid());
         assertThat(other.getVehiclePlate()).isEqualTo(spot.getVehiclePlate());
         assertThat(other.getDriverType()).isEqualTo(spot.getDriverType());
         assertThat(other.getBeginDate()).isEqualTo(spot.getBeginDate());
-//        assertThat(other.getFinishDate()).isEqualTo(spot.getFinishDate());
     }
 
     @Test
@@ -64,11 +56,10 @@ public class SpotTest {
         assertThat(spot.getDriverType()).isEqualTo(DriverType.REGULAR);
         assertThat(spot.getDriverType()).isNotEqualTo(DriverType.VIP);
         assertThat(spot.getBeginDate()).isEqualTo(startDate);
-        //      assertThat(spot.getFinishDate()).isEqualTo(finishDate);
     }
 
     @Test
-    public void testValidationForWholeValidSpot() {
+    public void shouldNotReturnErrorsForSpot() {
         Spot spot1 = new Spot(registrationNumber, DriverType.REGULAR, startDate);
 
         Set<ConstraintViolation<Spot>> violations = this.validator.validate(spot1);
@@ -81,7 +72,7 @@ public class SpotTest {
     }
 
     @Test
-    public void shouldReturnOneViolationBecauseOfRegistrationNumberAsNullParameter() {
+    public void shouldReturnOneViolationBecauseOfRegistrationPlateAsNullParameter() {
         Spot spot = new Spot(null, DriverType.REGULAR, startDate);
 
         Set<ConstraintViolation<Spot>> violations = this.validator.validate(spot);
@@ -199,5 +190,4 @@ public class SpotTest {
 //        }
 //    }
 
-    //TODO: add test for other currencies
 }

@@ -4,20 +4,21 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @Repository
-public class ArchivedSpotRepoStubImpl implements ArchivedSpotRepo {
+public class ArchivedSpotRepoStub implements ArchivedSpotRepo {
     private static Map<UUID, ArchivedSpot> mapParkingSpots = new ConcurrentHashMap<>();
 
     @Override
     public Optional<ArchivedSpot> save(final ArchivedSpot archivedSpot) {
-        return Optional.ofNullable(mapParkingSpots.put(archivedSpot.getUuid(), archivedSpot));
+        if (Objects.nonNull(archivedSpot)) {
+            mapParkingSpots.put(archivedSpot.getUuid(), archivedSpot);
+            return Optional.of(archivedSpot);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -31,5 +32,9 @@ public class ArchivedSpotRepoStubImpl implements ArchivedSpotRepo {
     private Date createEndDate(final Date d) {
         final LocalDateTime endDateTime = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         return Date.from(endDateTime.plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public void clearRepo() {
+        this.mapParkingSpots.clear();
     }
 }

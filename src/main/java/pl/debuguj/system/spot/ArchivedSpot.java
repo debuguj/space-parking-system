@@ -16,22 +16,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ArchivedSpot implements Serializable {
 
     private final UUID uuid = UUID.randomUUID();
-    @NotNull
-    @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
-    private String vehiclePlate;
-    @NotNull
-    @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
-    private DriverType driverType;
-    @NotNull
-    private Date beginDate;
-    @NotNull
-    private Date finishDate;
+
+    private final String vehiclePlate;
+    private final DriverType driverType;
+    private final Date beginDate;
+    private final Date finishDate;
 
     @Override
     public boolean equals(Object o) {
@@ -47,12 +41,16 @@ public class ArchivedSpot implements Serializable {
     }
 
     public Optional<BigDecimal> getFee() {
-        if (Objects.nonNull(getFinishDate())) {
+        if (Objects.nonNull(getFinishDate()) && checkFinishDate()) {
             BigDecimal fee = getBasicFee();
             return Optional.ofNullable(fee.multiply(Currency.PLN.getExchangeRate()).setScale(1, BigDecimal.ROUND_CEILING));
         } else {
             return Optional.empty();
         }
+    }
+
+    private boolean checkFinishDate() {
+        return getFinishDate().after(getBeginDate());
     }
 
     public Optional<BigDecimal> getFee(final Currency currency) {

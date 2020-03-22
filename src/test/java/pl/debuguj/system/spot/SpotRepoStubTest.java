@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
@@ -15,19 +14,19 @@ import static org.junit.Assert.*;
  * Created by GB on 05.03.2020.
  */
 
-public class SpotRepoStubImplTest {
+public class SpotRepoStubTest {
 
-    private final SpotRepoStubImpl parkingSpaceRepo = new SpotRepoStubImpl();
+    private final SpotRepoStub parkingSpaceRepo = new SpotRepoStub();
 
     private final SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//    private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
     private String registrationNumber = "WZE12345";
     private Date beginDate;
     private Date endDate;
 
-    public SpotRepoStubImplTest() {
+    public SpotRepoStubTest() {
         try {
             beginDate = timeDateFormat.parse("2017-10-14T11:15:48");
             endDate = timeDateFormat.parse("2017-10-14T21:35:12");
@@ -51,6 +50,7 @@ public class SpotRepoStubImplTest {
     public void shouldReturnFalseBecauseVehicleIsActive() {
         Spot spot1 = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
         parkingSpaceRepo.save(spot1);
+
         Spot spot2 = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
         Optional<Spot> opt = parkingSpaceRepo.save(spot2);
 
@@ -70,7 +70,7 @@ public class SpotRepoStubImplTest {
         Spot spot = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
         parkingSpaceRepo.save(spot);
 
-        Optional<Spot> psFromRepo = parkingSpaceRepo.findByPlate(registrationNumber);
+        Optional<Spot> psFromRepo = parkingSpaceRepo.findByVehiclePlate(registrationNumber);
 
         assertNotNull(psFromRepo);
         assertEquals(spot, psFromRepo.get());
@@ -79,18 +79,29 @@ public class SpotRepoStubImplTest {
     }
 
     @Test
-    public void shouldFindActiveParkingSpaceByRegistrationNumber() {
+    public void shouldFindActiveParkingSpaceByVehiclePlate() {
         Spot spot = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
         parkingSpaceRepo.save(spot);
 
-        Optional<Spot> psFromDao = parkingSpaceRepo.findByPlate(registrationNumber);
+        Optional<Spot> oSpot = parkingSpaceRepo.findByVehiclePlate(registrationNumber);
 
-        assertTrue(psFromDao.isPresent());
+        assertTrue(oSpot.isPresent());
 
         String registrationNo = "WCI997755";
-        psFromDao = parkingSpaceRepo.findByPlate(registrationNo);
+        oSpot = parkingSpaceRepo.findByVehiclePlate(registrationNo);
 
-        assertFalse(psFromDao.isPresent());
+        assertFalse(oSpot.isPresent());
+    }
+
+    @Test
+    public void shouldDeleteActiveSpot() {
+        Spot spot = new Spot(registrationNumber, DriverType.REGULAR, beginDate);
+        parkingSpaceRepo.save(spot);
+        parkingSpaceRepo.delete(spot.getVehiclePlate());
+
+        Optional<Spot> oSpot = parkingSpaceRepo.findByVehiclePlate(registrationNumber);
+
+        assertFalse(oSpot.isPresent());
     }
 
 //
