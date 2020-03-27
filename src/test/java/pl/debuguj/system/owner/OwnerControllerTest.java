@@ -8,7 +8,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OwnerControllerTest {
+class OwnerControllerTest {
 
     @Autowired
     private WebApplicationContext context;

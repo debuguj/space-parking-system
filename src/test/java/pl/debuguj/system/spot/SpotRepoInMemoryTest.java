@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
  * Created by GB on 05.03.2020.
  */
 
-public class SpotRepoStubTest {
+class SpotRepoInMemoryTest {
 
-    private final SpotRepoStub parkingSpaceRepo = new SpotRepoStub();
+    private final SpotRepoInMemory parkingSpaceRepo = new SpotRepoInMemory();
 
     private final SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 //    private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -26,7 +26,7 @@ public class SpotRepoStubTest {
     private Date beginDate;
     private Date endDate;
 
-    public SpotRepoStubTest() {
+    public SpotRepoInMemoryTest() {
         try {
             beginDate = timeDateFormat.parse("2017-10-14T11:15:48");
             endDate = timeDateFormat.parse("2017-10-14T21:35:12");

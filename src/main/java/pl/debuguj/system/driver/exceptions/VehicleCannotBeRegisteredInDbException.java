@@ -1,7 +1,4 @@
-package pl.debuguj.system.driver;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+package pl.debuguj.system.driver.exceptions;
 
 public class VehicleCannotBeRegisteredInDbException extends RuntimeException {
     public VehicleCannotBeRegisteredInDbException(final String vehiclePlate) {

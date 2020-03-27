@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import pl.debuguj.system.operator.exceptions.VehicleNotFoundException;
 import pl.debuguj.system.spot.Spot;
 import pl.debuguj.system.spot.SpotRepo;
 

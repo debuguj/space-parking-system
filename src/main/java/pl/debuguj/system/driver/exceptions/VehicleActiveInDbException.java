@@ -1,7 +1,4 @@
-package pl.debuguj.system.driver;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+package pl.debuguj.system.driver.exceptions;
 
 public class VehicleActiveInDbException extends RuntimeException {
     public VehicleActiveInDbException(final String vehiclePlate) {

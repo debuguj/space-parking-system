@@ -8,11 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pl.debuguj.system.spot.*;
+import pl.debuguj.system.driver.exceptions.VehicleActiveInDbException;
+import pl.debuguj.system.driver.exceptions.VehicleCannotBeRegisteredInDbException;
+import pl.debuguj.system.driver.exceptions.VehicleNotExistsInDbException;
+import pl.debuguj.system.spot.ArchivedSpot;
+import pl.debuguj.system.spot.ArchivedSpotRepo;
+import pl.debuguj.system.spot.Spot;
+import pl.debuguj.system.spot.SpotRepo;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -32,17 +37,19 @@ class DriverController {
         this.archivedSpotRepo = archivedSpotRepo;
     }
 
-    @PostMapping(value = "${uri.driver.start}")
+    @PostMapping(value = "${uri.driver.start}", consumes = "application/json", produces = "application/json")
     public HttpEntity<Spot> startParkingMeter(@RequestBody @Valid Spot spot) {
 
-        spotRepo.findByVehiclePlate(spot.getVehiclePlate()).orElseThrow(() -> new VehicleActiveInDbException(spot.getVehiclePlate()));
+        spotRepo.findByVehiclePlate(spot.getVehiclePlate()).ifPresent(e -> {
+            throw new VehicleActiveInDbException(spot.getVehiclePlate());
+        });
 
-        final Spot registeredSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
+        final Spot savedSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
 
-        return new ResponseEntity<>(registeredSpot, HttpStatus.OK);
+        return new ResponseEntity<>(savedSpot, HttpStatus.OK);
     }
 
-    @PatchMapping("${uri.driver.stop}")
+    @PatchMapping(value = "${uri.driver.stop}", produces = "application/json", consumes = "application/json")
     public HttpEntity<Fee> stopParkingMeter(
             @PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String vehiclePlate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date finishDate) {
@@ -58,8 +65,10 @@ class DriverController {
     }
 
     @PostMapping(value = "${uri.simple}")
-    public HttpEntity<?> simpleReturn(@PathVariable("plate") @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate) {
-
-        return new ResponseEntity<>(BigDecimal.TEN, HttpStatus.OK);
+    public HttpEntity<Spot> simpleReturn(@PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate,
+                                         @RequestBody @Valid Spot spot) {
+        //spotRepo.findByVehiclePlate(spot.getVehiclePlate()).orElseThrow(() -> new VehicleActiveInDbException(spot.getVehiclePlate()));
+        final Spot savedSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
+        return new ResponseEntity<>(spot, HttpStatus.OK);
     }
 }

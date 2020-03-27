@@ -1,15 +1,16 @@
 Q
 -
 BASIC
+- transaction
 - add validation format tests
 - add config for currency or request with currency value
-- update pattern for registration plate
-- add sending data in json and xml not uri
-    - test for json
 - add 2 profile: with h2 database, without database
 - add gui eg. thymeleaf
+- add security
+- add hateoas
+- figure out how to avoid constant patterns for date and time
 
-EXTRA
+ADDITIONAL
 - add some jms feature (activemq or rabbitmq)
 - simple client for test ??
 - test in spock

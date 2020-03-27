@@ -10,17 +10,20 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import pl.debuguj.system.driver.VehicleActiveInDbException;
-import pl.debuguj.system.driver.VehicleCannotBeRegisteredInDbException;
-import pl.debuguj.system.driver.VehicleNotExistsInDbException;
-import pl.debuguj.system.operator.VehicleNotFoundException;
+import pl.debuguj.system.driver.exceptions.VehicleActiveInDbException;
+import pl.debuguj.system.driver.exceptions.VehicleCannotBeRegisteredInDbException;
+import pl.debuguj.system.driver.exceptions.VehicleNotExistsInDbException;
+import pl.debuguj.system.operator.exceptions.VehicleNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(VehicleNotFoundException.class)
     public ResponseEntity<ErrorResponse> systemVehicleNotFound(Exception ex, WebRequest request) {
@@ -37,9 +40,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setTimestamp(LocalDateTime.now());
         errorResponse.setError(ex.getMessage());
-        errorResponse.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
+        errorResponse.setStatus(HttpStatus.FOUND.value());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(errorResponse, HttpStatus.FOUND);
     }
 
     @ExceptionHandler(VehicleCannotBeRegisteredInDbException.class)

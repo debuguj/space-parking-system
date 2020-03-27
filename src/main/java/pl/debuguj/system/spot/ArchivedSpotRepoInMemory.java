@@ -1,5 +1,6 @@
 package pl.debuguj.system.spot;
 
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -9,8 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @Repository
-public class ArchivedSpotRepoStub implements ArchivedSpotRepo {
+public class ArchivedSpotRepoInMemory implements ArchivedSpotRepo {
     private static Map<UUID, ArchivedSpot> mapParkingSpots = new ConcurrentHashMap<>();
+
 
     @Override
     public Optional<ArchivedSpot> save(final ArchivedSpot archivedSpot) {

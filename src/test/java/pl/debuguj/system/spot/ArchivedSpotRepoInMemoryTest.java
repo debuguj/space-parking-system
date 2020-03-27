@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 
-public class ArchivedSpotRepoStubTest {
+class ArchivedSpotRepoInMemoryTest {
 
-    private final ArchivedSpotRepoStub archivedSpotRepoStub = new ArchivedSpotRepoStub();
+    private final ArchivedSpotRepoInMemory archivedSpotRepoInMemory = new ArchivedSpotRepoInMemory();
 
     private final SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -23,7 +23,7 @@ public class ArchivedSpotRepoStubTest {
     private Date beginDate;
     private Date endDate;
 
-    public ArchivedSpotRepoStubTest() {
+    public ArchivedSpotRepoInMemoryTest() {
         try {
             beginDate = timeDateFormat.parse("2017-10-14T11:15:48");
             endDate = timeDateFormat.parse("2017-10-14T21:35:12");
@@ -34,19 +34,19 @@ public class ArchivedSpotRepoStubTest {
 
     @AfterEach
     void after() {
-        archivedSpotRepoStub.clearRepo();
+        archivedSpotRepoInMemory.clearRepo();
     }
 
     @Test
     public void shouldReturnEmptyOptional() {
-        Optional<ArchivedSpot> opt = archivedSpotRepoStub.save(null);
+        Optional<ArchivedSpot> opt = archivedSpotRepoInMemory.save(null);
         assertFalse(opt.isPresent());
     }
 
     @Test
     public void shouldSaveNewArchivedSpot() {
         ArchivedSpot archivedSpot = new ArchivedSpot(registrationNumber, DriverType.REGULAR, beginDate, endDate);
-        Optional<ArchivedSpot> opt = archivedSpotRepoStub.save(archivedSpot);
+        Optional<ArchivedSpot> opt = archivedSpotRepoInMemory.save(archivedSpot);
 
         assertTrue(opt.isPresent());
         assertEquals(archivedSpot, opt.get());
@@ -66,21 +66,21 @@ public class ArchivedSpotRepoStubTest {
 
         for (int i = 0; i < registrationNumbers.length; i++) {
             ArchivedSpot spot = new ArchivedSpot(registrationNumbers[i], driverTypes[i], timeDateFormat.parse(datesBegin[i]), timeDateFormat.parse(datesFinish[i]));
-            archivedSpotRepoStub.save(spot);
+            archivedSpotRepoInMemory.save(spot);
         }
 
         Date date = dayDateFormat.parse("2017-10-14");
-        Stream<ArchivedSpot> spotStream = archivedSpotRepoStub.getAllByDay(date);
+        Stream<ArchivedSpot> spotStream = archivedSpotRepoInMemory.getAllByDay(date);
 
         assertEquals(2, spotStream.count());
 
         date = dayDateFormat.parse("2017-10-13");
-        spotStream = archivedSpotRepoStub.getAllByDay(date);
+        spotStream = archivedSpotRepoInMemory.getAllByDay(date);
 
         assertEquals(3, spotStream.count());
 
         date = dayDateFormat.parse("2017-10-1");
-        spotStream = archivedSpotRepoStub.getAllByDay(date);
+        spotStream = archivedSpotRepoInMemory.getAllByDay(date);
 
         assertEquals(0, spotStream.count());
     }

@@ -1,19 +1,23 @@
 package pl.debuguj.system.driver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.GsonTester;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import pl.debuguj.system.spot.DriverType;
+import pl.debuguj.system.spot.Spot;
+
+import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,12 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @WebAppConfiguration
-//@ActiveProfiles("test")
-public class DriverControllerTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+class DriverControllerTest {
 
-    @Value("${uri.start.meter}")
+    @Value("${uri.driver.start}")
     private String uriStartMeter;
-    @Value("${uri.stop.meter}")
+    @Value("${uri.driver.stop}")
     private String uriStopMeter;
 
     @Autowired
@@ -36,46 +40,65 @@ public class DriverControllerTest {
 
     private MockMvc mockMvc;
 
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Before
     public void setup() {
+        //MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
-    @Test
-    public void shouldReturnCorrectHttpStatusAndPayload() throws Exception {
 
+    @Test
+    public void shouldReturnCorrectPayloadAndFormatAndValue() throws Exception {
+        //GIVEN
+        Spot spot = new Spot("WCC12345", DriverType.REGULAR, new Date());
         //WHEN
         mockMvc.perform(post(uriStartMeter)
-                
-                .param("vehiclePlate", "WCI12346")
-                .param("driverType", "REGULAR")
-                .param("beginDate", "2020-12-12T10:10:10")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
-
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(spot)))
                 //THEN
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().string("774.5"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(spot)))
                 .andDo(print())
                 .andReturn();
-
     }
-//
+
+    @Test
+    public void shouldReturnBadRequestBecauseOfBadDayFormat() throws Exception {
+        //GIVEN
+        Spot spot = new Spot("WCC12346", DriverType.REGULAR, new Date());
+        mockMvc.perform(post(uriStartMeter)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(spot)));
+        //WHEN
+        mockMvc.perform(post(uriStartMeter)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(spot)))
+                //THEN
+                .andExpect(status().is3xxRedirection())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andReturn();
+    }
+
 //    @Test
 //    public void shouldReturnBadRequestBecauseOfBadDayFormat() throws Exception {
 //        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(uriStartMeter)
-//                .append("/11111")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-13 10:10:12")
-//                .append("&stopTime=2017-10-13 11")
-//                .toString();
+//        Spot spot = new Spot("WCC12349", DriverType.REGULAR, new Date());
+//        mockMvc.perform(post(uriStartMeter)
+//                .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                .content(objectMapper.writeValueAsString(spot)));
 //        //WHEN
-//        mockMvc.perform(post(givenUrl))
-//                //THEN
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string(""))
+//        mockMvc.perform(post(uriStartMeter)
+//                .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                .content(objectMapper.writeValueAsString(spot)))
+//        //THEN
+//                .andExpect(status().is4xxClientError())
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 //                .andDo(print())
 //                .andReturn();
 //    }

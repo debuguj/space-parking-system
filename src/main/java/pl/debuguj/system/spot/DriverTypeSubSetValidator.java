@@ -1,8 +1,5 @@
 package pl.debuguj.system.spot;
 
-import pl.debuguj.system.spot.DriverType;
-import pl.debuguj.system.spot.DriverTypeSubSet;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;

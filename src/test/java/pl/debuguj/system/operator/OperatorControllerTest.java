@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = ParkingSpacesSystemApplication.class)
 //@WebAppConfiguration
-public class OperatorControllerTest {
+class OperatorControllerTest {
 
     @Autowired
     private WebApplicationContext context;

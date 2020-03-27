@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by GB on 05.03.2020.
  */
 @Repository
-public class SpotRepoStub implements SpotRepo {
+public class SpotRepoInMemory implements SpotRepo {
 
     //TODO: add limit for parking capacity
     private static Map<String, Spot> mapParkingSpots = new ConcurrentHashMap<>();
@@ -17,7 +17,7 @@ public class SpotRepoStub implements SpotRepo {
     @Override
     public Optional<Spot> save(final Spot spot) {
         if (Objects.nonNull(spot) && !mapParkingSpots.containsKey(spot.getVehiclePlate())) {
-            mapParkingSpots.putIfAbsent(spot.getVehiclePlate(), spot);
+            mapParkingSpots.put(spot.getVehiclePlate(), spot);
             return Optional.of(spot);
         }
         return Optional.empty();
@@ -32,7 +32,7 @@ public class SpotRepoStub implements SpotRepo {
     }
 
     @Override
-    public Optional<Spot> delete(String plate) {
+    public Optional<Spot> delete(final String plate) {
         return Optional.ofNullable(mapParkingSpots.remove(plate));
     }
 

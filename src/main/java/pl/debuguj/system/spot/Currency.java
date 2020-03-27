@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * Created by GB on 27.02.2020.
  */
 @Getter
-public enum Currency {
+enum Currency {
 
     PLN(new BigDecimal("1.0"), "Złoty"),
     USD(new BigDecimal("3.50"), "Dolar");
@@ -21,3 +21,7 @@ public enum Currency {
         this.name = name;
     }
 }
+
+
+
+

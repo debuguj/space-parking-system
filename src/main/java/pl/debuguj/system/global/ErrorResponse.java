@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-public class ErrorResponse {
+class ErrorResponse {
 
     private LocalDateTime timestamp;
     private int status;
