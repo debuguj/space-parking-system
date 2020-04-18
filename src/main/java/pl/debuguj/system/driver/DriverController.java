@@ -33,7 +33,7 @@ class DriverController {
     private final SpotRepo spotRepo;
     private final ArchivedSpotRepo archivedSpotRepo;
 
-    @PostMapping(value = "${uri.driver.start}", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "${uri.driver.start}")
     public HttpEntity<Spot> startParkingMeter(@RequestBody @Valid Spot spot) {
         spotRepo.findByVehiclePlate(spot.getVehiclePlate())
                 .ifPresent(e -> {
@@ -46,7 +46,7 @@ class DriverController {
         return new ResponseEntity<>(savedSpot, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "${uri.driver.stop}", produces = "application/json", consumes = "application/json")
+    @PatchMapping(value = "${uri.driver.stop}")
     public HttpEntity<Fee> stopParkingMeter(
             @PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS") Date finishDate) {
