@@ -19,7 +19,6 @@ import javax.validation.constraints.Pattern;
 @RestController
 @Slf4j
 @Validated
-@PropertySource("classpath:global.properties")
 @AllArgsConstructor
 class OperatorController {
 

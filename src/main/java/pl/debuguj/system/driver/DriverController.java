@@ -27,7 +27,6 @@ import java.util.Date;
 @RestController
 @Slf4j
 @Validated
-@PropertySource("classpath:global.properties")
 @AllArgsConstructor
 class DriverController {
 
@@ -63,10 +62,10 @@ class DriverController {
     }
 
     @PostMapping(value = "${uri.simple}")
-    public HttpEntity<Spot> simpleReturn(@PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate,
+    public HttpEntity<Date> simpleReturn(@PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate,
                                          @RequestBody @Valid Spot spot) {
         //spotRepo.findByVehiclePlate(spot.getVehiclePlate()).orElseThrow(() -> new VehicleActiveInDbException(spot.getVehiclePlate()));
-        final Spot savedSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
-        return new ResponseEntity<>(spot, HttpStatus.OK);
+        //final Spot savedSpot = spotRepo.save(spot).orElseThrow(() -> new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
+        return new ResponseEntity<>(new Date(), HttpStatus.OK);
     }
 }

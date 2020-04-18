@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 @RestController
 @Slf4j
 @Validated
-@PropertySource("classpath:global.properties")
 @AllArgsConstructor
 class OwnerController {
 
