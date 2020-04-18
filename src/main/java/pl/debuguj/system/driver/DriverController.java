@@ -56,11 +56,10 @@ class DriverController {
                 .orElseThrow(() -> new VehicleNotExistsInDbException(plate));
 
         final ArchivedSpot archivedSpot = new ArchivedSpot(spot, finishDate);
-
         archivedSpotRepo.save(archivedSpot);
         spotRepo.delete(plate);
 
-        return new ResponseEntity(new Fee(archivedSpot), HttpStatus.OK);
+        return new ResponseEntity<>(new Fee(archivedSpot), HttpStatus.OK);
     }
 
     @PostMapping(value = "${uri.simple}")
