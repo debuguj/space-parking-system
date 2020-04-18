@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -70,18 +71,18 @@ class ArchivedSpotRepoInMemoryTest {
         }
 
         Date date = dayDateFormat.parse("2017-10-14");
-        Stream<ArchivedSpot> spotStream = archivedSpotRepoInMemory.getAllByDay(date);
+        List<ArchivedSpot> spotStream = archivedSpotRepoInMemory.getAllByDay(date);
 
-        assertEquals(2, spotStream.count());
+        assertEquals(2, spotStream.size());
 
         date = dayDateFormat.parse("2017-10-13");
         spotStream = archivedSpotRepoInMemory.getAllByDay(date);
 
-        assertEquals(3, spotStream.count());
+        assertEquals(3, spotStream.size());
 
         date = dayDateFormat.parse("2017-10-1");
         spotStream = archivedSpotRepoInMemory.getAllByDay(date);
 
-        assertEquals(0, spotStream.count());
+        assertEquals(0, spotStream.size());
     }
 }

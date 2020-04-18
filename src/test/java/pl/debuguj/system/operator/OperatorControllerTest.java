@@ -1,165 +1,74 @@
 package pl.debuguj.system.operator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
-import pl.debuguj.system.ParkingSpacesSystemApplication;
+import pl.debuguj.system.exceptions.VehicleNotFoundException;
+import pl.debuguj.system.spot.DriverType;
+import pl.debuguj.system.spot.Spot;
+import pl.debuguj.system.spot.SpotRepo;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Date;
+import java.util.Optional;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest(classes = ParkingSpacesSystemApplication.class)
-//@WebAppConfiguration
-class OperatorControllerTest {
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-    @Autowired
-    private WebApplicationContext context;
+@RunWith(SpringRunner.class)
+@WebMvcTest(controllers = OperatorController.class)
+public class OperatorControllerTest {
 
-    @Value("${uri.check.vehicle}")
+    @Value("${uri.operator.check}")
     private String uriCheckVehicle;
 
+    @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockBean
+    private SpotRepo spotRepo;
 
-    //    @Before
-//    public void setup() {
-//        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-//    }
+    private final Spot spot = new Spot("WCC12345", DriverType.REGULAR, new Date());
+
     @Test
-    public void shouldReturnReallye() {
-        assertFalse(Boolean.FALSE);
+    @DisplayName("Should return VehicleNotFoundException because vehicle is not active")
+    public void shouldReturnExceptionBecauseVehicleIsNotActive() throws Exception {
+        //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenThrow(new VehicleNotFoundException(spot.getVehiclePlate()));
+
+        mockMvc.perform(get(uriCheckVehicle, spot.getVehiclePlate())
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                //THEN
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andReturn();
     }
-//    @Test
-//    public void shouldReturnCorrectHttpStatusAndPayload() throws Exception {
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(ParkingSpaceController.URI_START_METER)
-//                .append("/11111")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-29 10:10:10")
-//                .append("&stopTime=2017-10-29 23:20:59")
-//                .toString();
-//
-//        //WHEN
-//        mockMvc.perform(post(givenUrl))
-//
-//        //THEN
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(content().string("774.5"))
-//                .andDo(print())
-//                .andReturn();
-//
-//    }
 
+    @Test
+    @DisplayName("Should return status OK because vehicle is active in db")
+    public void shouldReturnOkBecauseVehicleIsActive() throws Exception {
+        //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.of(spot));
 
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfIncorrectEndTime() throws Exception {
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(ParkingSpaceController.URI_START_METER)
-//                .append("/11111")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-13 23:10:12")
-//                .append("&stopTime=2017-10-13 22:10:12")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(post(givenUrl))
-//        //THEN
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string(""))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//
-//    @Test
-//    public void shouldReturnThatVehicleIsNotRegisteredInSystem() throws Exception {
-//        String givenUrl = new StringBuilder()
-//                .append(uriCheckVehicle)
-//                .append("/22223")
-//                .append("?currentDate=2017-10-13 10:28:48")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(get(givenUrl))
-//                //THEN
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(content().string("false"))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfBadDateFormat() throws Exception {
-//        String givenUrl = new StringBuilder()
-//                .append(uriCheckVehicle)
-//                .append("/22222")
-//                .append("?currentDate=2017-10-13 10:28")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(get(givenUrl))
-//                //THEN
-//                .andExpect(status().isBadRequest())
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnNotFoundBecauseOfBadRegistrationNumberFormat() throws Exception {
-//        String givenUrl = new StringBuilder()
-//                .append(uriCheckVehicle)
-//                .append("/2222")
-//                .append("?currentDate=2017-10-13 10:28:24")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(get(givenUrl))
-//                //THEN
-//                .andExpect(status().isNotFound())
-//                .andDo(print())
-//                .andReturn();
-//    }
-
-
-//    @Test
-//    public void shouldReturnCorrectIncomePerDay() throws Exception {
-//
-//        //GIVEN
-//        String givenUrlSetData1 = new StringBuilder()
-//                .append(ParkingSpaceController.URI_START_METER)
-//                .append("/44444")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-19 10:10:12")
-//                .append("&stopTime=2017-10-19 11:15:12")
-//                .toString();
-//        mockMvc.perform(post(givenUrlSetData1));
-//
-//        String givenUrlSetData2 = new StringBuilder()
-//                .append(ParkingSpaceController.URI_START_METER)
-//                .append("/44445")
-//                .append("?driverType=REGULAR")
-//                .append("&startTime=2017-10-19 10:10:12")
-//                .append("&stopTime=2017-10-19 11:15:12")
-//                .toString();
-//        mockMvc.perform(post(givenUrlSetData2));
-//
-//        String getVehicleStatus = new StringBuilder()
-//                .append(ParkingSpaceController.URI_CHECK_INCOME_PER_DAY)
-//                .append("?date=2017-10-19")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(get(getVehicleStatus))
-//        //THEN
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(content().string("5.0"))
-//                .andDo(print())
-//                .andReturn();
-//    }
+        mockMvc.perform(get(uriCheckVehicle, spot.getVehiclePlate())
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                //THEN
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(spot)))
+                .andDo(print())
+                .andReturn();
+    }
 }

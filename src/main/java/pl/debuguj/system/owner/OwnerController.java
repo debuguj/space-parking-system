@@ -15,6 +15,7 @@ import pl.debuguj.system.spot.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -30,13 +31,13 @@ class OwnerController {
 
     private final ArchivedSpotRepo archivedSpotRepo;
 
-    @GetMapping("${uri.owner.income}")
+    @GetMapping(value = "${uri.owner.income}")
     public HttpEntity<DailyIncome> getIncomePerDay(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 
-        Stream<ArchivedSpot> archivedSpotStream = archivedSpotRepo.getAllByDay(date);
+        List<ArchivedSpot> archivedSpotList = archivedSpotRepo.getAllByDay(date);
 
-        if (archivedSpotStream.count() > 0) {
-            BigDecimal income = archivedSpotStream
+        if (archivedSpotList.size() > 0) {
+            BigDecimal income = archivedSpotList.stream()
                     .map(ArchivedSpot::getFee)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -44,7 +45,7 @@ class OwnerController {
 
             return new ResponseEntity<>(new DailyIncome(date, income), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DailyIncome(date, BigDecimal.ZERO), HttpStatus.NOT_FOUND);
         }
     }
 }

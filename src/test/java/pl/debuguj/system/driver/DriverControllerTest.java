@@ -1,30 +1,23 @@
 package pl.debuguj.system.driver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.debuguj.system.exceptions.VehicleActiveInDbException;
 import pl.debuguj.system.exceptions.VehicleCannotBeRegisteredInDbException;
 import pl.debuguj.system.exceptions.VehicleNotExistsInDbException;
 import pl.debuguj.system.spot.*;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
@@ -37,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = DriverController.class)
-class DriverControllerTest {
+public class DriverControllerTest {
 
     @Value("${uri.driver.start}")
     private String uriStartMeter;
@@ -55,8 +48,7 @@ class DriverControllerTest {
     @MockBean
     private ArchivedSpotRepo archivedSpotRepo;
 
-    private final String plate = "WCC12345";
-    private final Spot spot = new Spot(plate, DriverType.REGULAR, new Date());
+    private final Spot spot = new Spot("WCC12345", DriverType.REGULAR, new Date());
 
     @Test
     @DisplayName("Should return a correct payload after request")
@@ -64,6 +56,7 @@ class DriverControllerTest {
         //WHEN
         when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.empty());
         when(spotRepo.save(spot)).thenReturn(Optional.of(spot));
+
         mockMvc.perform(post(uriStartMeter)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(spot)))
@@ -79,7 +72,9 @@ class DriverControllerTest {
     @DisplayName("Should return redirection because vehicle is active")
     public void shouldReturnRedirectionBecauseOfVehicleIsActive() throws Exception {
         //WHEN
-        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenThrow(new VehicleActiveInDbException(spot.getVehiclePlate()));
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate()))
+                .thenThrow(new VehicleActiveInDbException(spot.getVehiclePlate()));
+
         mockMvc.perform(post(uriStartMeter)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(spot)))
@@ -96,6 +91,7 @@ class DriverControllerTest {
         //WHEN
         when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.empty());
         when(spotRepo.save(spot)).thenThrow(new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
+
         mockMvc.perform(post(uriStartMeter)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(spot)))

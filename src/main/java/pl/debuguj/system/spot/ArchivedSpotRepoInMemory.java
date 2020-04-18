@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
@@ -24,11 +25,12 @@ public class ArchivedSpotRepoInMemory implements ArchivedSpotRepo {
     }
 
     @Override
-    public Stream<ArchivedSpot> getAllByDay(final Date date) {
+    public List<ArchivedSpot> getAllByDay(final Date date) {
         final Date end = createEndDate(date);
         return mapParkingSpots.values()
                 .stream()
-                .filter(ps -> date.before(ps.getFinishDate()) && end.after(ps.getBeginDate()));
+                .filter(ps -> date.before(ps.getBeginDate()) && end.after(ps.getBeginDate()))
+                .collect(Collectors.toList());
     }
 
     private Date createEndDate(final Date d) {
@@ -37,6 +39,6 @@ public class ArchivedSpotRepoInMemory implements ArchivedSpotRepo {
     }
 
     public void clearRepo() {
-        this.mapParkingSpots.clear();
+        mapParkingSpots.clear();
     }
 }
