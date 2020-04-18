@@ -1,5 +1,6 @@
 package pl.debuguj.system.operator;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
@@ -9,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import pl.debuguj.system.operator.exceptions.VehicleNotFoundException;
+import pl.debuguj.system.exceptions.VehicleNotFoundException;
 import pl.debuguj.system.spot.Spot;
 import pl.debuguj.system.spot.SpotRepo;
 
@@ -19,13 +20,10 @@ import javax.validation.constraints.Pattern;
 @Slf4j
 @Validated
 @PropertySource("classpath:global.properties")
+@AllArgsConstructor
 class OperatorController {
 
     private final SpotRepo spotRepo;
-
-    public OperatorController(SpotRepo spotRepo) {
-        this.spotRepo = spotRepo;
-    }
 
     @GetMapping("${uri.operator.check}")
     public HttpEntity<Spot> checkVehicleByPlate(@PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate) {

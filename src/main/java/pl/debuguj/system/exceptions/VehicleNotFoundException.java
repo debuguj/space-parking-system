@@ -1,4 +1,4 @@
-package pl.debuguj.system.operator.exceptions;
+package pl.debuguj.system.exceptions;
 
 public class VehicleNotFoundException extends RuntimeException {
 

@@ -3,59 +3,75 @@ package pl.debuguj.system.driver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import pl.debuguj.system.spot.DriverType;
-import pl.debuguj.system.spot.Spot;
+import pl.debuguj.system.exceptions.VehicleActiveInDbException;
+import pl.debuguj.system.exceptions.VehicleCannotBeRegisteredInDbException;
+import pl.debuguj.system.exceptions.VehicleNotExistsInDbException;
+import pl.debuguj.system.spot.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ExtendWith(SpringExtension.class)
+//@ContextConfiguration(classes = GeneralConfig.class)
+//@SpringBootTest
+//@ContextConfiguration(locations = "classpath:application.properties")
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@WebAppConfiguration
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class DriverControllerTest {
+//@TestPropertySource(locations = {"classpath:application.properties"})
+@WebMvcTest(controllers = DriverController.class)
+//@ContextConfiguration(classes = GeneralConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
+//@TestPropertySource(properties = { "uri.driver.start=/spots", "uri.driver.stop=/spots/{plate}" })
+
+public class DriverControllerTest {
 
     @Value("${uri.driver.start}")
     private String uriStartMeter;
     @Value("${uri.driver.stop}")
     private String uriStopMeter;
+    @Value("${date.time.format}")
+    private String dateTimePattern;
 
     @Autowired
-    private WebApplicationContext context;
-
     private MockMvc mockMvc;
-
-
     @Autowired
     private ObjectMapper objectMapper;
+    @MockBean
+    private SpotRepo spotRepo;
+    @MockBean
+    private ArchivedSpotRepo archivedSpotRepo;
 
-    @Before
-    public void setup() {
-        //MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-    }
-
+    private final String plate = "WCC12345";
+    private final Spot spot = new Spot(plate, DriverType.REGULAR, new Date());
 
     @Test
+    @DisplayName("Should return a correct payload after request")
     public void shouldReturnCorrectPayloadAndFormatAndValue() throws Exception {
-        //GIVEN
-        Spot spot = new Spot("WCC12345", DriverType.REGULAR, new Date());
         //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.empty());
+        when(spotRepo.save(spot)).thenReturn(Optional.ofNullable(spot));
         mockMvc.perform(post(uriStartMeter)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(spot)))
@@ -68,13 +84,10 @@ class DriverControllerTest {
     }
 
     @Test
-    public void shouldReturnBadRequestBecauseOfBadDayFormat() throws Exception {
-        //GIVEN
-        Spot spot = new Spot("WCC12346", DriverType.REGULAR, new Date());
-        mockMvc.perform(post(uriStartMeter)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(spot)));
+    @DisplayName("Should return redirection because vehicle is active")
+    public void shouldReturnRedirectionBecauseOfVehicleIsActive() throws Exception {
         //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenThrow(new VehicleActiveInDbException(spot.getVehiclePlate()));
         mockMvc.perform(post(uriStartMeter)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(spot)))
@@ -85,168 +98,63 @@ class DriverControllerTest {
                 .andReturn();
     }
 
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfBadDayFormat() throws Exception {
-//        //GIVEN
-//        Spot spot = new Spot("WCC12349", DriverType.REGULAR, new Date());
-//        mockMvc.perform(post(uriStartMeter)
-//                .contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .content(objectMapper.writeValueAsString(spot)));
-//        //WHEN
-//        mockMvc.perform(post(uriStartMeter)
-//                .contentType(MediaType.APPLICATION_JSON_UTF8)
-//                .content(objectMapper.writeValueAsString(spot)))
-//        //THEN
-//                .andExpect(status().is4xxClientError())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfIncorrectDriverType() throws Exception {
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(uriStartMeter)
-//                .append("/11111")
-//                .append("?driverType=VI")
-//                .append("&startTime=2017-10-13 10:10:12")
-//                .append("&stopTime=2017-10-13 23:10:12")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(post(givenUrl))
-//                //THEN
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string(""))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnNotFoundBecauseOfIncorrectRegistrationNumber() throws Exception {
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(uriStartMeter)
-//                .append("/1111")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-13 10:10:12")
-//                .append("&stopTime=2017-10-13 23:10:12")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(post(givenUrl))
-//                //THEN
-//                .andExpect(status().isNotFound())
-//                .andExpect(content().string(""))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfIncorrectEndTime() throws Exception {
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(uriStartMeter)
-//                .append("/11111")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-13 23:10:12")
-//                .append("&stopTime=2017-10-13 22:10:12")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(post(givenUrl))
-//                //THEN
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().string(""))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnNewFeeValue() throws Exception {
-//
-//        //GIVEN
-//        String givenUrlSetData = new StringBuilder()
-//                .append(uriStartMeter)
-//                .append("/33333")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-11 10:10:12")
-//                .append("&stopTime=2017-10-11 12:15:12")
-//                .toString();
-//
-//        mockMvc.perform(post(givenUrlSetData));
-//
-//        String givenUrl = new StringBuilder()
-//                .append(uriStopMeter)
-//                .append("/33333")
-//                .append("?timeStamp=2017-10-11 10:28:48")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(put(givenUrl))
-//                //THEN
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(content().string("0.0"))
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfIncorrectNewTime() throws Exception {
-//
-//        //GIVEN
-//        String givenUrlSetData = new StringBuilder()
-//                .append(uriStartMeter)
-//                .append("/33333")
-//                .append("?driverType=VIP")
-//                .append("&startTime=2017-10-10 10:10:12")
-//                .append("&stopTime=2017-10-10 12:15:12")
-//                .toString();
-//
-//        mockMvc.perform(post(givenUrlSetData));
-//
-//        String givenUrl = new StringBuilder()
-//                .append(uriStopMeter)
-//                .append("/33333")
-//                .append("?timeStamp=2017-10-10 10:05:48")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(put(givenUrl))
-//                //THEN
-//                .andExpect(status().isBadRequest())
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnNotFoundBecauseOfBadRegistrationNumberFormatWhenEndDateUpdate() throws Exception {
-//
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(uriStopMeter)
-//                .append("/3333")
-//                .append("?timeStamp=2017-10-13 10:28:48")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(put(givenUrl))
-//                //THEN
-//                .andExpect(status().isNotFound())
-//                .andDo(print())
-//                .andReturn();
-//    }
-//
-//    @Test
-//    public void shouldReturnBadRequestBecauseOfBadDateFormatWhenEndDateUpdate() throws Exception {
-//
-//        //GIVEN
-//        String givenUrl = new StringBuilder()
-//                .append(uriStopMeter)
-//                .append("/33333")
-//                .append("?timeStamp=2017-10-13 10:28")
-//                .toString();
-//        //WHEN
-//        mockMvc.perform(put(givenUrl))
-//                //THEN
-//                .andExpect(status().isBadRequest())
-//                .andDo(print())
-//                .andReturn();
-//    }
+    @Test
+    @DisplayName("Should return lock because a vehicle cannot be registered")
+    public void shouldReturnLockedBecauseOfVehicleCannotBeRegistered() throws Exception {
+        //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.empty());
+        when(spotRepo.save(spot)).thenThrow(new VehicleCannotBeRegisteredInDbException(spot.getVehiclePlate()));
+        mockMvc.perform(post(uriStartMeter)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(spot)))
+                //THEN
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    @DisplayName("Should return Not Found because vehicle is not active")
+    public void shouldReturnNotFoundBecauseVehicleIsNotActive() throws Exception {
+        //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenThrow(new VehicleNotExistsInDbException(spot.getVehiclePlate()));
+
+        mockMvc.perform(patch(uriStopMeter, spot.getVehiclePlate())
+                .param("finishDate", createTimeAfter2hInString(spot.getBeginDate()))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                //THEN
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andReturn();
+    }
+
+    @Test
+    @DisplayName("Should return correct fee")
+    public void shouldReturnCorrectFee() throws Exception {
+
+        final Fee fee = new Fee(new ArchivedSpot(spot, createTimeAfter2h(spot.getBeginDate())));
+        //WHEN
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.ofNullable(spot));
+
+        mockMvc.perform(patch(uriStopMeter, spot.getVehiclePlate())
+                .param("finishDate", createTimeAfter2hInString(spot.getBeginDate()))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                //THEN
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().json(objectMapper.writeValueAsString(fee)))
+                .andDo(print())
+                .andReturn();
+    }
+
+    private String createTimeAfter2hInString(final Date startDate) {
+        final Date newDate = Date.from(startDate.toInstant().plus(Duration.ofHours(2)));
+        return new SimpleDateFormat(dateTimePattern).format(newDate);
+    }
+
+    private Date createTimeAfter2h(final Date startDate) {
+        return Date.from(startDate.toInstant().plus(Duration.ofHours(2)));
+    }
 }

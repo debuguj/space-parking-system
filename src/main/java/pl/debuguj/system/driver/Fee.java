@@ -1,11 +1,14 @@
 package pl.debuguj.system.driver;
 
+import lombok.Getter;
 import pl.debuguj.system.spot.ArchivedSpot;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-class Fee {
+@Getter
+class Fee implements Serializable {
     private final String plate;
     private final Date startTime;
     private final Date stopTime;

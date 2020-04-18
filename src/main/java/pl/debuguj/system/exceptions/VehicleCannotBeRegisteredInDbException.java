@@ -1,4 +1,4 @@
-package pl.debuguj.system.driver.exceptions;
+package pl.debuguj.system.exceptions;
 
 public class VehicleCannotBeRegisteredInDbException extends RuntimeException {
     public VehicleCannotBeRegisteredInDbException(final String vehiclePlate) {

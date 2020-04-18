@@ -24,6 +24,13 @@ public class ArchivedSpot implements Serializable {
     private final Date beginDate;
     private final Date finishDate;
 
+    public ArchivedSpot(final Spot spot, Date finishDate) {
+        this.vehiclePlate = spot.getVehiclePlate();
+        this.driverType = spot.getDriverType();
+        this.beginDate = spot.getBeginDate();
+        this.finishDate = finishDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

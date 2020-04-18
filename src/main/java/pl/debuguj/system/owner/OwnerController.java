@@ -1,5 +1,6 @@
 package pl.debuguj.system.owner;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,13 +25,10 @@ import java.util.stream.Stream;
 @Slf4j
 @Validated
 @PropertySource("classpath:global.properties")
+@AllArgsConstructor
 class OwnerController {
 
     private final ArchivedSpotRepo archivedSpotRepo;
-
-    public OwnerController(ArchivedSpotRepo archivedSpotRepo) {
-        this.archivedSpotRepo = archivedSpotRepo;
-    }
 
     @GetMapping("${uri.owner.income}")
     public HttpEntity<DailyIncome> getIncomePerDay(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {

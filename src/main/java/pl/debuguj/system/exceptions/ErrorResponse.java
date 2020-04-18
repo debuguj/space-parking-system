@@ -1,4 +1,4 @@
-package pl.debuguj.system.global;
+package pl.debuguj.system.exceptions;
 
 
 import lombok.Getter;

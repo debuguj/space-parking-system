@@ -1,4 +1,4 @@
-package pl.debuguj.system.global;
+package pl.debuguj.system.exceptions;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import pl.debuguj.system.driver.exceptions.VehicleActiveInDbException;
-import pl.debuguj.system.driver.exceptions.VehicleCannotBeRegisteredInDbException;
-import pl.debuguj.system.driver.exceptions.VehicleNotExistsInDbException;
-import pl.debuguj.system.operator.exceptions.VehicleNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Date;
