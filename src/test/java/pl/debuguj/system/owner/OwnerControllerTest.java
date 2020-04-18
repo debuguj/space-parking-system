@@ -46,7 +46,6 @@ public class OwnerControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private ArchivedSpotRepo archivedSpotRepo;
-
     private final Spot spot = new Spot("WCC12345", DriverType.REGULAR, new Date());
 
     @Test
