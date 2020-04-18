@@ -35,17 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-//@ContextConfiguration(classes = GeneralConfig.class)
-//@SpringBootTest
-//@ContextConfiguration(locations = "classpath:application.properties")
 @RunWith(SpringRunner.class)
-//@TestPropertySource(locations = {"classpath:application.properties"})
 @WebMvcTest(controllers = DriverController.class)
-//@ContextConfiguration(classes = GeneralConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
-//@TestPropertySource(properties = { "uri.driver.start=/spots", "uri.driver.stop=/spots/{plate}" })
-
-public class DriverControllerTest {
+class DriverControllerTest {
 
     @Value("${uri.driver.start}")
     private String uriStartMeter;
@@ -71,7 +63,7 @@ public class DriverControllerTest {
     public void shouldReturnCorrectPayloadAndFormatAndValue() throws Exception {
         //WHEN
         when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.empty());
-        when(spotRepo.save(spot)).thenReturn(Optional.ofNullable(spot));
+        when(spotRepo.save(spot)).thenReturn(Optional.of(spot));
         mockMvc.perform(post(uriStartMeter)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(spot)))
@@ -136,7 +128,7 @@ public class DriverControllerTest {
 
         final Fee fee = new Fee(new ArchivedSpot(spot, createTimeAfter2h(spot.getBeginDate())));
         //WHEN
-        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.ofNullable(spot));
+        when(spotRepo.findByVehiclePlate(spot.getVehiclePlate())).thenReturn(Optional.of(spot));
 
         mockMvc.perform(patch(uriStopMeter, spot.getVehiclePlate())
                 .param("finishDate", createTimeAfter2hInString(spot.getBeginDate()))
