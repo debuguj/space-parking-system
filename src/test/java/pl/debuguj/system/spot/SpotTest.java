@@ -11,9 +11,11 @@ import javax.validation.ValidatorFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpotTest {
@@ -43,6 +45,7 @@ class SpotTest {
         Spot spot = new Spot(registrationNumber, DriverType.REGULAR, startDate);
         Spot other = (Spot) SerializationUtils.deserialize(SerializationUtils.serialize(spot));
 
+        Objects.requireNonNull(other);
         assertThat(other.getVehiclePlate()).isEqualTo(spot.getVehiclePlate());
         assertThat(other.getDriverType()).isEqualTo(spot.getDriverType());
         assertThat(other.getBeginDate()).isEqualTo(spot.getBeginDate());
@@ -95,22 +98,6 @@ class SpotTest {
         assertTrue(violations.size() > 0);
     }
 
-//    @Test
-//    void shouldNotReturnViolationsBecauseOfDateFinishAsNull() {
-//        Spot spot = new Spot(registrationNumber, DriverType.REGULAR, startDate, null);
-//
-//        Set<ConstraintViolation<Spot>> violations = this.validator.validate(spot);
-//        assertTrue(violations.isEmpty());
-//    }
-
-//    @Test
-//    void shouldReturnViolationBecauseOfInvalidFinishDate() {
-//        Spot spot = new Spot(registrationNumber, DriverType.REGULAR, startDate, invalidFinishDate);
-//
-//        Set<ConstraintViolation<Spot>> violations = this.validator.validate(spot);
-//        assertTrue(!violations.isEmpty());
-//    }
-
     @Test
     void shouldReturnViolationBecauseOfIncorrectRegistrationNumber() {
         String[] registrationNumbers = {
@@ -127,67 +114,11 @@ class SpotTest {
                 "QWE123456",
                 "QWE123"};
 
-        for (int i = 0; i < registrationNumbers.length; i++) {
-            Spot spot = new Spot(registrationNumbers[i], DriverType.REGULAR, startDate);
+        for (String number : registrationNumbers) {
+            Spot spot = new Spot(number, DriverType.REGULAR, startDate);
 
             Set<ConstraintViolation<Spot>> violations = this.validator.validate(spot);
-            assertTrue(violations.size() == 1);
+            assertEquals(violations.size(), 1);
         }
     }
-
-//    @Test
-//    public void shouldReturnEmptyOptionalBecauseOfNullFinishDate() {
-//        Spot spot = new Spot(registrationNumber, DriverType.REGULAR, startDate, null);
-//
-//        assertEquals(Optional.empty(), spot.getFee(Currency.PLN));
-//    }
-
-//    @Test
-//    public void shouldReturnCorrectFeeForRegularDriver() throws Exception {
-//        String[] startDates = {"2017-10-12T11:15:48", "2017-10-12T11:15:48",
-//                "2017-10-12T11:15:48", "2017-10-12T11:15:48",
-//                "2017-10-12T00:15:48", "2017-10-12T11:15:48", "2020-12-12T10:10:10"
-//        };
-//        String[] finishDates = {"2017-10-12T11:35:12", "2017-10-12T12:35:12",
-//                "2017-10-12T13:35:12", "2017-10-12T16:35:12",
-//                "2017-10-12T15:35:12", "2017-10-13T11:14:12", "2020-12-12T22:13:10"
-//        };
-//        BigDecimal[] returnedFee = {new BigDecimal("1.0"), new BigDecimal("3.0"),
-//                new BigDecimal("7.0"), new BigDecimal("63.0"),
-//                new BigDecimal("65535.0"), new BigDecimal("16777215.0"), new BigDecimal("8191.0")
-//        };
-//
-//        for (int i = 0; i < startDates.length; i++) {
-//            Date start = simpleDateTimeFormatter.parse(startDates[i]);
-//            Date stop = simpleDateTimeFormatter.parse(finishDates[i]);
-//            Spot spot = new Spot(registrationNumber, DriverType.REGULAR, start, stop);
-//
-//            assertEquals(returnedFee[i], spot.getFee(Currency.PLN).get());
-//        }
-//    }
-//
-//    @Test
-//    public void shouldReturnCorrectFeeForVipDriver() throws Exception {
-//        String[] beginDates = {"2017-10-12T11:15:48", "2017-10-12T11:15:48",
-//                "2017-10-12T11:15:48", "2017-10-12T11:15:48",
-//                "2017-10-12T00:15:48", "2017-10-12T11:15:48"
-//        };
-//        String[] endDates = {"2017-10-12T11:35:12", "2017-10-12T12:35:12",
-//                "2017-10-12T13:35:12", "2017-10-12T16:35:12",
-//                "2017-10-12T15:35:12", "2017-10-13T11:14:12"
-//        };
-//        BigDecimal[] returnedFee = {new BigDecimal("0.0"), new BigDecimal("2.0"),
-//                new BigDecimal("5.0"), new BigDecimal("26.4"),
-//                new BigDecimal("1747.6"), new BigDecimal("44887.0")
-//        };
-//
-//        for (int i = 0; i < beginDates.length; i++) {
-//            Date start = simpleDateTimeFormatter.parse(beginDates[i]);
-//            Date stop = simpleDateTimeFormatter.parse(endDates[i]);
-//            Spot spot = new Spot(registrationNumber, DriverType.VIP, start, stop);
-//
-//            assertEquals(returnedFee[i], spot.getFee(Currency.PLN).get());
-//        }
-//    }
-
 }

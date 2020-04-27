@@ -2,12 +2,10 @@ package pl.debuguj.system.driver;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.debuguj.system.exceptions.VehicleActiveInDbException;
 import pl.debuguj.system.exceptions.VehicleCannotBeRegisteredInDbException;
@@ -26,7 +24,6 @@ import java.util.Date;
  */
 @RestController
 @Slf4j
-@Validated
 @AllArgsConstructor
 class DriverController {
 
@@ -48,8 +45,8 @@ class DriverController {
 
     @PatchMapping(value = "${uri.driver.stop}")
     public HttpEntity<Fee> stopParkingMeter(
-            @PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS") Date finishDate) {
+            @Valid @PathVariable @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$") String plate,
+            @Valid @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS") Date finishDate) {
 
         final Spot spot = spotRepo.findByVehiclePlate(plate)
                 .orElseThrow(() -> new VehicleNotExistsInDbException(plate));

@@ -2,7 +2,9 @@ package pl.debuguj.system.spot;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -12,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SpotRepoInMemory implements SpotRepo {
 
     //TODO: add limit for parking capacity
-    private static Map<String, Spot> mapParkingSpots = new ConcurrentHashMap<>();
+    private Map<String, Spot> mapParkingSpots = new ConcurrentHashMap<>();
 
     @Override
     public Optional<Spot> save(final Spot spot) {

@@ -17,12 +17,9 @@ import static org.junit.Assert.*;
 class SpotRepoInMemoryTest {
 
     private final SpotRepoInMemory parkingSpaceRepo = new SpotRepoInMemory();
-
     private final SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-//    private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-
-    private String registrationNumber = "WZE12345";
+    private final String registrationNumber = "WZE12345";
     private Date beginDate;
     private Date endDate;
 
@@ -73,9 +70,11 @@ class SpotRepoInMemoryTest {
         Optional<Spot> psFromRepo = parkingSpaceRepo.findByVehiclePlate(registrationNumber);
 
         assertNotNull(psFromRepo);
-        assertEquals(spot, psFromRepo.get());
-        assertEquals(spot.getBeginDate(), psFromRepo.get().getBeginDate());
-        assertEquals(spot.getDriverType(), psFromRepo.get().getDriverType());
+        psFromRepo.ifPresent(c -> {
+            assertEquals(spot, psFromRepo.get());
+            assertEquals(spot.getBeginDate(), psFromRepo.get().getBeginDate());
+            assertEquals(spot.getDriverType(), psFromRepo.get().getDriverType());
+        });
     }
 
     @Test

@@ -8,10 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
 
 class ArchivedSpotRepoInMemoryTest {
 
@@ -20,7 +18,7 @@ class ArchivedSpotRepoInMemoryTest {
     private final SimpleDateFormat timeDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private final SimpleDateFormat dayDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    private String registrationNumber = "WZE12345";
+    private final String registrationNumber = "WZE12345";
     private Date beginDate;
     private Date endDate;
 

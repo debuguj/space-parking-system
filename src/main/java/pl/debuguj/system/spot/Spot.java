@@ -15,12 +15,12 @@ public class Spot implements Serializable {
 
     @NotNull(message = "Vehicle plate must be provided.")
     @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$", message = "Invalid email address.")
-    private String vehiclePlate;
+    private final String vehiclePlate;
     @NotNull(message = "Driver type must be provided.")
     @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
-    private DriverType driverType;
+    private final DriverType driverType;
     @NotNull(message = "Begin date must be provided.")
-    private Date beginDate;
+    private final Date beginDate;
 
     @Override
     public boolean equals(Object o) {

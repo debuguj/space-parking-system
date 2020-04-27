@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import pl.debuguj.system.spot.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -24,14 +25,13 @@ import java.util.stream.Stream;
  */
 @RestController
 @Slf4j
-@Validated
 @AllArgsConstructor
 class OwnerController {
 
     private final ArchivedSpotRepo archivedSpotRepo;
 
     @GetMapping(value = "${uri.owner.income}")
-    public HttpEntity<DailyIncome> getIncomePerDay(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    public HttpEntity<DailyIncome> getIncomePerDay(@Valid @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 
         List<ArchivedSpot> archivedSpotList = archivedSpotRepo.getAllByDay(date);
 
