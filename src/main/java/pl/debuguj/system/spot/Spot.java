@@ -13,13 +13,13 @@ import java.util.Objects;
 @Getter
 public class Spot implements Serializable {
 
-    @NotNull
-    @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$")
+    @NotNull(message = "Vehicle plate must be provided.")
+    @Pattern(regexp = "^[A-Z]{2,3}[0-9]{4,5}$", message = "Invalid email address.")
     private String vehiclePlate;
-    @NotNull
+    @NotNull(message = "Driver type must be provided.")
     @DriverTypeSubSet(anyOf = {DriverType.REGULAR, DriverType.VIP})
     private DriverType driverType;
-    @NotNull
+    @NotNull(message = "Begin date must be provided.")
     private Date beginDate;
 
     @Override

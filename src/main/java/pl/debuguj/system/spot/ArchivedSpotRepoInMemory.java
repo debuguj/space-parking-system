@@ -1,17 +1,13 @@
 package pl.debuguj.system.spot;
 
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Repository
 public class ArchivedSpotRepoInMemory implements ArchivedSpotRepo {
     private static Map<UUID, ArchivedSpot> mapParkingSpots = new ConcurrentHashMap<>();
-
 
     @Override
     public Optional<ArchivedSpot> save(final ArchivedSpot archivedSpot) {
